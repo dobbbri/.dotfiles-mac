@@ -1,0 +1,97 @@
+#!/bin/zsh
+
+# home
+alias hh='cd ~'
+
+# dotfiles
+alias ff='cd ~/.dotfiles-mac/'
+alias sc='cd ~/.dotfiles-mac/scripts/'
+alias vv='cd ~/.dotfiles-mac/config/.config/nvim/'
+
+# folders
+alias ww='cd ~/Work/'
+alias dd='cd ~/Dev/'
+alias ss='cd ~/Sites/'
+alias dl='cd ~/Downloads/'
+
+# run http-server
+alias run-server="npx http-server "
+
+alias x="exit"
+alias l='eza -ll --color=always --group-directories-first'
+alias ls='eza -al --header --icons --group-directories-first'
+alias lt='eza --tree --level=2 --long --icons --git --color=always --group-directories-first'
+alias grep='grep --color=auto'
+alias myip="ip -f inet address | grep inet | grep -v 'lo$' | cut -d ' ' -f 6,13 && curl ifconfig.me && echo ' external ip'"
+alias reload='source ~/.zshrc'
+
+# nvim
+alias v='nvim'
+alias e='nvim'
+alias lg='lazygit'
+
+# Directories
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../../'
+
+# update node packages
+alias update-pkg="ncu --interactive --format group"
+
+# Git
+alias gsync="git pull && git push && git status --short"
+alias gps="git push && git status --short"
+alias gnah="git reset --hard && git clean -df"
+
+alias gaa="git add ."
+alias gs="git status --short"
+alias gl="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches"
+alias gc="git commit -m"
+alias gp="git push"
+alias gP="git pull"
+
+alias gac="git add . && git commit -m"
+alias gpp="git pull && git push"
+alias ggg="gac 'update...' && gps"
+
+# npm
+alias nr="npm run"
+alias naf="npm audit fix"
+alias nrf="npm run fix"
+alias nrd="npm run dev"
+alias nrp="npm run preview"
+alias nrb="npm run build"
+alias nrs="npm run start"
+alias ni="npm install"
+alias nid="npm install --save-dev"
+alias nig="sudo npm install -g"
+alias nu="npm uninstall"
+alias nug="sudo npm uninstall -g"
+alias nlsg="npm ls -g"            # List installed packages
+alias nls="npm ls"                # List installed packages
+alias nlp="npm prune"             # Remove un-used packages from node_modules folder
+alias nup="npm update"            # Update all packages listed in package.json
+alias nrdup="npm dedupe"          # Remove duplicate packages from node_modules
+alias nclean="npm cache clean -f" # Clean npm cache
+
+alias neovim-clear-log="rm ~/.local/state/nvim/lsp.log"
+
+mkcd() {
+  mkdir -p "$1" && cd "$1"
+}
+
+neovim-clear() {
+  echo "- clean Neovim plugins, caches ... ---------------------------------------------"
+  rm -rf ~/.cache/nvim
+  rm -rf ~/.local/share/nvim
+  rm -rf ~/.local/state/nvim
+  rm ~/.config/nvim/nvim-pack-lock.json
+}
+
+gup() {
+  if [[ -n $* ]]; then
+    git add . && git commit -m "$1" && git push && git status --short
+  else
+    git add . && git commit -m "fast update ..." && git push && git status --short
+  fi
+}

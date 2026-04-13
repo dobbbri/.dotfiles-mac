@@ -1,1 +1,2 @@
-# .dotfiles-mac
+# .omarchy-dotfiles
+ 
