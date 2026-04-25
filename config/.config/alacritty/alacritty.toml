@@ -24,6 +24,10 @@ padding.x = 14
 padding.y = 14
 # decorations = "None"
 
+[window.dimensions]
+columns = 126
+lines = 35
+
 [keyboard]
 bindings = [
 { key = "Insert", mods = "Shift", action = "Paste" },

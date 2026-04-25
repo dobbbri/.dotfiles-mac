@@ -2,19 +2,21 @@
 
 echo "install mac ports ---------------------------------------------------"
 
-sudo port install stow eza wget nvm alacritty kitty neovim go ripgrep ttf-nerd-fonts-symbols
+sudo port install stow eza wget nvm alacritty kitty neovim go ripgrep colima docker-compose 
 
 echo "install oh-my-zsh ---------------------------------------------------"
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
-# wget -P ~/.oh-my-zsh/custom/themes https://raw.githubusercontent.com/moarram/headline/main/headline.zsh-theme
+echo "install Nerd Fonts -------------------------------------------------------------"
+
+curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
+getnf && fc-cache -f
 
 cp ~/.zshrc ~/.zshrc.original
 rm ~/.zshrc
 
-echo "\.DS_Store" >> ~/.stow-global-ignore
-
+echo "\.DS_Store" >>~/.stow-global-ignore
 
 echo "run stow -------------------------------------------------------------"
 
@@ -35,4 +37,4 @@ echo "copy docker ------------------------------------------------------------"
 
 mkdir -p ~/Work
 
-cp -r ~/.dotfiles-mac/docker/wordpress-local-dev/ ~/Work/
+cp -r ~/.dotfiles-mac/docker/local-wordpress-development/ ~/Work/local-wordpress-development/
