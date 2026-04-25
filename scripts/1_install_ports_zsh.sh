@@ -2,19 +2,16 @@
 
 echo "install mac ports ---------------------------------------------------"
 
-sudo port install stow eza wget nvm alacritty kitty neovim python39 lua54 lua54-luarocs rust go cargo ripgrep ttf-nerd-fonts-symbols
+sudo port install stow eza wget nvm alacritty kitty neovim go ripgrep ttf-nerd-fonts-symbols
 
 echo "install oh-my-zsh ---------------------------------------------------"
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
-wget -P ~/.oh-my-zsh/custom/themes https://raw.githubusercontent.com/moarram/headline/main/headline.zsh-theme
+# wget -P ~/.oh-my-zsh/custom/themes https://raw.githubusercontent.com/moarram/headline/main/headline.zsh-theme
 
 cp ~/.zshrc ~/.zshrc.original
 rm ~/.zshrc
-
-cp ~/.dotfiles-mac/zsh/aliases.zsh ~/.oh-my-zsh/custom/aliases.zsh
-cp ~/.dotfiles-mac/zsh/.zshrc ~/.zshrc
 
 echo "\.DS_Store" >> ~/.stow-global-ignore
 
