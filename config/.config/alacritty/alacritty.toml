@@ -8,20 +8,14 @@ osc52 = "CopyPaste"
 
 [font]
 builtin_box_drawing = true
-size = 14.0
+size = 15.0
 
 [font.normal]
 family = "JetBrainsMono Nerd Font"
 
-# [font]
-# normal = { family = "JetBrainsMono Nerd Font" }
-# bold = { family = "JetBrainsMono Nerd Font" }
-# italic = { family = "JetBrainsMono Nerd Font" }
-# size = 14
-
 [window]
-padding.x = 14
-padding.y = 14
+padding.x = 8
+padding.y = 8
 # decorations = "None"
 
 [window.dimensions]
