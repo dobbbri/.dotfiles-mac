@@ -2,7 +2,7 @@
 
 echo "install mac ports ---------------------------------------------------"
 
-sudo port install stow eza wget nvm alacritty kitty neovim go ripgrep colima docker-compose 
+sudo port install stow eza wget nvm alacritty kitty fzf viu chafa neovim go ripgrep colima docker-compose 
 
 echo "install oh-my-zsh ---------------------------------------------------"
 
@@ -33,8 +33,3 @@ stow home/
 echo "fix ssh permission -----------------------------------------------------"
 cd ~ && ./.ssh/fix_ssh_permission.sh
 
-echo "copy docker ------------------------------------------------------------"
-
-mkdir -p ~/Work
-
-cp -r ~/.dotfiles-mac/docker/local-wordpress-development/ ~/Work/local-wordpress-development/

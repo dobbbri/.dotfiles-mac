@@ -105,9 +105,10 @@ vim.pack.add({
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
-  "https://github.com/rafamadriz/friendly-snippets",
-  "https://github.com/saghen/blink.cmp",
   "https://github.com/stevearc/conform.nvim",
+  "https://github.com/saghen/blink.cmp",
+  "https://github.com/saghen/blink.lib",
+  "https://github.com/rafamadriz/friendly-snippets",
   "https://github.com/stevearc/oil.nvim",
   "https://github.com/ibhagwan/fzf-lua",
   "https://github.com/folke/which-key.nvim",
@@ -154,15 +155,16 @@ require("oil").setup({
 })
 
 -- =============================================================================
-require("blink.cmp").setup({
+local cmp = require('blink.cmp')
+cmp.build():wait(60000)
+cmp.setup({
   fuzzy = {
-    implementation = "prefer_rust",
-    prebuilt_binaries = { force_version = "v*", download = true },
+    implementation = "rust",
   },
   signature = { enabled = true },
   sources = { default = { "lsp", "path", "snippets", "buffer" } },
   completion = {
-    documentation = { auto_show = true },
+    documentation = { auto_show = true ,window = { border = 'single' }},
     menu = { auto_show = true },
     list = { selection = { preselect = true, auto_insert = false } },
   },
