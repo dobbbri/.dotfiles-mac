@@ -8,6 +8,11 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "<filetype>" },
+  callback = function() vim.treesitter.start() end,
+})
+
 -- vim.api.nvim_create_autocmd("ColorScheme", {
 --   pattern = "*",
 --   callback = function()
