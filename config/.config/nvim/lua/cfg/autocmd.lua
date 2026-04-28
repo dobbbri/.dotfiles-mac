@@ -13,10 +13,11 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function() vim.treesitter.start() end,
 })
 
--- vim.api.nvim_create_autocmd("ColorScheme", {
---   pattern = "*",
---   callback = function()
---     vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
---     vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE" })
---   end,
--- })
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    -- vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+    -- vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE" })
+    vim.api.nvim_set_hl(0, "StatusLine", { link = "Comment" })
+  end,
+})

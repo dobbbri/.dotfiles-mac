@@ -6,10 +6,6 @@
 vim.g.mapleader = " " -- Set space as the leader key for custom mappings
 vim.g.maplocalleader = " " -- Set space as the local leader key for buffer-local mappings
 
-require("cfg.options")
-require("vim._core.ui2").enable()
-require("cfg.autocmd")
-
 vim.pack.add({
   "https://github.com/nvim-tree/nvim-web-devicons",
   "https://github.com/neovim/nvim-lspconfig",
@@ -31,14 +27,15 @@ vim.pack.add({
   "https://github.com/3rd/image.nvim",
   "https://github.com/luukvbaal/statuscol.nvim",
   "https://github.com/mg979/vim-visual-multi",
-	"https://github.com/xero/evangelion.nvim",
+  "https://github.com/xero/evangelion.nvim",
 }, { confirm = false })
 
-vim.cmd.colorscheme("evangelion")
--- vim.cmd("colorscheme catppuccin")
--- vim.cmd("colorscheme retrobox")
--- vim.cmd("colorscheme unokai")
+require("vim._core.ui2").enable()
 
+require("cfg.options")
+require("cfg.autocmd")
+
+require("ui.colorscheme")
 require("ui.oil")
 require("ui.diagnostic")
 require("ui.statuscol")
@@ -51,6 +48,7 @@ require("core.treesitter")
 require("core.autotag")
 require("core.autopairs")
 require("core.blink")
+require("core.conform")
 
 require("lsp.mason")
 require("lsp.lsp")

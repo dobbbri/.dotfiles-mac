@@ -6,8 +6,8 @@ return {
   hide_tab_bar_if_only_one_tab = true,
 
   allow_square_glyphs_to_overflow_width = "Never",
-  freetype_load_target = "HorizontalLcd",
-  freetype_render_target = "HorizontalLcd",
+  -- freetype_load_target = "HorizontalLcd",
+  -- freetype_render_target = "HorizontalLcd",
   use_cap_height_to_scale_fallback_fonts = true,
   warn_about_missing_glyphs = false,
 
@@ -15,7 +15,7 @@ return {
   initial_cols = 127,
 
   window_decorations = "TITLE | RESIZE",
-  window_background_opacity = 0.8,
+  window_background_opacity = 0.9,
   window_padding = {
     left = 0,
     right = 0,
@@ -46,10 +46,10 @@ return {
     "Noto Color Emoji",
   }),
   font_size = 15,
-  line_height = 1,
+  line_height = 1.4,
 
   colors = {
-    background = "#191b1f",
+    background = "#000000",
     foreground = "#d3d5d8",
     cursor_fg = "#191b1f",
     cursor_bg = "#ffffff",

@@ -33,7 +33,8 @@ vim.opt.ruler = true -- Show cursor position in command line
 vim.opt.showtabline = 0 -- Never show the tab line
 vim.opt.cmdheight = 1 -- Height of command line area
 vim.opt.pumheight = 10 -- Maximum height of popup menu
-vim.opt.winborder = "single" -- Use rounded borders for floating windows
+vim.opt.winborder = "none" -- Use rounded borders for floating windows
+vim.opt.laststatus = 3 -- 0: never, 1: split only, 2: always, 3: global
 
 -- Search
 vim.opt.hlsearch = true -- Highlight all search matches

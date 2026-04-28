@@ -72,6 +72,10 @@
       "rev": "0fcc83805ad11cf714a949c98c605ed717e0b83e",
       "src": "https://github.com/stevearc/oil.nvim"
     },
+    "plainline": {
+      "rev": "0b5b7890369bbd9cfe17f1ba0483493c82ca44f3",
+      "src": "https://github.com/eduardo-antunes/plainline"
+    },
     "statuscol.nvim": {
       "rev": "c46172d0911aa5d49ba5f39f4351d1bb7aa289cc",
       "src": "https://github.com/luukvbaal/statuscol.nvim"
