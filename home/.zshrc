@@ -4,6 +4,8 @@ export PATH="$HOME/bin:$PATH"
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+set rtp+=/opt/local/share/fzf/vim
+
 # Would you like to use another custom folder than $ZSH/custom?
 # export ZSH_CUSTOM="$ZSH/custom"
 
