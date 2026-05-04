@@ -12,7 +12,7 @@ vim.pack.add({
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
-  -- "https://github.com/stevearc/conform.nvim",
+  "https://github.com/stevearc/conform.nvim",
   "https://github.com/saghen/blink.cmp",
   "https://github.com/saghen/blink.lib",
   "https://github.com/rafamadriz/friendly-snippets",
@@ -20,7 +20,8 @@ vim.pack.add({
   "https://github.com/ibhagwan/fzf-lua",
   "https://github.com/folke/which-key.nvim",
   "https://github.com/lewis6991/gitsigns.nvim",
-  "https://github.com/nvim-treesitter/nvim-treesitter",
+  -- "https://github.com/nvim-treesitter/nvim-treesitter",
+  "https://github.com/arborist-ts/arborist.nvim",
   "https://github.com/windwp/nvim-ts-autotag",
   "https://github.com/windwp/nvim-autopairs",
   "https://github.com/MagicDuck/grug-far.nvim",
@@ -45,11 +46,12 @@ require("ui.grugfar")
 require("ui.gitsigns")
 require("ui.wichkey")
 
-require("core.treesitter")
+-- require("core.treesitter")
+require("core.arborist")
 require("core.autotag")
 require("core.autopairs")
 require("core.blink")
--- require("core.conform")
+require("core.conform")
 
 require("lsp.mason")
 require("lsp.lsp")

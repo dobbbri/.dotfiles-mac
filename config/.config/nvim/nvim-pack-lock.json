@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "arborist.nvim": {
+      "rev": "6cffbf419a495c84c56b918771a3d004e892e235",
+      "src": "https://github.com/arborist-ts/arborist.nvim"
+    },
     "blink.cmp": {
       "rev": "e1dbca9ea1d8dc7a83e27a52bbd990bd717e54a6",
       "src": "https://github.com/saghen/blink.cmp"
