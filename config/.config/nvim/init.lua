@@ -12,7 +12,7 @@ vim.pack.add({
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
-  "https://github.com/stevearc/conform.nvim",
+  -- "https://github.com/stevearc/conform.nvim",
   "https://github.com/saghen/blink.cmp",
   "https://github.com/saghen/blink.lib",
   "https://github.com/rafamadriz/friendly-snippets",
@@ -30,6 +30,7 @@ vim.pack.add({
   "https://github.com/xero/evangelion.nvim",
 }, { confirm = false })
 
+vim.cmd("packadd nvim.undotree")
 require("vim._core.ui2").enable()
 
 require("cfg.options")
@@ -48,7 +49,7 @@ require("core.treesitter")
 require("core.autotag")
 require("core.autopairs")
 require("core.blink")
-require("core.conform")
+-- require("core.conform")
 
 require("lsp.mason")
 require("lsp.lsp")

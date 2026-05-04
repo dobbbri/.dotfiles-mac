@@ -17,6 +17,8 @@ wk.add({
   { "<leader>cf", "<CMD>Format<CR>", desc = "Format File" },
   { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" } },
   { "<leader>cr", vim.lsp.buf.rename, desc = "Rename Symbol" },
+  { "<leader>cp", function() vim.fn.setreg("+", vim.fn.expand("%:p")) end, desc = "Copy absolute path" },
+  { "<leader>cr", function() vim.fn.setreg("+", vim.fn.expand("%")) end, desc = "Copy relative path" },
 
   { "<leader>f", group = "Find" }, -- Grouping for your fzf-lua
   { "<leader>ff", "<CMD>FzfLua files<CR>", desc = "Find Files" },
@@ -28,6 +30,8 @@ wk.add({
   { "<leader>gr", "<CMD>Gitsigns reset_hunk<CR>", desc = "Reset Hunk" },
   { "<leader>gp", "<CMD>Gitsigns preview_hunk<CR>", desc = "Preview Hunk" },
   { "<leader>gb", "<CMD>Gitsigns blame_line --full'<CR>", desc = "Blame Line" },
+
+  { "<leader>u", require("undotree").open, desc = "Toggle undotree" },
 
   { "<leader>r", group = "Replace" },
   { "<leader>ra", "<CMD>GrugFar<CR>", desc = "Replace in projec", mode = { "n", "v" } },
@@ -78,4 +82,3 @@ wk.add({
   { "<C-k>", "<CMD>wincmd k<CR>", desc = "Go Up", mode = "t" },
   { "<C-l>", "<CMD>wincmd l<CR>", desc = "Go Right", mode = "t" },
 })
-

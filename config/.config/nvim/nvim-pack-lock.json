@@ -12,6 +12,10 @@
       "rev": "dca1a190aa85f9065979ef35802fb77131911106",
       "src": "https://github.com/stevearc/conform.nvim"
     },
+    "dropbar.nvim": {
+      "rev": "f0a42bd92aa647e44221397723453403f5e20f16",
+      "src": "https://github.com/Bekaboo/dropbar.nvim"
+    },
     "evangelion.nvim": {
       "rev": "08cf52a0931a81bf5b64c93b744e136b5edb6d85",
       "src": "https://github.com/xero/evangelion.nvim"
