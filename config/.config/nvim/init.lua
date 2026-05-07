@@ -3,19 +3,19 @@
 -- ▓█  █ ▓█ ▄ ▓█  █ ▓█ █ ▓█ ▓█   █
 -- ▓█  █ ▓█▄█ ▀█▄▄▀ ▀█▄▀ ▓█ ▓█   █
 
-vim.g.mapleader = " " -- Set space as the leader key for custom mappings
+vim.g.mapleader = " "      -- Set space as the leader key for custom mappings
 vim.g.maplocalleader = " " -- Set space as the local leader key for buffer-local mappings
 
 vim.pack.add({
   "https://github.com/nvim-tree/nvim-web-devicons",
   "https://github.com/neovim/nvim-lspconfig",
-  "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
+  "https://github.com/mason-org/mason.nvim",
   "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
   "https://github.com/stevearc/conform.nvim",
-  "https://github.com/saghen/blink.cmp",
-  "https://github.com/saghen/blink.lib",
-  "https://github.com/rafamadriz/friendly-snippets",
+  -- "https://github.com/saghen/blink.cmp",
+  -- "https://github.com/saghen/blink.lib",
+  -- "https://github.com/rafamadriz/friendly-snippets",
   "https://github.com/stevearc/oil.nvim",
   "https://github.com/ibhagwan/fzf-lua",
   "https://github.com/folke/which-key.nvim",
@@ -31,7 +31,11 @@ vim.pack.add({
   "https://github.com/xero/evangelion.nvim",
 }, { confirm = false })
 
-vim.cmd("packadd nvim.undotree")
+-- vim.cmd("packadd nvim.undotree")
+-- :undotree
+-- vim.cmd("packadd nvim.difftool")
+-- :difftool
+
 require("vim._core.ui2").enable()
 
 require("cfg.options")
@@ -50,7 +54,7 @@ require("ui.wichkey")
 require("core.arborist")
 require("core.autotag")
 require("core.autopairs")
-require("core.blink")
+-- require("core.blink")
 require("core.conform")
 
 require("lsp.mason")

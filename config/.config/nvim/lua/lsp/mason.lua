@@ -16,6 +16,5 @@ require("mason-tool-installer").setup({
     "lua-language-server",
     "typescript-language-server",
     "yamlfmt",
-    "dockerls",
   },
 })

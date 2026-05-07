@@ -15,10 +15,15 @@ wk.add({
 
   { "<leader>c", group = "Code" },
   -- { "<leader>cf", "<CMD>Format<CR>", desc = "Format File" },
-  { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" } },
+  {
+    "<leader>ca",
+    vim.lsp.buf.code_action,
+    desc = "Code Action",
+    mode = { "n", "v" },
+  },
   { "<leader>cr", vim.lsp.buf.rename, desc = "Rename Symbol" },
-  { "<leader>cp", function() vim.fn.setreg("+", vim.fn.expand("%:p")) end, desc = "Copy absolute path" },
-  { "<leader>cr", function() vim.fn.setreg("+", vim.fn.expand("%")) end, desc = "Copy relative path" },
+  -- { "<leader>cp", function() vim.fn.setreg("+", vim.fn.expand("%:p")) end, desc = "Copy absolute path" },
+  -- { "<leader>cr", function() vim.fn.setreg("+", vim.fn.expand("%")) end, desc = "Copy relative path" },
 
   { "<leader>f", group = "Find" }, -- Grouping for your fzf-lua
   { "<leader>ff", "<CMD>FzfLua files<CR>", desc = "Find Files" },
@@ -31,10 +36,15 @@ wk.add({
   { "<leader>gp", "<CMD>Gitsigns preview_hunk<CR>", desc = "Preview Hunk" },
   { "<leader>gb", "<CMD>Gitsigns blame_line --full'<CR>", desc = "Blame Line" },
 
-  { "<leader>u", require("undotree").open, desc = "Toggle undotree" },
+  -- { "<leader>u", require("undotree").open, desc = "Toggle undotree" },
 
   { "<leader>r", group = "Replace" },
-  { "<leader>ra", "<CMD>GrugFar<CR>", desc = "Replace in projec", mode = { "n", "v" } },
+  {
+    "<leader>ra",
+    "<CMD>GrugFar<CR>",
+    desc = "Replace in projec",
+    mode = { "n", "v" },
+  },
   { "<leader>rr", ":%s///gcI<Left><Left><Left><Left><Left>", desc = "replace in current buffer" },
 
   { "<leader>?", "<CMD>WhichKey<CR>", desc = "Show all keymaps" },
@@ -59,11 +69,31 @@ wk.add({
 
   { "J", ":m '>+1<CR>gv=gv", desc = "Move Lines Down", mode = "v" },
   { "K", ":m '<-2<CR>gv=gv", desc = "Move Lines Up", mode = "v" },
-  { "k", "v:count == 0 ? 'gk' : 'k'", expr = true, desc = "Up (wrapped)" },
-  { "j", "v:count == 0 ? 'gj' : 'j'", expr = true, desc = "Down (wrapped)" },
+  {
+    "k",
+    "v:count == 0 ? 'gk' : 'k'",
+    expr = true,
+    desc = "Up (wrapped)",
+  },
+  {
+    "j",
+    "v:count == 0 ? 'gj' : 'j'",
+    expr = true,
+    desc = "Down (wrapped)",
+  },
 
-  { "H", "^", desc = "Start of Line", mode = { "n", "x", "o" } },
-  { "L", "g_", desc = "End of Line", mode = { "n", "x", "o" } },
+  {
+    "H",
+    "^",
+    desc = "Start of Line",
+    mode = { "n", "x", "o" },
+  },
+  {
+    "L",
+    "g_",
+    desc = "End of Line",
+    mode = { "n", "x", "o" },
+  },
 
   { "<Tab>", "<CMD>bprevious<CR>", desc = "Prev Buffer" },
   { "<S-Tab>", "<CMD>bnext<CR>", desc = "Next Buffer" },

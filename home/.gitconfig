@@ -4,6 +4,7 @@
 [user]
 	name = Sergio Dobri
 	email = sergiodobri@gmail.com
+  username = dobbbri
 	signingkey = /Users/sd/.ssh/id_ed25519
 	
 [filter "lfs"]

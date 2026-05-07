@@ -1,4 +1,3 @@
-
 vim.cmd.colorscheme("evangelion")
 
 -- vim.cmd("colorscheme catppuccin")

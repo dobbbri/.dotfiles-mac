@@ -17,10 +17,12 @@ cmp.setup({
       window = { border = "single" },
     },
     menu = { auto_show = true },
-    list = { selection = {
-      preselect = true,
-      auto_insert = false,
-    } },
+    list = {
+      selection = {
+        preselect = true,
+        auto_insert = false,
+      },
+    },
   },
   keymap = {
     ["<CR>"] = { "accept", "fallback" },
