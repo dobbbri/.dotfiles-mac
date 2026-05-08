@@ -1,14 +1,14 @@
 vim.diagnostic.config({
   virtual_text = {
     prefix = "●",
-    spacing = 4,
+    spacing = 3,
   },
   float = {
-    source = "if_many", -- nicer look for floats and show source if multiple sources (ex. ruff and ty)
+    source = "if_many",
     focusable = true,
     style = "minimal",
   },
   severity_sort = true,
   update_in_insert = false,
-  jump = { float = true }, -- automatically open the diagnostic float if you jump with [d ]d
+  jump = { float = true },
 })

@@ -1,5 +1,5 @@
 require("arborist").setup({
-  ensure_installed = { "astro", "javascript", "typescript", "tsx", "html", "css", "json", "lua", "toml" },
+  -- ensure_installed = { "astro", "javascript", "typescript", "tsx", "html", "css", "json", "lua", "toml" },
 })
 
 -- Other nvim-treesitter alternatives:

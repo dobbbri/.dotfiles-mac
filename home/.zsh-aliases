@@ -74,6 +74,8 @@ alias nup="npm update"            # Update all packages listed in package.json
 alias nrdup="npm dedupe"          # Remove duplicate packages from node_modules
 alias nclean="npm cache clean -f" # Clean npm cache
 
+alias macport-update="sudo port -d selfupdate"
+
 alias neovim-clear-log="rm ~/.local/state/nvim/lsp.log"
 
 mkcd() {

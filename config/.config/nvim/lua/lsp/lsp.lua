@@ -4,7 +4,15 @@ vim.lsp.config("lua_ls", {
       diagnostics = {
         globals = { "vim" },
       },
-      telemetry = { enable = false },
+      completion = {
+        callSnippet = "Replace",
+      },
+      workspace = {
+        library = {
+          [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+          [vim.fn.stdpath("config") .. "/lua"] = true,
+        },
+      },
     },
   },
 })
@@ -28,24 +36,24 @@ vim.lsp.config("ts_ls", {
   },
 })
 
--- vim.lsp.config("*", {
---   capabilities = require("blink.cmp").get_lsp_capabilities(),
--- })
+vim.lsp.config("tailwindcss", {
+  init_options = {
+    userLanguages = {
+      astro = "html",
+    },
+  },
+})
+
+vim.lsp.config("astro", {
+  init_options = {
+    typescript = {
+      tsdk = vim.fn.stdpath("data") .. "/mason/packages/typescript-language-server/node_modules/typescript/lib"
+    }
+  },
+})
 
 vim.lsp.enable({ "astro", "bashls", "jsonls", "lua_ls", "tailwindcss", "ts_ls", "biome" })
 
-vim.keymap.set("n", "gl", vim.diagnostic.open_float)
-
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(ev)
-    local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
-    if client:supports_method("textDocument/completion") then
-      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-    end
-  end,
-})
-
--- Auto-format ("lint") on save (adapted from neovim docs :help auto-format)
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(ev)
     local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))

@@ -24,7 +24,7 @@ vim.opt.number = true         -- Show absolute line numbers
 vim.opt.relativenumber = true -- Show relative line numbers (hybrid with number=true)
 vim.opt.numberwidth = 2       -- Minimum width of number column
 vim.opt.signcolumn = "yes"    -- Always show sign column with width of 1
-vim.opt.cursorline = true     -- Don't highlight the current line
+vim.opt.cursorline = false    -- Don't highlight the current line
 vim.opt.wrap = false          -- Don't wrap long lines
 vim.opt.breakindent = false   -- Wrapped lines preserve indentation
 vim.opt.showmode = false      -- Don't show mode in command line (shown in statusline)
@@ -59,11 +59,10 @@ vim.opt.writebackup = false    -- Don't create backup while editing
 vim.opt.swapfile = false       -- Don't create swap files
 
 -- Completion
-vim.opt.completeopt = { "menu", "menuone", "noselect" } -- Completion menu options
-vim.opt.conceallevel = 0                                -- Show all text normally (no concealment)
+vim.opt.completeopt = { "menu", "menuone", "noselect", "popup", "fuzzy" } -- Completion menu options
+vim.opt.conceallevel = 0                                                  -- Show all text normally (no concealment)
 vim.o.autocomplete = true
 vim.opt.complete:append("o")
--- vim.opt.completeopt = { "menuone", "noselect" }
 vim.o.pumheight = 10
 vim.o.pumborder = "rounded"
 

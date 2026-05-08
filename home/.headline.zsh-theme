@@ -156,7 +156,7 @@ declare -A HL_GIT_STATUS_SYMBOLS=(
   AHEAD     '↑'
   DIVERGED  '↕'
   STASHED   '*'
-  CONFLICTS '✘' # consider "%{$red%}✘"
+  CONFLICTS '✕' # consider "%{$red%}✘"
   CLEAN     '' # consider '✓' or "%{$green%}✔"
 )
 

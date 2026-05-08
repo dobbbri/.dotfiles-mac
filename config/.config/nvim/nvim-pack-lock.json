@@ -12,6 +12,10 @@
       "rev": "08cf52a0931a81bf5b64c93b744e136b5edb6d85",
       "src": "https://github.com/xero/evangelion.nvim"
     },
+    "friendly-snippets": {
+      "rev": "6cd7280adead7f586db6fccbd15d2cac7e2188b9",
+      "src": "https://github.com/rafamadriz/friendly-snippets"
+    },
     "fzf-lua": {
       "rev": "17e3507b788699776ba6d2f8dd101ec177f37a96",
       "src": "https://github.com/ibhagwan/fzf-lua"
@@ -28,13 +32,9 @@
       "rev": "da2be65c153ba15a14a342b05591652a6df70d58",
       "src": "https://github.com/3rd/image.nvim"
     },
-    "mason-lspconfig.nvim": {
-      "rev": "0c2823e0418f3d9230ff8b201c976e84de1cb401",
-      "src": "https://github.com/mason-org/mason-lspconfig.nvim"
-    },
-    "mason-tool-installer.nvim": {
-      "rev": "443f1ef8b5e6bf47045cb2217b6f748a223cf7dc",
-      "src": "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim"
+    "mason-auto-install.nvim": {
+      "rev": "f1138b65d9d03f2c752c1b00a4c26ceede82ccb6",
+      "src": "https://github.com/owallb/mason-auto-install.nvim"
     },
     "mason.nvim": {
       "rev": "cb8445f8ce85d957416c106b780efd51c6298f89",
@@ -71,6 +71,10 @@
     "which-key.nvim": {
       "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
       "src": "https://github.com/folke/which-key.nvim"
+    },
+    "yasp.nvim": {
+      "rev": "402975f1c63fcd8cbb834199c8f211ca9f0baac6",
+      "src": "https://github.com/DimitrisDimitropoulos/yasp.nvim"
     }
   }
 }
