@@ -2,7 +2,7 @@
 
 echo "install mac ports ---------------------------------------------------"
 
-sudo port install stow eza wget wezterm fd fzf viu chafa neovim go ripgrep
+sudo port install stow eza wget tree wezterm fd bat fzf viu chafa neovim go ripgrep
 
 echo "install oh-my-zsh ---------------------------------------------------"
 
