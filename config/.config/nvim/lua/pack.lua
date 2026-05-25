@@ -136,8 +136,8 @@ GrugFar.setup({
 })
 
 vim.keymap.set("n", "<leader>rp", function() GrugFar.open({ transient = true }) end, { desc = "Replace in project" })
-vim.keymap.set("n", "<leader>rf", function() GrugFar.open({ prefills = { paths = vim.fn.expand(" % ") } }) end,
-  { desc = "Replace in project" }
+vim.keymap.set("n", "<leader>rb", function() GrugFar.open({ prefills = { paths = vim.fn.expand(" % ") } }) end,
+  { desc = "Replace in buffer" }
 )
 
 --- colorizer ---

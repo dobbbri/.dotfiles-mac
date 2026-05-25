@@ -20,7 +20,7 @@ vim.api.nvim_create_user_command("PackUpdate", function(opts)
   end
 end, { nargs = "*", desc = "Update all plugins or specific ones" })
 
--- save cursor postion --
+--- save cursor postion ---
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function()
     local mark = vim.api.nvim_buf_get_mark(0, '"')
@@ -28,5 +28,13 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount then
       pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
+  end,
+})
+
+--- TextYankPost ---
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Highlight when yanking (copying) text",
+  callback = function()
+    vim.hl.on_yank()
   end,
 })

@@ -10,7 +10,7 @@
   --color-border: #D3CDC6;
   --color-heading: #212725;
 
-  --typography-primary-font-family: "Marcellus";
+  --typography-primary-font-family: "Playflair Display";
 	--typography-primary-font-size: 67.34px;
   --typography-primary-font-weight: 400;
   --typography-primary-text-transform: none;
@@ -42,7 +42,7 @@
   --typography-accent-text-decoration: none;
   --typography-accent-line-height: 1.8em;
   
-  --typography-h1-font-family: "Marcellus";
+  --typography-h1-font-family: "Playflair Display";
   --typography-h1-font-size: 67.34px;
   --typography-h1-font-weight: 400;
   --typography-h1-text-transform: none;
@@ -50,7 +50,7 @@
   --typography-h1-text-decoration: none;
   --typography-h1-line-height: 1.1em;
   
-  --typography-h2-font-family: "Marcellus";
+  --typography-h2-font-family: "Playflair Display";
   --typography-h2-font-size: 50.52px;
   --typography-h2-font-weight: 400;
   --typography-h2-text-transform: none;
@@ -58,7 +58,7 @@
   --typography-h2-text-decoration: none;
   --typography-h2-line-height: 1.2em;
 
-  --typography-h3-font-family: "Marcellus";
+  --typography-h3-font-family: "Playflair Display";
   --typography-h3-font-size: 37.9px;
   --typography-h3-font-weight: 400;
   --typography-h3-text-transform: none;
@@ -66,7 +66,7 @@
   --typography-h3-text-decoration: none;
   --typography-h3-line-height: 1.3em;
 
-  --typography-h4-font-family: "Marcellus";
+  --typography-h4-font-family: "Playflair Display";
   --typography-h4-font-size: 28.43px;
   --typography-h4-font-weight: 400;
   --typography-h4-text-transform: none;
@@ -74,7 +74,7 @@
   --typography-h4-text-decoration: none;
   --typography-h4-line-height: 1.4em;
 
-  --typography-h5-font-family: "Marcellus";
+  --typography-h5-font-family: "Playflair Display";
   --typography-h5-font-size: 21.33px;
   --typography-h5-font-weight: 400;
   --typography-h5-text-transform: none;
@@ -82,7 +82,7 @@
   --typography-h5-text-decoration: none;
   --typography-h5-line-height: 1.5em;
 
-  --typography-h6-font-family: "Marcellus";
+  --typography-h6-font-family: "Playflair Display";
   --typography-h6-font-size: 16px;
   --typography-h6-font-weight: 400;
   --typography-h6-text-transform: none;

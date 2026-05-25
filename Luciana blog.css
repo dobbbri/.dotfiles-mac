@@ -1,0 +1,68 @@
+/*
+ * Luciana blog
+ * Created with ColorSlurp
+ */
+ 
+Text-Color
+#4C314C
+
+Primary-Color
+#F6F0E9
+
+Light-Accent-Color
+#94AB8F
+
+Accent-Color
+#43816C
+
+Dark-Accent-Color
+#064237
+
+Light-Secondary-Color
+#BF97BC
+
+Secondary-Color
+#AB7AA7
+
+Dark-Secondary-Color
+#975792
+
+Transparent-Color
+#00000000
+
+White-Color
+#FFFFFF
+
+:root, .luciana-blog {
+    --sidecar: #f5dcc0;
+    --merino: #f6f0e9;
+    --strikemaster: #975792;
+    --white: #bf97bc;
+    --bouquet: #ab7aa7;
+    --strikemaster: #885884;
+    --eggplant: #4c314c;
+    --cactus: #5c7456;
+    --camouflage-green: #768972;
+    --envy: #94ab8f;
+    --white: #ffffff;
+    --tiber: #064237;
+    --viridian: #43816c;
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+    :root, .luciana-blog {
+        --sidecar: color(display-p3 0.959 0.864 0.755 / 1.0);
+        --merino: color(display-p3 0.965 0.941 0.914 / 1.0);
+        --strikemaster: color(display-p3 0.592 0.341 0.573 / 1.0);
+        --white: color(display-p3 0.749 0.592 0.737 / 1.0);
+        --bouquet: color(display-p3 0.671 0.478 0.655 / 1.0);
+        --strikemaster: color(display-p3 0.533 0.345 0.518 / 1.0);
+        --eggplant: color(display-p3 0.298 0.192 0.298 / 1.0);
+        --cactus: color(display-p3 0.361 0.455 0.337 / 1.0);
+        --camouflage-green: color(display-p3 0.463 0.537 0.447 / 1.0);
+        --envy: color(display-p3 0.58 0.671 0.561 / 1.0);
+        --white: color(display-p3 1.0 1.0 1.0 / 1.0);
+        --tiber: color(display-p3 0.024 0.259 0.216 / 1.0);
+        --viridian: color(display-p3 0.263 0.506 0.424 / 1.0);
+    }
+}
