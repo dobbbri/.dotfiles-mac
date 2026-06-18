@@ -6,12 +6,11 @@ sudo port install stow eza wget tree wezterm fd bat fzf viu chafa neovim go ripg
 
 echo "install oh-my-zsh ---------------------------------------------------"
 
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 echo "install Nerd Fonts -------------------------------------------------------------"
 
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
-getnf && fc-cache -f
+$HOME/.local/bin/getnf && fc-cache -f
 
 echo "run stow -------------------------------------------------------------"
 

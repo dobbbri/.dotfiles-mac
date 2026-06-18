@@ -5,7 +5,7 @@
 echo "- Install Nodejs@22, npm and pnpm --------------------------------------------------"
 sudo port install nvm && nvm install 22
 
-sudo port install pnpm && corepack enable
+# sudo port install pnpm && corepack enable
 
 
 echo "- Install NPM packages --------------------------------------------------"

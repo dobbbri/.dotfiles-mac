@@ -26,8 +26,9 @@ require("evangelion").setup({
 vim.cmd.colorscheme("evangelion")
 
 -- vim.cmd("colorscheme catppuccin")
--- vim.cmd("colorscheme retrobox")
--- vim.cmd("colorscheme unokai")
+-- vim.cmd("colorscheme retrobox") -- gruvbox clone
+-- vim.cmd("colorscheme unokai") -- monokai clone
+
 -- mini files ----
 local MiniFiles = require("mini.files")
 MiniFiles.setup({
@@ -66,18 +67,6 @@ local imap_expr = function(lhs, rhs)
 end
 imap_expr('<Tab>',   [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
 imap_expr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
-
---- mini surround ---
-require("mini.surround").setup()
--- Default Keymaps
--- | `sa` | Add surrounding or Direct with 'saiw' |
--- | `sd` | Delete surrounding |
--- | `sr` | Replace surrounding |
--- | `sf` | Find surrounding (right) |
--- | `sF` | Find surrounding (left) |
--- | `sh` | Highlight surrounding |
--- | `sn` | Update n_lines |
--- | `l` / `n` | as suffix for prev/next |
 
 --- mini picker ---
 local MiniPick = require("mini.pick")
@@ -131,7 +120,6 @@ require("fancyline").setup({
 --- grug-far ---
 local GrugFar = require("grug-far")
 GrugFar.setup({
-  -- headerMaxWidth = 80,
   showCompactInputs = true,
 })
 

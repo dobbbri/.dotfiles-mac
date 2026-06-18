@@ -9,7 +9,7 @@ return {
 	use_cap_height_to_scale_fallback_fonts = true,
 	warn_about_missing_glyphs = false,
 
-	initial_rows = 35,
+	initial_rows = 28,
 	initial_cols = 127,
 
 	window_decorations = "TITLE | RESIZE",
