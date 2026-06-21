@@ -17,5 +17,6 @@ require("commands")
 require("pack")
 require("treesitter")
 require("lsp")
+require("statusline")
 
 

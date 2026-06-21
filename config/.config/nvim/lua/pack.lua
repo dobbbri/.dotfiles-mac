@@ -9,7 +9,6 @@ vim.pack.add({
   "https://github.com/MagicDuck/grug-far.nvim",
   "https://github.com/mg979/vim-visual-multi",
   "https://github.com/catgoose/nvim-colorizer.lua",
-  "https://github.com/SantosAlarcon/fancyline.nvim",
   "https://github.com/xero/evangelion.nvim",
 }, { confirm = false })
 
@@ -107,15 +106,6 @@ MiniDiff.setup({
 
 vim.keymap.set("n", "<leader>gg", "<cmd>tabnew | Git | only<cr>", { desc = "Fugitive Full Page New Tab" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<CR>", { desc = "Git diff split", })
-
---- fancyline ---
-require("fancyline").setup({
-  preset = "vscode",
-  sections = {
-    left = { "mode", "file", "git_branch", "git_diff" },
-    right = { "diagnostics", "filetype", "lsp", "position" },
-  },
-})
 
 --- grug-far ---
 local GrugFar = require("grug-far")
