@@ -9,24 +9,10 @@ vim.pack.add({
   "https://github.com/MagicDuck/grug-far.nvim",
   "https://github.com/mg979/vim-visual-multi",
   "https://github.com/catgoose/nvim-colorizer.lua",
-  "https://github.com/xero/evangelion.nvim",
+  "https://github.com/lewis6991/gitsigns.nvim",
+  "https://github.com/nvim-tree/nvim-web-devicons"
 }, { confirm = false })
 
---- colorscheme ---
-require("evangelion").setup({
- transparent = false,
- overrides = {
-   Directory = { bg = "NONE" },
-   Comment = { fg = "#6D8086", bg = "NONE" },
-   StatusLine = { fg = "#B968FC", bg = "#39274D", bold = true },
-   StatusLineNC = { fg = "#666666", bg = "#39274D", bold = true },
- },
-})
-vim.cmd.colorscheme("evangelion")
-
--- vim.cmd("colorscheme catppuccin")
--- vim.cmd("colorscheme retrobox") -- gruvbox clone
--- vim.cmd("colorscheme unokai") -- monokai clone
 
 -- mini files ----
 local MiniFiles = require("mini.files")
@@ -42,6 +28,12 @@ vim.keymap.set("n", "<leader>-", function()
   MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
   MiniFiles.reveal_cwd()
 end, { desc = "Toggle into currently opened file" })
+
+---- mini icons ----
+local miniIcons =  require("mini.icons")
+miniIcons.setup()
+miniIcons.mock_nvim_web_devicons()
+vim.g.miniIcons = miniIcons
 
 ---- mini notify ----
 require("mini.notify").setup({
@@ -64,13 +56,13 @@ require("mini.cmdline").setup({
 local imap_expr = function(lhs, rhs)
   vim.keymap.set('i', lhs, rhs, { expr = true })
 end
-imap_expr('<Tab>',   [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
+imap_expr('<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
 imap_expr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
 
 --- mini picker ---
 local MiniPick = require("mini.pick")
-local MiniExtra = require("mini.extra")
 MiniPick.setup()
+local MiniExtra = require("mini.extra")
 MiniExtra.setup()
 
 -- keymaps
@@ -98,14 +90,27 @@ MiniSnippets.setup({
 })
 MiniSnippets.start_lsp_server({ match = false })
 
---- mini diff and fugitive ---
-local MiniDiff = require("mini.diff")
-MiniDiff.setup({
-  source = MiniDiff.gen_source.git({ index = false }),
+-- gitsigns ---
+local signs = {
+  add = { text = "▎" },
+  change = { text = "▎" },
+  delete = { text = "" },
+  topdelete = { text = "" },
+  changedelete = { text = "▎" },
+  untracked = { text = "▎" },
+}
+
+require("gitsigns").setup({
+  signs = signs,
+  signs_staged = signs
 })
 
 vim.keymap.set("n", "<leader>gg", "<cmd>tabnew | Git | only<cr>", { desc = "Fugitive Full Page New Tab" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<CR>", { desc = "Git diff split", })
+vim.keymap.set({ "n", "v" }, "<leader>gs", ":Gitsigns stage_hunk<CR>", { desc = "Stage Hunk" })
+vim.keymap.set({ "n", "v" }, "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "Reset Hunk" })
+vim.keymap.set("n", "<leader>gS", ":Gitsigns stage_buffer<CR>", { desc = "Stage Buffer" })
+vim.keymap.set("n", "<leader>gR", ":Gitsigns stage_buffer<CR>", { desc = "Reset Buffer" })
 
 --- grug-far ---
 local GrugFar = require("grug-far")

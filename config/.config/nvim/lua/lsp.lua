@@ -45,12 +45,12 @@ vim.lsp.config("lua_ls", {
   },
 })
 
--- vim.lsp.enable({
---   "astro",
---   "bashls",
---   "jsonls",
---   "lua_ls",
---   "tailwindcss",
---   "ts_ls",
---   "biome"
--- })
+vim.lsp.enable({
+  "astro",
+  "bashls",
+  "jsonls",
+  "lua_ls",
+  "tailwindcss",
+  "ts_ls",
+  "biome"
+})

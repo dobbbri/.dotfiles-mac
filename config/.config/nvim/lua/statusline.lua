@@ -1,8 +1,9 @@
-vim.api.nvim_set_hl(0, "StModeNormal", { fg = "#2d353b", bg = "#83c092", bold = true })
-vim.api.nvim_set_hl(0, "StModeInsert", { fg = "#2d353b", bg = "#F7F1DE", bold = true })
-vim.api.nvim_set_hl(0, "StModeVisual", { fg = "#2d353b", bg = "#d699b6", bold = true })
-vim.api.nvim_set_hl(0, "StModeOther", { fg = "#2d353b", bg = "#e67e80", bold = true })
-vim.api.nvim_set_hl(0, "StGitBranch", { fg = "#d3c6aa", bg = "NONE" })
+vim.api.nvim_set_hl(0, "StModeNormal", { bg = "NONE", fg = "#83c092", bold = true })
+vim.api.nvim_set_hl(0, "StModeInsert", { bg = "NONE", fg = "#F7F1DE", bold = true })
+vim.api.nvim_set_hl(0, "StModeVisual", { bg = "NONE", fg = "#d699b6", bold = true })
+vim.api.nvim_set_hl(0, "StModeOther", { bg = "NONE", fg = "#e67e80", bold = true })
+vim.api.nvim_set_hl(0, "StGitBranch", { fg = "#F7F1DE", bg = "NONE" })
+vim.api.nvim_set_hl(0, "FileName", { fg = "#FFFFFF", bg = "NONE" })
 vim.api.nvim_set_hl(0, "StGitAdd", { fg = "#a7c080", bg = "NONE" })
 vim.api.nvim_set_hl(0, "StGitChange", { fg = "#dbbc7f", bg = "NONE" })
 vim.api.nvim_set_hl(0, "StGitDelete", { fg = "#e67e80", bg = "NONE" })
@@ -11,20 +12,19 @@ vim.api.nvim_set_hl(0, "ErrorHl", { fg = "#e67e80", bg = "NONE" })
 vim.api.nvim_set_hl(0, "WarningHl", { fg = "#dbbc7f", bg = "NONE" })
 vim.api.nvim_set_hl(0, "HintsHl", { fg = "#A5E9DD", bg = "NONE" })
 vim.api.nvim_set_hl(0, "InfoHl", { fg = "#B0BA99", bg = "NONE" })
-vim.api.nvim_set_hl(0, "RecordingHl", { fg = "#e67e80", bg = "NONE" })
 vim.api.nvim_set_hl(0, "StBase", { bg = "NONE" }) -- Transparent background
 
 local function get_mode()
   local mode_map = {
-    n = { " n ", "StModeNormal" },
-    i = { " i ", "StModeInsert" },
-    v = { " v ", "StModeVisual" },
-    V = { " v-line ", "StModeVisual" },
-    ["\22"] = { " v-block ", "StModeVisual" },
-    c = { " c ", "StModeOther" },
-    r = { " r ", "StModeOther" },
-    R = { " R ", "StModeOther" },
-    t = { " t ", "StModeOther" },
+    n = { " Normal ", "StModeNormal" },
+    i = { " Insert ", "StModeInsert" },
+    v = { " Visual ", "StModeVisual" },
+    V = { " V-line ", "StModeVisual" },
+    ["\22"] = { " V-block ", "StModeVisual" },
+    c = { " Command ", "StModeOther" },
+    r = { " R-pending ", "StModeOther" }, -- r-pending
+    R = { " Replace ", "StModeOther" },   -- replace
+    t = { " Terminal", "StModeOther" },
   }
   local mode = vim.api.nvim_get_mode().mode
   local m = mode_map[mode] or { " " .. mode .. " ", "StModeOther" }
@@ -37,7 +37,7 @@ local function get_git()
     return ""
   end
 
-  local branch = dict.head and ("%#StGitBranch#  " .. dict.head .. " ") or ""
+  local branch = dict.head and ("%#StGitDelete#  %#StGitBranch#" .. dict.head .. " ") or ""
   local added = dict.added and dict.added > 0 and ("%#StGitAdd#+" .. dict.added .. " ") or ""
   local changed = dict.changed and dict.changed > 0 and ("%#StGitChange#~" .. dict.changed .. " ") or ""
   local removed = dict.removed and dict.removed > 0 and ("%#StGitDelete#-" .. dict.removed .. " ") or ""
@@ -46,7 +46,7 @@ local function get_git()
   if branch == "" and diff == "" then
     return ""
   end
-  return diff .. branch .. ""
+  return branch .. diff .. ""
 end
 
 local function get_lsp_diagnostic_count()
@@ -72,41 +72,56 @@ local function get_lsp_diagnostic_count()
       .. info_icon
 end
 
-local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 local function get_icon()
-  if not has_devicons then
-    return ""
-  end
-  local icon, icon_hl = devicons.get_icon(vim.fn.expand("%:t"), vim.fn.expand("%:e"))
+  local icon, icon_hl = vim.g.miniIcons.get('file', vim.fn.expand('%:t'))
   if not icon then
     return ""
   end
   return "%#" .. icon_hl .. "# " .. icon .. " %#StBase#"
 end
 
+local function get_progress()
+  -- LSP progress (e.g. "indexing…" from language servers)
+  local progress = vim.ui.progress_status and vim.ui.progress_status() or ""
+  if progress ~= "" then
+    return "%#StBase# " .. progress .. " %#StBase#"
+  end
+  return ""
+end
+
 function _G.CustomStatusLine()
   local is_active = vim.g.statusline_winid == vim.fn.win_getid()
   local is_modified = vim.api.nvim_get_option_value("modified", { buf = 0 })
-  local modified_icon = is_modified and "" or ""
-  local filename = " %t"
-  local space = "%="
+  local modified_icon = is_modified and "●" or ""
+  local filename = "%t"
+  local right_align = "%="
   if not is_active then
-    return "%#StBase#" .. filename .. space
+    return "%#StBase#" .. filename .. right_align
   end
-  return
-      get_mode()
-      .. "%#StBase# "
+  return "%#StBase#"
+      .. get_mode()
+      .. " "
+      .. get_git()
+      .. "%#StBase#"
+      .. " "
+      .. get_icon()
+      .. "%#FileName#"
+      .. filename
+      .. " "
       .. "%#FileModifiedIcon#"
       .. modified_icon
       .. " "
-      .. "%#StBase#"
-      .. filename
-      .. " "
       .. get_lsp_diagnostic_count()
       .. "%#StBase#"
-      .. space
-      .. get_git()
-      .. get_icon()
+
+      .. right_align
+      .. get_progress()
+      .. "%#InfoHl#"
+      .. vim.bo.fileencoding
+      .. " "
+      .. vim.bo.fileformat
+      .. " "
+      .. "%#HintsHl#   " .. "%#FileName# %l:%c" .. "%#InfoHl# %p%% "
 end
 
 vim.opt.statusline = "%!v:lua.CustomStatusLine()"

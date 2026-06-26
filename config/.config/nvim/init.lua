@@ -14,9 +14,9 @@ require('vim._core.ui2').enable({
 require("options")
 require("keymaps")
 require("commands")
+require("colorscheme")
 require("pack")
 require("treesitter")
 require("lsp")
 require("statusline")
-
 
