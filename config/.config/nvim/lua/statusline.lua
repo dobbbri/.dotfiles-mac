@@ -80,6 +80,20 @@ local function get_icon()
   return "%#" .. icon_hl .. "# " .. icon .. " %#StBase#"
 end
 
+
+local function get_lsp_clients()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
+  if next(clients) == nil then
+    return ''
+  end
+  local client_names = {}
+  for _, client in ipairs(clients) do
+    table.insert(client_names, client.name)
+  end
+  return '   ' .. table.concat(client_names, ', ')
+end
+
 local function get_progress()
   -- LSP progress (e.g. "indexing…" from language servers)
   local progress = vim.ui.progress_status and vim.ui.progress_status() or ""
@@ -115,8 +129,10 @@ function _G.CustomStatusLine()
       .. "%#StBase#"
 
       .. right_align
+      .. "%#StBase#"
       .. get_progress()
-      .. "%#InfoHl#"
+      .. get_lsp_clients()
+      .. "  %#InfoHl#"
       .. vim.bo.fileencoding
       .. " "
       .. vim.bo.fileformat
