@@ -5,7 +5,7 @@
 	name = Sergio Dobri
 	email = sergiodobri@gmail.com
   username = dobbbri
-	signingkey = /Users/sd/.ssh/id_ed25519
+	signingkey = /Users/sdobri/.ssh/id_ed25519
 	
 [filter "lfs"]
 	clean = git-lfs clean -- %f

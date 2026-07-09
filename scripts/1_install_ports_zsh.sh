@@ -2,17 +2,17 @@
 
 echo "install mac ports ---------------------------------------------------"
 
-sudo port install stow eza wget tree wezterm fd bat fzf viu chafa neovim go ripgrep
+sudo port install stow eza wget tree fd bat fzf neovim go ripgrep
 
 echo "install oh-my-zsh ---------------------------------------------------"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-
-echo "install Nerd Fonts -------------------------------------------------------------"
+echo "install Nerd Fonts --------------------------------------------------"
 
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
 $HOME/.local/bin/getnf && fc-cache -f
 
-echo "run stow -------------------------------------------------------------"
+echo "run stow ------------------------------------------------------------"
 
 cd ~/.dotfiles-mac/
 mkdir -p ~/.config/_BKP
@@ -21,8 +21,7 @@ mv ~/.config/alacritty ~/.config/_BKP/
 mv ~/.config/nvim ~/.config/_BKP/
 mv ~/.config/kitty ~/.config/_BKP/
 
-cp ~/.zshrc ~/.zshrc.original
-rm ~/.zshrc
+mv ~/.zshrc ~/.zshrc-original
 
 echo "\.DS_Store" >>~/.stow-global-ignore
 

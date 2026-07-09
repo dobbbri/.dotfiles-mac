@@ -1,6 +1,7 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
+
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -11,35 +12,7 @@ set rtp+=/opt/local/share/fzf/vim
 
 # themes
 
-#ZSH_THEME="headline"
-
-source $HOME/.headline.zsh-theme
-HL_LAYOUT_TEMPLATE=(
-  _PRE    "${IS_SSH+ssh }" # shows "ssh " if this is an ssh session
-  USER    '...'
-  HOST    ' at ...'
-  VENV    ' with ...'
-  PATH    ' in ...'
-  _SPACER '' # special, only shows when compact, otherwise fill with space
-  BRANCH  ' on ...'
-  STATUS  ' (...)'
-  _POST   ''
-)
-HL_CONTENT_TEMPLATE=(
-  USER   "%{$bold$red%} ..."
-  HOST   "%{$bold$yellow%}󰇅 ..."
-  VENV   "%{$bold$green%} ..."
-  PATH   "%{$bold$blue%} ..."
-  BRANCH "%{$bold$cyan%} ..."
-  STATUS "%{$bold$magenta%}..."
-)
-HL_GIT_COUNT_MODE='on'
-HL_GIT_SEP_SYMBOL='|'
-HL_GIT_STATUS_SYMBOLS[CONFLICTS]="%{$red%}✘"
-HL_GIT_STATUS_SYMBOLS[CLEAN]="%{$green%}✔"
-HL_CLOCK_MODE='on'
-HL_CLOCK_SOURCE="date +%+"
-HL_ERR_MODE='detail'
+ZSH_THEME="dst"
 
 CASE_SENSITIVE="true"
 
@@ -106,7 +79,6 @@ fi
 
 # - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
-#
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
