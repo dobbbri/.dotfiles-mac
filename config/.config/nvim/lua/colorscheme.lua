@@ -14,6 +14,6 @@
 -- })
 -- vim.cmd.colorscheme("evangelion")
 
-vim.cmd("colorscheme catppuccin")
--- vim.cmd("colorscheme retrobox") -- gruvbox clone
+-- vim.cmd("colorscheme catppuccin")
+vim.cmd("colorscheme retrobox") -- gruvbox clone
 -- vim.cmd("colorscheme unokai") -- monokai clone

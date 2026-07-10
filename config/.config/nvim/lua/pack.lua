@@ -19,6 +19,7 @@ local MiniFiles = require("mini.files")
 MiniFiles.setup({
   mappings = {
     go_in = "<CR>",
+    go_in_plus = '<CR>',
     go_out = "-",
   },
 })
@@ -30,7 +31,7 @@ vim.keymap.set("n", "<leader>-", function()
 end, { desc = "Toggle into currently opened file" })
 
 ---- mini icons ----
-local miniIcons =  require("mini.icons")
+local miniIcons = require("mini.icons")
 miniIcons.setup()
 miniIcons.mock_nvim_web_devicons()
 vim.g.miniIcons = miniIcons
@@ -90,8 +91,27 @@ MiniSnippets.setup({
 })
 MiniSnippets.start_lsp_server({ match = false })
 
+require("mini.notify").setup({
+  content = {
+    format = function(notif)
+      return notif.msg
+    end,
+  },
+  window = {
+    config = function()
+      return {
+        title = "",
+        anchor = "SE",
+        row = vim.o.lines - 2,
+        col = vim.o.columns,
+        border = "none",
+      }
+    end,
+  },
+})
+
 -- gitsigns ---
-local signs = {
+local _signs = {
   add = { text = "▎" },
   change = { text = "▎" },
   delete = { text = "" },
@@ -101,8 +121,8 @@ local signs = {
 }
 
 require("gitsigns").setup({
-  signs = signs,
-  signs_staged = signs
+  signs = _signs,
+  signs_staged = _signs
 })
 
 vim.keymap.set("n", "<leader>gg", "<cmd>tabnew | Git | only<cr>", { desc = "Fugitive Full Page New Tab" })

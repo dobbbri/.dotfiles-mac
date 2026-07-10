@@ -16,3 +16,15 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.hl.on_yank()
   end,
 })
+
+
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'MiniFilesBufferCreate',
+  callback = function(args)
+    local buf_id = args.data.buf_id
+    -- Map <CR> to open the file and close the explorer window
+    vim.keymap.set('n', '<CR>', function()
+      require('mini.files').go_in({ close_on_file = true })
+    end, { buffer = buf_id, desc = 'Open file and close explorer' })
+  end,
+})

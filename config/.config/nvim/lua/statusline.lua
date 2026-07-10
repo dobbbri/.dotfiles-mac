@@ -13,6 +13,7 @@ vim.api.nvim_set_hl(0, "WarningHl", { fg = "#dbbc7f", bg = "NONE" })
 vim.api.nvim_set_hl(0, "HintsHl", { fg = "#A5E9DD", bg = "NONE" })
 vim.api.nvim_set_hl(0, "InfoHl", { fg = "#B0BA99", bg = "NONE" })
 vim.api.nvim_set_hl(0, "StBase", { bg = "NONE" }) -- Transparent background
+vim.api.nvim_set_hl(0, "Statusline", {  reverse = false }) -- Transparent background
 
 local function get_mode()
   local mode_map = {
@@ -132,7 +133,7 @@ function _G.CustomStatusLine()
       .. "%#StBase#"
       .. get_progress()
       .. get_lsp_clients()
-      .. "  %#InfoHl#"
+      .. "  %#InfoHl# "
       .. vim.bo.fileencoding
       .. " "
       .. vim.bo.fileformat
