@@ -1,8 +1,16 @@
 {
   "plugins": {
+    "darcula-solid.nvim": {
+      "rev": "abd698d7e4630b5c8ccfaa0f07b8ad1a3db8bd08",
+      "src": "https://codeberg.org/brargenzilian/darcula-solid.nvim"
+    },
     "diffview.nvim": {
       "rev": "4516612fe98ff56ae0415a259ff6361a89419b0a",
       "src": "https://github.com/sindrets/diffview.nvim"
+    },
+    "dracula-night": {
+      "rev": "8722f99c8d044bdc213d524de255c99c087c72a6",
+      "src": "https://github.com/ryovoid/dracula-night"
     },
     "evangelion.nvim": {
       "rev": "08cf52a0931a81bf5b64c93b744e136b5edb6d85",

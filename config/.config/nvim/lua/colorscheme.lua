@@ -1,19 +1,13 @@
--- vim.pack.add({
---   "https://github.com/xero/evangelion.nvim",
--- }, { confirm = false })
---
--- --- colorscheme ---
--- require("evangelion").setup({
---   transparent = false,
---   overrides = {
---     Directory = { bg = "NONE" },
---     Comment = { fg = "#6D8086", bg = "NONE" },
---     -- StatusLine = { fg = "#B968FC", bg = "#39274D", bold = true },
---     StatusLineNC = { fg = "#666666", bg = "#39274D", bold = true },
---   },
--- })
+-- vim.pack.add({ 'https://github.com/ryovoid/dracula-night' }, { confirm = false });
+-- vim.cmd.colorscheme('dracula-night')
+
+vim.pack.add({ 'https://codeberg.org/brargenzilian/darcula-solid.nvim' }, { confirm = false });
+vim.cmd.colorscheme('darcula-solid')
+
+-- vim.pack.add({ "https://github.com/xero/evangelion.nvim" }, { confirm = false })
+-- require("evangelion").setup({ overrides = { Directory = { bg = "NONE" }, Comment = { bg = "NONE" } } })
 -- vim.cmd.colorscheme("evangelion")
 
 -- vim.cmd("colorscheme catppuccin")
-vim.cmd("colorscheme retrobox") -- gruvbox clone
+-- vim.cmd("colorscheme retrobox") -- gruvbox clone
 -- vim.cmd("colorscheme unokai") -- monokai clone
