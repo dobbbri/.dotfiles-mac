@@ -1,9 +1,10 @@
 # If you come from bash you might have to change your $PATH.
 export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH
 
 # Path to your Oh My Zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+#export ZSH="$HOME/.oh-my-zsh"
 
 set rtp+=/opt/local/share/fzf/vim
 
@@ -11,8 +12,7 @@ set rtp+=/opt/local/share/fzf/vim
 # export ZSH_CUSTOM="$ZSH/custom"
 
 # themes
-
-ZSH_THEME="dst"
+# ZSH_THEME="dst"
 
 CASE_SENSITIVE="true"
 
@@ -51,9 +51,26 @@ plugins=(
 	git
 )
 
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
 
 # User configuration
+autoload -Uz colors && colors
+setopt PROMPT_SUBST
+
+RED='%F{red}'
+GREEN='%F{green}'
+ORANGE='%F{orange}'
+YELLOW='%F{yellow}'
+BLUE='%F{blue}'
+MAGENTA='%F{magenta}'
+CYAN='%F{cyan}'
+WHITE='%F{white}'
+ENDC='%f'
+
+[[ -n "$SSH_CLIENT" ]] && ssh_message="-ssh_session" || ssh_message=""
+
+PROMPT="${ENDC}${CYAN}%n${WHITE} at ${YELLOW}%m${RED}${ssh_message} ${WHITE}in ${BLUE}%~${ENDC}
+${CYAN}->${ENDC} "
 
 # export MANPATH="/usr/local/man:$MANPATH"
 

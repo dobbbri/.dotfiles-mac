@@ -90,7 +90,8 @@ local function get_lsp_clients()
   end
   local client_names = {}
   for _, client in ipairs(clients) do
-    table.insert(client_names, client.name)
+local alt_text = string.gsub(client.name, "mini.", "")
+    table.insert(client_names, alt_text)
   end
   return '   ' .. table.concat(client_names, ', ')
 end

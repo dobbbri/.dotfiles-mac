@@ -17,7 +17,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
-
+--- mini.files - exit on close ---
 vim.api.nvim_create_autocmd('User', {
   pattern = 'MiniFilesBufferCreate',
   callback = function(args)

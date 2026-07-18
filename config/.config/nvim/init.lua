@@ -16,7 +16,6 @@ require("keymaps")
 require("commands")
 require("colorscheme")
 require("pack")
-require("treesitter")
 require("lsp")
 require("statusline")
 
