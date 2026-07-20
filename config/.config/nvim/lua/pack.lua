@@ -1,5 +1,5 @@
 vim.pack.add({
-  "https://github.com/arborist-ts/arborist.nvim",
+  "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/neovim/nvim-lspconfig",
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/owallb/mason-auto-install.nvim",
@@ -10,12 +10,33 @@ vim.pack.add({
   "https://github.com/mg979/vim-visual-multi",
   "https://github.com/catgoose/nvim-colorizer.lua",
   "https://github.com/lewis6991/gitsigns.nvim",
-  "https://github.com/nvim-tree/nvim-web-devicons",
+  "https://github.com/stevearc/conform.nvim",
+  "https://github.com/ryovoid/dracula-night",
+  "https://codeberg.org/brargenzilian/darcula-solid.nvim",
+  "https://github.com/xero/evangelion.nvim",
 }, { confirm = false })
 
---- arborist ---
-require("arborist").setup({
-  update_cadence = "weekly"
+--- colorschemes ---
+vim.cmd.colorscheme("dracula-night")
+-- vim.cmd.colorscheme("darcula-solid")
+-- vim.cmd.colorscheme("evangelion")
+-- vim.cmd("colorscheme catppuccin")
+-- vim.cmd("colorscheme retrobox") -- gruvbox clone
+-- vim.cmd("colorscheme unokai") -- monokai clone
+
+--- treesitter ---
+require("nvim-treesitter").install({
+  "bash",
+  "http",
+  "astro",
+  "javascript",
+  "typescript",
+  "tsx",
+  "html",
+  "css",
+  "json",
+  "lua",
+  "toml",
 })
 
 --- mini files ---
@@ -23,7 +44,7 @@ local MiniFiles = require("mini.files")
 MiniFiles.setup({
   mappings = {
     go_in = "<CR>",
-    go_in_plus = '<CR>',
+    go_in_plus = "<CR>",
     go_out = "-",
   },
 })
@@ -40,50 +61,44 @@ miniIcons.setup()
 miniIcons.mock_nvim_web_devicons()
 vim.g.miniIcons = miniIcons
 
----- mini notify ----
-require("mini.notify").setup({
-  content = { -- only show messages
-    format = function(notif)
-      return notif.msg
-    end,
-  },
-})
-
 --- mini pairs ---
-require('mini.pairs').setup()
-require('mini.indentscope').setup()
+require("mini.pairs").setup()
+require("mini.indentscope").setup()
 
---- mini cmdline completion ---
-require("mini.cmdline").setup({
-  autocorrect = { enable = false }
-})
-
-local imap_expr = function(lhs, rhs)
-  vim.keymap.set('i', lhs, rhs, { expr = true })
-end
-imap_expr('<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
-imap_expr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
+local imap_expr = function(lhs, rhs) vim.keymap.set("i", lhs, rhs, { expr = true }) end
+imap_expr("<Tab>", [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
+imap_expr("<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
 
 --- mini picker ---
 local MiniPick = require("mini.pick")
 MiniPick.setup()
+
+vim.keymap.set("n", "<leader>pf", function() MiniPick.builtin.files() end, { desc = "Mini File Picker" })
+vim.keymap.set(
+  "n",
+  "<leader>ps",
+  function() MiniPick.builtin.grep({ pattern = vim.fn.expand("<cword>") }) end,
+  { desc = "Grep word/Search word" }
+)
+vim.keymap.set("n", "<leader>ph", function() MiniPick.builtin.help() end, { desc = "Mini Help" })
+
+--- mini extra ---
 local MiniExtra = require("mini.extra")
 MiniExtra.setup()
 
--- keymaps
-vim.keymap.set("n", "<leader>pf", function() MiniPick.builtin.files() end, { desc = "Mini File Picker" })
-vim.keymap.set("n", "<leader>ps", function() MiniPick.builtin.grep({ pattern = vim.fn.expand("<cword>") }) end,
-  { desc = "Grep word/Search word" })
-vim.keymap.set("n", "<leader>vh", function() MiniPick.builtin.help() end, { desc = "Mini Help" })
-
 vim.keymap.set("n", "<leader>xx", function() MiniExtra.pickers.diagnostic() end, { desc = "Mini Picker Diagnostics" })
-vim.keymap.set("n", "<leader>pk", function() MiniExtra.pickers.keymaps() end, { desc = 'Search keymaps' })
+vim.keymap.set("n", "<leader>pk", function() MiniExtra.pickers.keymaps() end, { desc = "Search keymaps" })
 
 --- mini completions ---
 require("mini.completion").setup({
   lsp_completion = {
     auto_setup = true,
-  }
+  },
+})
+
+--- mini cmdline completion ---
+require("mini.cmdline").setup({
+  autocorrect = { enable = false },
 })
 
 --- mini snippets ---
@@ -95,11 +110,10 @@ MiniSnippets.setup({
 })
 MiniSnippets.start_lsp_server({ match = false })
 
+--- mini notify ---
 require("mini.notify").setup({
   content = {
-    format = function(notif)
-      return notif.msg
-    end,
+    format = function(notif) return notif.msg end,
   },
   window = {
     config = function()
@@ -126,15 +140,15 @@ local _signs = {
 
 require("gitsigns").setup({
   signs = _signs,
-  signs_staged = _signs
+  signs_staged = _signs,
 })
 
 vim.keymap.set("n", "<leader>gg", "<cmd>tabnew | Git | only<cr>", { desc = "Fugitive Full Page New Tab" })
-vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<CR>", { desc = "Git diff split", })
+vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<CR>", { desc = "Git diff split" })
 vim.keymap.set({ "n", "v" }, "<leader>gs", ":Gitsigns stage_hunk<CR>", { desc = "Stage Hunk" })
+vim.keymap.set({ "n", "v" }, "<leader>gS", ":Gitsigns stage_buffer<CR>", { desc = "Stage Buffer" })
 vim.keymap.set({ "n", "v" }, "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "Reset Hunk" })
-vim.keymap.set("n", "<leader>gS", ":Gitsigns stage_buffer<CR>", { desc = "Stage Buffer" })
-vim.keymap.set("n", "<leader>gR", ":Gitsigns stage_buffer<CR>", { desc = "Reset Buffer" })
+vim.keymap.set({ "n", "v" }, "<leader>gR", ":Gitsigns reset_buffer<CR>", { desc = "Reset Buffer" })
 
 --- grug-far ---
 local GrugFar = require("grug-far")
@@ -143,7 +157,10 @@ GrugFar.setup({
 })
 
 vim.keymap.set("n", "<leader>rp", function() GrugFar.open({ transient = true }) end, { desc = "Replace in project" })
-vim.keymap.set("n", "<leader>rb", function() GrugFar.open({ prefills = { paths = vim.fn.expand(" % ") } }) end,
+vim.keymap.set(
+  "n",
+  "<leader>rb",
+  function() GrugFar.open({ prefills = { paths = vim.fn.expand(" % ") } }) end,
   { desc = "Replace in buffer" }
 )
 
@@ -156,3 +173,31 @@ require("colorizer").setup({
     },
   },
 })
+
+--- conform ---
+require("conform").setup({
+  formatters_by_ft = {
+    sh = { "shfmt" },
+    lua = { "stylua" },
+    toml = { "taplo" },
+    yaml = { "yamlfmt" },
+    astro = { "biome" },
+    javascript = { "biome" },
+    javascriptreact = { "biome" },
+    typescript = { "biome" },
+    typescriptreact = { "biome" },
+    css = { "biome" },
+    html = { "biome" },
+    json = { "biome" },
+    jsonc = { "biome" },
+    markdown = { "biome" },
+  },
+  default_format_opts = { lsp_fallback = true, async = false, timeout_ms = 500 },
+  format_on_save = { lsp_format = "fallback" },
+})
+
+-- native undotree
+vim.keymap.set("n", "<leader>u", function()
+  vim.cmd.packadd("nvim.undotree")
+  require("undotree").open()
+end, { desc = "Toggle Builtin Undotree" })

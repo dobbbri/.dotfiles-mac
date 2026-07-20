@@ -1,21 +1,19 @@
 vim.loader.enable() -- Lua bytecode cache for faster startup
 
-require('vim._core.ui2').enable({
+require("vim._core.ui2").enable({
   enable = true,
   msg = {
     target = "cmd",
-    pager  = { height = 0.5 },
+    pager = { height = 0.5 },
     dialog = { height = 0.5 },
-    cmd    = { height = 0.5 },
-    msg    = { height = 0.5, timeout = 4500 },
+    cmd = { height = 0.5 },
+    msg = { height = 0.5, timeout = 4500 },
   },
 })
 
 require("options")
-require("keymaps")
 require("commands")
-require("colorscheme")
 require("pack")
 require("lsp")
+require("keymaps")
 require("statusline")
-
