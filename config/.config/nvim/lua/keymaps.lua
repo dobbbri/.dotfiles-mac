@@ -18,4 +18,4 @@ vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result cursor center
 
 vim.keymap.set("n", "<leader>X", "<cmd>!chmod +x %<CR>", { silent = true, desc = "makes file executable" })
 
-vim.keymap.set("n", "<leader>re", "<cmd>restart<cr>", { desc = "Restart config :restart)" })
+vim.keymap.set("n", "<leader>E", "<cmd>restart<cr>", { desc = "Restart config :restart" })

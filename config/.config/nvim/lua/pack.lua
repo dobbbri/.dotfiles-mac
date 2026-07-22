@@ -11,6 +11,7 @@ vim.pack.add({
   "https://github.com/catgoose/nvim-colorizer.lua",
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/stevearc/conform.nvim",
+  "https://github.com/folke/which-key.nvim",
   "https://github.com/ryovoid/dracula-night",
   "https://codeberg.org/brargenzilian/darcula-solid.nvim",
   "https://github.com/xero/evangelion.nvim",
@@ -43,6 +44,7 @@ require("nvim-treesitter").install({
 local MiniFiles = require("mini.files")
 MiniFiles.setup({
   mappings = {
+    close = "<ESC>",
     go_in = "<CR>",
     go_in_plus = "<CR>",
     go_out = "-",
@@ -73,21 +75,21 @@ imap_expr("<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
 local MiniPick = require("mini.pick")
 MiniPick.setup()
 
-vim.keymap.set("n", "<leader>pf", function() MiniPick.builtin.files() end, { desc = "Mini File Picker" })
+vim.keymap.set("n", "<leader>f", function() MiniPick.builtin.files() end, { desc = "Mini File Picker" })
 vim.keymap.set(
   "n",
-  "<leader>ps",
+  "<leader>F",
   function() MiniPick.builtin.grep({ pattern = vim.fn.expand("<cword>") }) end,
   { desc = "Grep word/Search word" }
 )
-vim.keymap.set("n", "<leader>ph", function() MiniPick.builtin.help() end, { desc = "Mini Help" })
+vim.keymap.set("n", "<leader>h", function() MiniPick.builtin.help() end, { desc = "Mini Help" })
 
 --- mini extra ---
 local MiniExtra = require("mini.extra")
 MiniExtra.setup()
 
-vim.keymap.set("n", "<leader>xx", function() MiniExtra.pickers.diagnostic() end, { desc = "Mini Picker Diagnostics" })
-vim.keymap.set("n", "<leader>pk", function() MiniExtra.pickers.keymaps() end, { desc = "Search keymaps" })
+vim.keymap.set("n", "<leader>x", function() MiniExtra.pickers.diagnostic() end, { desc = "Mini Picker Diagnostics" })
+vim.keymap.set("n", "<leader>k", function() MiniExtra.pickers.keymaps() end, { desc = "Search keymaps" })
 
 --- mini completions ---
 require("mini.completion").setup({
@@ -143,12 +145,12 @@ require("gitsigns").setup({
   signs_staged = _signs,
 })
 
-vim.keymap.set("n", "<leader>gg", "<cmd>tabnew | Git | only<cr>", { desc = "Fugitive Full Page New Tab" })
-vim.keymap.set("n", "<leader>gd", "<cmd>Gvdiffsplit<CR>", { desc = "Git diff split" })
-vim.keymap.set({ "n", "v" }, "<leader>gs", ":Gitsigns stage_hunk<CR>", { desc = "Stage Hunk" })
-vim.keymap.set({ "n", "v" }, "<leader>gS", ":Gitsigns stage_buffer<CR>", { desc = "Stage Buffer" })
-vim.keymap.set({ "n", "v" }, "<leader>gr", ":Gitsigns reset_hunk<CR>", { desc = "Reset Hunk" })
-vim.keymap.set({ "n", "v" }, "<leader>gR", ":Gitsigns reset_buffer<CR>", { desc = "Reset Buffer" })
+vim.keymap.set("n", "<leader>p", "<cmd>tabnew | Git | only<cr>", { desc = "Fugitive Full Page New Tab" })
+vim.keymap.set("n", "<leader>P", "<cmd>Gvdiffsplit<CR>", { desc = "Git diff split" })
+vim.keymap.set({ "n", "v" }, "<leader>S", ":Gitsigns stage_hunk<CR>", { desc = "Git Stage Hunk" })
+vim.keymap.set({ "n", "v" }, "<leader>s", ":Gitsigns stage_buffer<CR>", { desc = "Git Stage Buffer" })
+vim.keymap.set({ "n", "v" }, "<leader>T", ":Gitsigns reset_hunk<CR>", { desc = "Git Reset Hunk" })
+vim.keymap.set({ "n", "v" }, "<leader>t", ":Gitsigns reset_buffer<CR>", { desc = "Git Reset Buffer" })
 
 --- grug-far ---
 local GrugFar = require("grug-far")
@@ -156,10 +158,10 @@ GrugFar.setup({
   showCompactInputs = true,
 })
 
-vim.keymap.set("n", "<leader>rp", function() GrugFar.open({ transient = true }) end, { desc = "Replace in project" })
+vim.keymap.set("n", "<leader>R", function() GrugFar.open({ transient = true }) end, { desc = "Replace in project" })
 vim.keymap.set(
   "n",
-  "<leader>rb",
+  "<leader>r",
   function() GrugFar.open({ prefills = { paths = vim.fn.expand(" % ") } }) end,
   { desc = "Replace in buffer" }
 )
@@ -195,6 +197,16 @@ require("conform").setup({
   default_format_opts = { lsp_fallback = true, async = false, timeout_ms = 500 },
   format_on_save = { lsp_format = "fallback" },
 })
+
+--- which-key ---
+-- local whichkey = require("which-key").setup({ preset = "modern" })
+--
+-- vim.keymap.set(
+--   "n",
+--   "<leader>?",
+--   function() whichkey.show({ global = false }) end,
+--   { desc = "Buffer Local Keymaps (which-key)" }
+-- )
 
 -- native undotree
 vim.keymap.set("n", "<leader>u", function()

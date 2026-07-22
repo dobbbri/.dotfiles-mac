@@ -17,7 +17,7 @@ require("mason-auto-install").setup({
 })
 
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format Local buffer" })
+vim.keymap.set("n", "f", vim.lsp.buf.format, { desc = "Format Local buffer" })
 vim.keymap.set("n", "df", vim.diagnostic.open_float, { desc = "Show line diagnostics" })
 
 vim.diagnostic.config({
@@ -39,9 +39,7 @@ vim.lsp.config("*", { capabilities = capabilities })
 
 vim.lsp.config("lua_ls", {
   settings = {
-    Lua = {
-      diagnostics = { globals = { "vim" } },
-    },
+    Lua = { diagnostics = { globals = { "vim" } } },
   },
 })
 
