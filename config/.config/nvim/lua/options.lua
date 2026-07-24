@@ -3,13 +3,25 @@ vim.g.maplocalleader = " "
 
 vim.g.have_nerd_font = true
 
--- vim.g.loaded_netrw = 1
--- vim.g.loaded_netrwPlugin = 1
-
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
+
+vim.filetype.add({
+  extension = {
+    mdx = "markdown",
+    conf = "config",
+    ejs = "html",
+  },
+  filename = {
+    [".env"] = "config",
+    ["config"] = "config",
+  },
+  pattern = {
+    ["gitconf.*"] = "gitconfig",
+  },
+})
 
 vim.opt.termguicolors = true
 vim.opt.mouse = "a"

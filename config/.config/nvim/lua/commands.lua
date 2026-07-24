@@ -43,6 +43,8 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     vim.api.nvim_set_hl(0, "FloatBorder", { link = "NormalFloat" })
     vim.api.nvim_set_hl(0, "MiniPickBorder", { link = "MiniFilesBorder" })
     vim.api.nvim_set_hl(0, "MiniPickNormal", { link = "MiniFilesNormal" })
+    vim.api.nvim_set_hl(0, "FloatBorder", { link = "MiniFilesBorder" })
+    vim.api.nvim_set_hl(0, "NormalFloat", { link = "MiniFilesNormal" })
     vim.api.nvim_set_hl(0, "Directory", { bg = "NONE" })
     vim.api.nvim_set_hl(0, "Comment", { bg = "NONE" })
     --     -- vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
