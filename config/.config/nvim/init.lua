@@ -13,7 +13,6 @@ require("vim._core.ui2").enable({
 
 require("options")
 require("commands")
+require("keymaps")
 require("pack")
 require("lsp")
-require("keymaps")
-require("statusline")

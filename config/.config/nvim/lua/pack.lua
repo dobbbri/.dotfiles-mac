@@ -11,6 +11,7 @@ vim.pack.add({
   "https://github.com/catgoose/nvim-colorizer.lua",
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/stevearc/conform.nvim",
+  "https://github.com/dobbbri/statusline.nvim",
   -- colorschemes
   "https://github.com/ryovoid/dracula-night",
   "https://codeberg.org/brargenzilian/darcula-solid.nvim",
@@ -35,13 +36,7 @@ local ignore_files = { ".DS_Store", ".git", ".astro", "dist", "package-lock.json
 local MiniFiles = require("mini.files")
 MiniFiles.setup({
   content = { filter = function(entry) return not vim.tbl_contains(ignore_files, entry.name) end },
-  mappings = {
-    close = "<ESC>",
-    go_in = "<CR>",
-    go_in_plus = "<right>",
-    go_out = "-",
-    go_out_plus = "<left>",
-  },
+  mappings = { close = "<ESC>", go_in = "<CR>", go_out = "-" },
 })
 vim.keymap.set("n", "-", function() MiniFiles.open() end, { desc = "Show File Manager" })
 vim.keymap.set("n", "<leader>e", function() MiniFiles.open() end, { desc = "Show File Manager" })
@@ -63,7 +58,6 @@ MiniPick.setup()
 vim.keymap.set("n", "<leader>pf", function() MiniPick.builtin.files() end, { desc = "Show File Picker" })
 vim.keymap.set(
   "n",
-  -- "https://github.com/folke/which-key.nvim",
   "<leader>pg",
   function() MiniPick.builtin.grep({ pattern = vim.fn.expand("<cword>") }) end,
   { desc = "Grep word/Search word" }
@@ -192,6 +186,9 @@ require("conform").setup({
   default_format_opts = { lsp_fallback = true, async = false, timeout_ms = 500 },
   format_on_save = { lsp_format = "fallback" },
 })
+
+--- statusline ---
+require("statusline").setup({})
 
 --- native undotree ---
 vim.keymap.set("n", "<leader>u", function()
