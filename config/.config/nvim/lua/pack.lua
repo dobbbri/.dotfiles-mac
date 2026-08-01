@@ -16,10 +16,12 @@ vim.pack.add({
   "https://github.com/ryovoid/dracula-night",
   "https://codeberg.org/brargenzilian/darcula-solid.nvim",
   "https://github.com/xero/evangelion.nvim",
+  "https://github.com/g-kirti/hardhat.nvim",
 }, { confirm = false })
 
 --- colorschemes ---
-vim.cmd.colorscheme("dracula-night")
+vim.cmd.colorscheme("hardhat-vivid")
+-- vim.cmd.colorscheme("dracula-night")
 -- vim.cmd.colorscheme("darcula-solid")
 -- vim.cmd.colorscheme("evangelion")
 -- vim.cmd("colorscheme catppuccin")

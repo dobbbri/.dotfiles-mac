@@ -53,6 +53,10 @@ plugins=(
 
 # source $ZSH/oh-my-zsh.sh
 
+# Ubuntu  = "󰕈"
+# Arch    = "󰣇"
+# Macos   = ""
+
 # User configuration
 autoload -Uz colors && colors
 setopt PROMPT_SUBST
@@ -69,7 +73,7 @@ ENDC='%f'
 
 [[ -n "$SSH_CLIENT" ]] && ssh_message="-ssh_session" || ssh_message=""
 
-PROMPT="${ENDC}${CYAN}%n${WHITE} at ${YELLOW}%m${RED}${ssh_message} ${WHITE}in ${BLUE}%~${ENDC}
+PROMPT=" ${ENDC}${CYAN}%n${WHITE} at ${YELLOW}%m${RED}${ssh_message} ${WHITE}in ${BLUE}%~${ENDC}
 ${CYAN}->${ENDC} "
 
 # export MANPATH="/usr/local/man:$MANPATH"

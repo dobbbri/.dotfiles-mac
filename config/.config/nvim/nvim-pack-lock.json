@@ -28,6 +28,10 @@
       "rev": "0f6a5d0d7a70659b11bbcd6b3673ee0fe61b6024",
       "src": "https://github.com/MagicDuck/grug-far.nvim"
     },
+    "hardhat.nvim": {
+      "rev": "dc40a26d585bd78067ee32114278ab980db1265f",
+      "src": "https://github.com/g-kirti/hardhat.nvim"
+    },
     "mason-auto-install.nvim": {
       "rev": "f1138b65d9d03f2c752c1b00a4c26ceede82ccb6",
       "src": "https://github.com/owallb/mason-auto-install.nvim"

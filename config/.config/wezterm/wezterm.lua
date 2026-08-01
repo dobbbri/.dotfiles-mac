@@ -8,18 +8,17 @@ return {
 
 	window_decorations = "TITLE | RESIZE",
 	window_close_confirmation = "NeverPrompt",
-	window_background_opacity = 0.7,
-	window_padding = {
-		left = 0,
-		right = 0,
-		top = 0,
-		bottom = 0,
-	},
+	window_background_opacity = 0.9,
+	window_padding = { left = 0, right = 0, top = 0, bottom = 0 },
 
 	initial_rows = 30,
 	initial_cols = 127,
 
 	font = wezterm.font_with_fallback({
+		"Berkeley Mono",
+		"TX-02 Condensed",
+		"TX-02 Retina",
+		"SF Mono",
 		"JetBrainsMono Nerd Font",
 		"Noto Color Emoji",
 	}),
@@ -27,7 +26,5 @@ return {
 	line_height = 1.2,
 
 	color_scheme = "Dark+",
-	colors = {
-		background = "#000000",
-	},
+	colors = { background = "#000000" },
 }
