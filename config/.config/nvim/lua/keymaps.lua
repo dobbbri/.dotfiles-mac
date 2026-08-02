@@ -28,7 +28,8 @@ vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result cursor center
 
 vim.keymap.set("n", "<leader>X", "<cmd>!chmod +x %<CR>", { silent = true, desc = "makes file executable" })
 
-vim.keymap.set("n", "<leader>re", "<cmd>restart<cr>", { desc = "Restart config :restart" })
+vim.keymap.set("n", "<leader>tr", "<cmd>restart<cr>", { desc = "Restart config :restart" })
+vim.keymap.set("n", "<leader>tu", "<cmd>lua vim.pack.update()<cr>", { desc = "Update plugins" })
 
 vim.keymap.set("i", "<Tab>", [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true })
 vim.keymap.set("i", "<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true })

@@ -1,3 +1,16 @@
+vim.loader.enable() -- Lua bytecode cache for faster startup
+
+require("vim._core.ui2").enable({
+  enable = true,
+  msg = {
+    target = "cmd",
+    pager = { height = 0.5 },
+    dialog = { height = 0.5 },
+    cmd = { height = 0.5 },
+    msg = { height = 0.5, timeout = 4500 },
+  },
+})
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -62,3 +75,5 @@ vim.opt.fileencoding = "utf-8"
 
 vim.opt.colorcolumn = "0"
 vim.opt.signcolumn = "yes"
+
+vim.opt.cmdheight = 0

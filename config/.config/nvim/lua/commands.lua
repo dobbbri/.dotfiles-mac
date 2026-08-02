@@ -48,7 +48,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     vim.api.nvim_set_hl(0, "Directory", { bg = "NONE" })
     vim.api.nvim_set_hl(0, "Comment", { bg = "NONE" })
     --     -- vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
-    --     -- vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE" })
-    --     -- vim.api.nvim_set_hl(0, "Pmenu", { fg = "#ffffff", bg = "#2f363d" })
+    vim.api.nvim_set_hl(0, "StatusLine", { bg = "#2b3335" })
+    vim.api.nvim_set_hl(0, "Pmenu", { fg = "#ffffff", bg = "#2f363d" })
   end,
 })
