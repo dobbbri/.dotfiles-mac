@@ -20,9 +20,12 @@ echo "install oh-my-zsh ---------------------------------------------------"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 echo "install Nerd Fonts --------------------------------------------------"
-
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
 $HOME/.local/bin/getnf && fc-cache -f
+
+echo "save screenshots to a folder------------------------------------------"
+mkdir "${HOME}/screenshots"
+defaults write com.apple.screencapture location -string "${HOME}/screenshots"
 
 echo "run stow ------------------------------------------------------------"
 
