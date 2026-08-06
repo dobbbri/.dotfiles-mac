@@ -15,6 +15,8 @@ sudo port install rust -cf
 sudo port install cargo -cf
 sudo port install eza -cf
 sudo port install wezterm -cf
+sudo port install bottom -cf
+sudo port install lazygit -cf
 
 echo "install oh-my-zsh ---------------------------------------------------"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

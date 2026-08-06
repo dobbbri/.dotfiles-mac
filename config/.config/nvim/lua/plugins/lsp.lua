@@ -16,7 +16,6 @@ require("mason-auto-install").setup({
   },
 })
 
-
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = vim.tbl_deep_extend("force", capabilities, require("mini.completion").get_lsp_capabilities())
 
@@ -28,16 +27,7 @@ vim.lsp.config("lua_ls", {
   },
 })
 
-vim.lsp.enable({
-  "astro",
-  "bashls",
-  "jsonls",
-  "lua_ls",
-  "tailwindcss",
-  "ts_ls",
-  "biome",
-})
-
+vim.lsp.enable({ "astro", "bashls", "jsonls", "lua_ls", "tailwindcss", "ts_ls", "biome" })
 
 vim.keymap.set("n", "ld", vim.lsp.buf.definition, { desc = "Go to definition" })
 vim.keymap.set("n", "lD", vim.lsp.buf.declaration, { desc = "Go to declaration" })

@@ -16,8 +16,8 @@ return {
 	initial_cols = 127,
 
 	font = wezterm.font_with_fallback({
-		"TX-02 Condensed",
 		"Berkeley Mono",
+		"TX-02 Condensed",
 		"TX-02 Retina",
 		"SF Mono",
 		"MonoLisa",
