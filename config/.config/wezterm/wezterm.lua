@@ -13,12 +13,12 @@ return {
 	window_padding = { left = 0, right = 0, top = 0, bottom = 0 },
 
 	initial_rows = 30,
-	initial_cols = 127,
+	initial_cols = 126,
 
 	font = wezterm.font_with_fallback({
+		"TX-02",
 		"Berkeley Mono",
 		"TX-02 Condensed",
-		"TX-02 Retina",
 		"SF Mono",
 		"MonoLisa",
 		"JetBrainsMono Nerd Font",

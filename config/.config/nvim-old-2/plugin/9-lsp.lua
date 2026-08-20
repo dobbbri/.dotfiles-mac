@@ -2,11 +2,11 @@ vim.pack.add({
   "https://github.com/neovim/nvim-lspconfig",
 }, { confirm = false })
 
-vim.lsp.enable({ "astro", "bashls", "jsonls", "lua_ls", "tailwindcss", "ts_ls" })
-
 vim.lsp.config("*", { capabilities = require("blink.cmp").get_lsp_capabilities() })
 vim.lsp.config("astro", { init_options = { typescript = { tsdk = "node_modules/typescript/lib" } } })
 vim.lsp.config("lua_ls", { settings = { Lua = { diagnostics = { globals = { "vim", "require" } } } } })
+
+vim.lsp.enable({ "astro", "bashls", "jsonls", "lua_ls", "tailwindcss", "ts_ls" })
 
 vim.diagnostic.config({
   signs = { text = { ERROR = " ", WARN = "󰀨 ", INFO = " ", HINT = "󰠠 " } },

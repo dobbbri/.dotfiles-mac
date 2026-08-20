@@ -4,7 +4,6 @@ local opt = vim.opt
 -- mapleader
 g.mapleader = " "
 g.maplocalleader = ","
---------------------------------------------------------------------------------------------------------------------
 
 -- Matchparen (Highlight matching brackets)
 g.matchparen_timeout = 20 -- Timeout in ms for highlight calculation
@@ -34,7 +33,7 @@ g.loaded_python3_provider = 0
 g.loaded_perl_provider = 0
 g.loaded_ruby_provider = 0
 
--- opt.colorcolumn = "101"
+--------------------------------------------------------------------------------------------------------------------
 opt.termguicolors = true
 
 -- use rounded borders on all floating windows

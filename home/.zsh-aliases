@@ -13,6 +13,14 @@ alias ww='cd ~/Work/'
 alias dd='cd ~/Dev/'
 alias ss='cd ~/Sites/'
 alias dl='cd ~/Downloads/'
+alias oo='cd ~/Documents/Obsidian-gitsync/'
+
+# copy and move files interactive
+alias cp='cp -i'
+alias mv='mv -i'
+
+# untar
+alias untar='tar xvf'
 
 # run http-server
 alias run-server="npx http-server "
