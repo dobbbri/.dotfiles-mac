@@ -6,7 +6,7 @@ alias hh='cd ~'
 # dotfiles
 alias ff='cd ~/.dotfiles-mac/'
 alias sc='cd ~/.dotfiles-mac/scripts/'
-alias vv='cd ~/.dotfiles-mac/config/.config/nvim/'
+alias vv='cd ~/.dotfiles-mac/config/nvim/'
 
 # folders
 alias ww='cd ~/Work/'
@@ -104,4 +104,22 @@ gup() {
   else
     git add . && git commit -m "fast update ..." && git push && git status --short
   fi
+}
+
+ob-sync() {
+  cd ~/Documents/Obsidian-gitsync || exit 1
+
+  git pull || exit 1
+
+  CHANGES_EXIST="$(git status --porcelain | wc -l)"
+
+  if [ "$CHANGES_EXIST" -eq 0 ]; then
+      exit 0
+  fi
+
+  git add . &&
+  git commit -q -m "$(date +'%Y-%m-%d %H:%M:%S')" &&
+  git push -q
+
+  cd ~
 }

@@ -4,22 +4,13 @@
 -- * add extra plugins
 -- * disable/enabled LazyVim plugins
 -- * override the configuration of LazyVim plugins
-return {
-  -- add gruvbox
-  { "ellisonleao/gruvbox.nvim" },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "gruvbox",
-    },
-  },
 
-  -- add pyright to lspconfig
+return {
+
+  -- add servers to lspconfig
   {
     "neovim/nvim-lspconfig",
-    ---@class PluginLspOpts
     opts = {
-      ---@type lspconfig.options
       servers = {
         -- pyright will be automatically installed with mason and loaded with lspconfig
         pyright = {},
@@ -77,6 +68,28 @@ return {
         "lua-language-server",
         "typescript-language-server",
         "yamlfmt",
+      },
+    },
+  },
+
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        sh = { "shfmt" },
+        lua = { "stylua" },
+        toml = { "taplo" },
+        yaml = { "yamlfmt" },
+        astro = { "biome" },
+        javascript = { "biome" },
+        javascriptreact = { "biome" },
+        typescript = { "biome" },
+        typescriptreact = { "biome" },
+        css = { "biome" },
+        html = { "biome" },
+        json = { "biome" },
+        jsonc = { "biome" },
+        markdown = { "biome" },
       },
     },
   },

@@ -1,0 +1,69 @@
+[env]
+TERM = "xterm-256color"
+
+[terminal]
+osc52 = "CopyPaste"
+
+[font]
+builtin_box_drawing = true
+size = 15.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+
+[window]
+opacity = 0.75
+blur = true
+dynamic_padding = true
+
+
+[window.dimensions]
+columns = 126
+lines = 35
+
+[mouse]
+hide_when_typing = true
+
+[keyboard]
+bindings = [
+  { key = "Insert", mods = "Shift", action = "Paste" },
+  { key = "Insert", mods = "Control", action = "Copy" },
+  { key = "Return", mods = "Shift", chars = "\u001B\r" },
+]
+
+# [colors]
+# draw_bold_text_with_bright_colors = false
+# transparent_background_colors = true
+#
+# Circadia — Dark Classic (Warm Ember & Espresso)
+[colors.primary]
+background = "#17130f"
+foreground = "#c9c0b1"
+
+[colors.cursor]
+text = "#17130f"
+cursor = "#e89a49"
+
+[colors.selection]
+text = "#c9c0b1"
+background = "#29241e"
+
+[colors.normal]
+black = "#17130f"
+red = "#d9a86e"
+green = "#8cbb62"
+yellow = "#d99148"
+blue = "#66abc6"
+magenta = "#b991db"
+cyan = "#d99148"
+white = "#c9c0b1"
+
+[colors.bright]
+black = "#91887d"
+red = "#ea9d49"
+green = "#8cbb62"
+yellow = "#f8c88f"
+blue = "#66abc6"
+magenta = "#de88a6"
+cyan = "#66abc6"
+white = "#c9c0b1"

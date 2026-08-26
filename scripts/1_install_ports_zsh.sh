@@ -23,7 +23,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 echo "install Nerd Fonts --------------------------------------------------"
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash
-$HOME/.local/bin/getnf && fc-cache -f
+"$HOME/.local/bin/getnf" && fc-cache -f
 
 echo "save screenshots to a folder------------------------------------------"
 mkdir "${HOME}/screenshots"
@@ -31,18 +31,21 @@ defaults write com.apple.screencapture location -string "${HOME}/screenshots"
 
 echo "run stow ------------------------------------------------------------"
 
-cd ~/.dotfiles-mac/
+cd ~/.dotfiles-mac/ || return
 mkdir -p ~/.config/_BKP
 
-mv ~/.config/alacritty ~/.config/_BKP/
+mv ~/.config/wezterm ~/.config/_BKP/
 mv ~/.config/nvim ~/.config/_BKP/
-mv ~/.config/kitty ~/.config/_BKP/
+
+# Cria o link
+ln -s ~/.dotfiles-mac/config/wezterm ~/.config/wezterm
+ln -s ~/.dotfiles-mac/config/nvim ~/.config/nvim
 
 mv ~/.zshrc ~/.zshrc-original
 
 echo "\.DS_Store" >>~/.stow-global-ignore
 
-stow config/
+# stow config/
 stow home/
 
 echo "fix ssh permission -----------------------------------------------------"

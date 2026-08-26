@@ -2,5 +2,7 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
+vim.opt.spell = false
+vim.opt.spelllang = { "en", "pt_br" } -- "pt_br" for Brazilian Portuguese
 vim.opt.title = true
 vim.opt.titlestring = '%t%( %M%)%( (%{expand("%:~:h")})%)%a [nvim]'
