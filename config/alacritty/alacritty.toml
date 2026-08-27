@@ -9,7 +9,7 @@ osc52 = "CopyPaste"
 
 [font]
 builtin_box_drawing = true
-size = 15.0
+size = 16.0
 [font.normal]
 family = "JetBrainsMono Nerd Font"
 
