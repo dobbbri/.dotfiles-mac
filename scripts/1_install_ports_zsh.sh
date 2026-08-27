@@ -17,6 +17,7 @@ sudo port install eza -cf
 sudo port install wezterm -cf
 sudo port install bottom -cf
 sudo port install lazygit -cf
+sudo port install alacritty -cf
 
 echo "install oh-my-zsh ---------------------------------------------------"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -34,10 +35,12 @@ echo "run stow ------------------------------------------------------------"
 cd ~/.dotfiles-mac/ || return
 mkdir -p ~/.config/_BKP
 
+mv ~/.config/alacritty ~/.config/_BKP/
 mv ~/.config/wezterm ~/.config/_BKP/
 mv ~/.config/nvim ~/.config/_BKP/
 
 # Cria o link
+ln -s ~/.dotfiles-mac/config/alacrity/ ~/.config/alacritty
 ln -s ~/.dotfiles-mac/config/wezterm ~/.config/wezterm
 ln -s ~/.dotfiles-mac/config/nvim ~/.config/nvim
 
