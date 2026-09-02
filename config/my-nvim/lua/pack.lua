@@ -13,16 +13,18 @@ vim.pack.add({
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/folke/trouble.nvim",
   "https://github.com/dobbbri/statusline.nvim",
+  "https://github.com/yaocccc/visual-multi.nvim",
+
   -- colorschemes
   "https://github.com/ryovoid/dracula-night",
   "https://codeberg.org/brargenzilian/darcula-solid.nvim",
   "https://github.com/xero/evangelion.nvim",
 }, { confirm = false })
 
-local colorschemes = { 
-  "dracula-night", 
-  "darcula-solid", 
-  "evangelion" 
+local colorschemes = {
+  "dracula-night",
+  "darcula-solid",
+  "evangelion",
 }
 vim.cmd.colorscheme(colorschemes[2])
 
@@ -36,4 +38,4 @@ require("plugins.conform")
 require("plugins.statusline")
 require("plugins.undotree")
 require("plugins.trouble")
-
+require("plugins.multicursor")

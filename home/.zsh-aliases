@@ -13,7 +13,7 @@ alias ww='cd ~/Work/'
 alias dd='cd ~/Dev/'
 alias ss='cd ~/Sites/'
 alias dl='cd ~/Downloads/'
-alias oo='cd ~/Documents/Obsidian-gitsync/'
+alias oo='cd ~/Obsidian/'
 
 # copy and move files interactive
 alias cp='cp -i'
