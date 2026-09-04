@@ -98,6 +98,13 @@ neovim-clear() {
   rm ~/.config/nvim/nvim-pack-lock.json
 }
 
+neovim-update() {
+  cd ~ &&
+  rm -rf ~/nvim-macos-x86_64 &&
+  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-x86_64.tar.gz &&
+  tar xzf nvim-macos-x86_64.tar.gz
+}
+
 gup() {
   if [[ -n $* ]]; then
     git add . && git commit -m "$1" && git push && git status --short
@@ -123,3 +130,5 @@ ob-sync() {
 
   cd ~
 }
+
+
