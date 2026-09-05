@@ -1,40 +1,32 @@
 
--- vim.pack.add({
---   "https://github.com/jake-stewart/multicursor.nvim",
--- }, { confirm = false })
---
--- local mc = require("multicursor-nvim")
---
--- mc.setup()
---
--- -- Add or skip cursor above/below the main cursor.
--- vim.keymap.set({ "n", "x" }, "<C-M-up>", function() mc.lineAddCursor(-1) end)
--- vim.keymap.set({ "n", "x" }, "<C-M-down>", function() mc.lineAddCursor(1) end)
--- vim.keymap.set({ "n", "x" }, "<C-M-B>", function() mc.lineSkipCursor(-1) end)
--- vim.keymap.set({ "n", "x" }, "<C-M-S>", function() mc.lineSkipCursor(1) end)
---
--- -- Add or skip adding a new cursor by matching word/selection
--- vim.keymap.set({ "n", "x" }, "<C-N>", function() mc.matchAddCursor(1) end)
--- vim.keymap.set({ "n", "x" }, "<C-S>", function() mc.matchSkipCursor(1) end)
---
--- -- Mappings defined in a keymap layer only apply when there are
--- -- multiple cursors. This lets you have overlapping mappings.
--- mc.addKeymapLayer(function(layerSet)
---   -- Delete the main cursor.
---   layerSet({ "n", "x" }, "<leader>x", mc.deleteCursor)
---
---   -- Enable and clear cursors using escape.
---   layerSet("n", "<esc>", function()
---     if not mc.cursorsEnabled() then
---       mc.enableCursors()
---     else
---       mc.clearCursors()
---     end
---   end)
--- end)
---
--- -- Customize how cursors look.
--- vim.api.nvim_set_hl(0, "MultiCursorCursor", { link = "Cursor" })
--- vim.api.nvim_set_hl(0, "MultiCursorVisual", { link = "Visual" })
--- vim.api.nvim_set_hl(0, "MultiCursorDisabledCursor", { link = "Visual" })
--- vim.api.nvim_set_hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
+vim.pack.add({
+   "https://github.com/yaocccc/visual-multi.nvim",
+}, { confirm = false })
+
+require("visual-multi").setup({
+  wrap = true,
+  case_sensitive = true,
+  mappings = {
+    find_next = "<C-n>",
+    select_all = "<C-d>",
+    select_left = "<C-Left>",
+    select_right = "<C-Right>",
+    add_cursor_up = "<C-Up>",
+    add_cursor_down = "<C-Down>",
+    add_cursor = "<C-x>",
+    add_cursor_word = "<C-w>",
+    skip_region = false,
+    remove_region = "q",
+    insert_paste = "<C-v>",
+    undo = "u",
+    redo = "<C-r>",
+  },
+  highlights = {
+    cursor = { bg = "#87afff", fg = "#4e4e4e" },
+    cursor_active = { bg = "#dfdf87", fg = "#4e4e4e" },
+    insert = { bg = "#4c4e50" },
+    insert_active = { bg = "#4c4e50" },
+    selection = { bg = "#005faf" },
+    selection_active = { bg = "#87afff", fg = "#4e4e4e" },
+  },
+})
