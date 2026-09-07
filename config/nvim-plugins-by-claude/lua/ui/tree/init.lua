@@ -15,24 +15,24 @@ local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 ---------------------------------------------------------------------------
 local config = {
   keymap = "<leader>e",
-  close_on_open = false, -- fecha a árvore ao abrir um arquivo
+  close_on_open = true, -- fecha a árvore ao abrir um arquivo
   icons = nil,           -- sobrescreve default_icons/fallback_icons via setup()
 }
 
 -- Ícones padrão (Nerd Font). Sobrescrevíveis via setup({ icons = {...} }).
 local default_icons = {
-  folder_closed = "",
-  folder_open = "",
-  folder_empty = "",
-  folder_empty_open = "",
+  folder_closed     = "",
+  folder_open       = "",
+  folder_empty      = "",
+  folder_empty_open = "",
 }
 
 -- Fallback ASCII usado quando não há Nerd Font/devicons disponível.
 local fallback_icons = {
-  folder_closed = ">",
-  folder_open = "v",
-  folder_empty = ">",
-  folder_empty_open = "v",
+  folder_closed = "+",
+  folder_open = "-",
+  folder_empty = "+",
+  folder_empty_open = "-",
 }
 
 local function folder_icon(is_empty, expanded)
@@ -347,6 +347,7 @@ function M.open(path)
   state.win = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_buf(state.win, state.buf)
   vim.wo[state.win].number = false
+  vim.wo[state.win].cursorline = true
   vim.wo[state.win].relativenumber = false
   vim.wo[state.win].signcolumn = "no"
   vim.wo[state.win].wrap = false

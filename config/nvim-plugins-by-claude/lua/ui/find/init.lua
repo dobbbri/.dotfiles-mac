@@ -18,7 +18,7 @@ local state = {
   files = {},      -- full file list for cwd
   filtered = {},   -- currently filtered+sorted list
   selected = 1,
-  ns = vim.api.nvim_create_namespace("simple_ff"),
+  ns = vim.api.nvim_create_namespace("simple_find"),
 }
 
 --------------------------------------------------------------------------

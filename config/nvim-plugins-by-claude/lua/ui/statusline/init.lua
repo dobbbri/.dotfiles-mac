@@ -57,7 +57,7 @@ local function mode_component()
   local m = vim.api.nvim_get_mode().mode
   local info = modes[m] or { m:upper(), "StNormal", "" }
   local label, hl, icon = info[1], info[2], info[3]
-  return string.format("%%#%s# %s %s %%*", hl, icon, label)
+  return string.format("%%#%s# %s %%*", hl, label)
 end
 
 -- ===========================================================
@@ -194,7 +194,7 @@ local function diagnostics_component()
   end
 
   if #parts == 0 then
-    return "%#StDiagInfo#  ok%*"
+    return "%#StDiagInfo# ok %*"
   end
 
   return table.concat(parts, " ")
@@ -231,7 +231,7 @@ function M.setup()
   set_highlights()
 
   vim.opt.laststatus = 3 -- statusline global (uma só, na parte inferior)
-  vim.o.statusline = "%!v:lua.require'statusline'.statusline()"
+  vim.o.statusline = "%!v:lua.require('ui.statusline').statusline()"
 
   local group = vim.api.nvim_create_augroup("CustomStatusline", { clear = true })
 

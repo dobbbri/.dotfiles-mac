@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/bufferline-simple.lua (or paste into init.lua)
+-- ~/.config/nvim/lua/ui/bufferline-simple.lua (or paste into init.lua)
 
 local M = {}
 
@@ -27,6 +27,6 @@ function M.build_tabline()
 end
 
 vim.o.showtabline = 2 -- always show
-vim.o.tabline = '%!v:lua.require("bufferline-simple").build_tabline()'
+vim.o.tabline = '%!v:lua.require("ui.bufferline").build_tabline()'
 
 return M
