@@ -18,7 +18,8 @@ local opt = vim.opt
 opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
-opt.signcolumn = "yes"
+-- (sem opt.signcolumn: o statuscol.nvim, configurado mais abaixo, assume
+-- a coluna esquerda via 'statuscolumn' e essa opção nativa deixa de ter efeito)
 opt.termguicolors = true
 opt.mouse = "a"
 opt.scrolloff = 8
@@ -68,6 +69,13 @@ opt.laststatus = 3 -- statusline única pra todas as janelas (era "globalstatus"
 -- carregado no start, então a config abaixo chama os "setup()" na hora.
 -- Para atualizar depois: :lua vim.pack.update()
 -- Para ver o que está instalado: :lua vim.print(vim.pack.get())
+--
+-- Sobre versões: só o blink.cmp está fixado (branch "v1", por recomendação
+-- da própria doc dele). Os demais seguem o branch padrão de cada repo —
+-- o "confirm = false" abaixo só afeta a instalação inicial; vim.pack.update()
+-- continua pedindo confirmação e mostrando o diff de commits antes de
+-- aplicar, então updates que quebrem algo (tipo o master→main do
+-- nvim-treesitter) não caem em cima de você sem aviso.
 
 vim.pack.add({
   -- Tema
@@ -175,6 +183,13 @@ miniclue.setup({
     miniclue.gen_clues.registers(),
     miniclue.gen_clues.windows(),
     miniclue.gen_clues.z(),
+    -- Nomes de grupo pros nossos prefixos de leader (equivalente ao
+    -- {name=...} do which-key)
+    { mode = "n", keys = "<Leader>f", desc = "+buscar" },
+    { mode = "n", keys = "<Leader>s", desc = "+search & replace" },
+    { mode = "n", keys = "<Leader>c", desc = "+código" },
+    { mode = "n", keys = "<Leader>x", desc = "+diagnósticos" },
+    { mode = "n", keys = "<Leader>e", desc = "+explorer" },
   },
   window = { delay = 300 },
 })
@@ -198,8 +213,9 @@ require("mini.files").setup({
 })
 
 local function toggle_mini_files(path)
-  if not MiniFiles.close() then
-    MiniFiles.open(path, false)
+  local mini_files = require("mini.files")
+  if not mini_files.close() then
+    mini_files.open(path, false)
   end
 end
 
@@ -209,7 +225,9 @@ vim.keymap.set("n", "<leader>ef", function() toggle_mini_files(vim.api.nvim_buf_
   { desc = "Localizar arquivo atual no explorer" })
 
 -- Fecha o explorer automaticamente ao abrir um arquivo (entrar em pasta
--- continua normal, só fecha quando o alvo é mesmo um arquivo).
+-- continua normal, só fecha quando o alvo é mesmo um arquivo). Isso
+-- sobrescreve o "go_in = '<CR>'" acima só nesse detalhe (close_on_file);
+-- sem esse autocmd, o mapping do setup() já bastaria pra abrir com Enter.
 vim.api.nvim_create_autocmd("User", {
   pattern = "MiniFilesBufferCreate",
   callback = function(args)
@@ -224,15 +242,22 @@ vim.api.nvim_create_autocmd("User", {
 require("mini.pick").setup({})
 require("mini.extra").setup({})
 
-vim.keymap.set("n", "<leader>ff", function() MiniPick.builtin.files() end, { desc = "Buscar arquivos" })
-vim.keymap.set("n", "<leader>fg", function() MiniPick.builtin.grep_live() end, { desc = "Buscar texto no projeto (grep)" })
-vim.keymap.set("n", "<leader>fb", function() MiniPick.builtin.buffers() end, { desc = "Buscar entre buffers abertos" })
-vim.keymap.set("n", "<leader>fh", function() MiniPick.builtin.help() end, { desc = "Buscar na ajuda" })
-vim.keymap.set("n", "<leader>fr", function() MiniExtra.pickers.oldfiles() end, { desc = "Arquivos recentes" })
-vim.keymap.set("n", "<leader>fd", function() MiniExtra.pickers.diagnostic() end, { desc = "Buscar diagnósticos (erros/avisos)" })
+vim.keymap.set("n", "<leader>ff", function() require("mini.pick").builtin.files() end, { desc = "Buscar arquivos" })
+vim.keymap.set("n", "<leader>fg", function() require("mini.pick").builtin.grep_live() end, { desc = "Buscar texto no projeto (grep)" })
+vim.keymap.set("n", "<leader>fb", function() require("mini.pick").builtin.buffers() end, { desc = "Buscar entre buffers abertos" })
+vim.keymap.set("n", "<leader>fh", function() require("mini.pick").builtin.help() end, { desc = "Buscar na ajuda" })
+vim.keymap.set("n", "<leader>fr", function() require("mini.extra").pickers.oldfiles() end, { desc = "Arquivos recentes" })
+vim.keymap.set("n", "<leader>fd", function() require("mini.extra").pickers.diagnostic() end, { desc = "Buscar diagnósticos (erros/avisos)" })
 
--- grug-far: search & replace em massa no projeto (substitui o nvim-spectre)
-require("grug-far").setup({})
+-- grug-far: search & replace em massa no projeto (substitui o nvim-spectre).
+-- extraArgs exclui as mesmas pastas que já ignoramos no explorer/picker.
+require("grug-far").setup({
+  engines = {
+    ripgrep = {
+      extraArgs = "--glob '!node_modules/**' --glob '!dist/**' --glob '!.git/**' --glob '!.astro/**'",
+    },
+  },
+})
 vim.keymap.set("n", "<leader>sr", function() require("grug-far").open() end, { desc = "Search & Replace (grug-far)" })
 vim.keymap.set("n", "<leader>sw", function()
   require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
@@ -302,12 +327,31 @@ end
 -- Aplica capabilities + on_attach como padrão pra TODOS os servidores.
 vim.lsp.config("*", { capabilities = capabilities, on_attach = on_attach })
 
-local servers = { "ts_ls", "astro", "cssls", "html", "jsonls", "emmet_ls", "lua_ls" }
+-- Aparência do diagnóstico: ícone nos sinais, texto mais discreto ao lado
+-- da linha, e um float automático (sem precisar apertar nada) quando o
+-- cursor fica parado em cima de uma linha com erro/aviso.
+vim.diagnostic.config({
+  severity_sort = true,
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "✘",
+      [vim.diagnostic.severity.WARN] = "▲",
+      [vim.diagnostic.severity.INFO] = "●",
+      [vim.diagnostic.severity.HINT] = "○",
+    },
+  },
+  virtual_text = { spacing = 2, source = "if_many", prefix = "●" },
+  float = { border = "rounded", source = true },
+})
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function() vim.diagnostic.open_float(nil, { focus = false }) end,
+})
 
--- Biome: LSP de lint/format ultra-rápido para JS/TS/JSON.
--- Só "ativa de verdade" em projetos que tenham biome.json ou biome.jsonc
+-- "biome" só "ativa de verdade" em projetos que tenham biome.json/biome.jsonc
 -- na raiz (comportamento padrão do root_dir/root_markers do nvim-lspconfig).
-table.insert(servers, "biome")
+local servers = {
+  "ts_ls", "astro", "cssls", "html", "jsonls", "lua_ls", "biome", "tailwindcss", "emmet_ls",
+}
 
 -- Tailwind precisa reconhecer classes dentro de .astro, .tsx, .jsx etc.
 vim.lsp.config("tailwindcss", {
@@ -317,7 +361,14 @@ vim.lsp.config("tailwindcss", {
   },
   init_options = { userLanguages = { astro = "html" } },
 })
-table.insert(servers, "tailwindcss")
+
+-- emmet_ls por padrão só ativa em html/css — sem isso, abreviação Emmet
+-- (ex: "div.card>ul>li*3") não expande dentro de JSX/TSX/Astro.
+vim.lsp.config("emmet_ls", {
+  filetypes = {
+    "html", "css", "astro", "javascriptreact", "typescriptreact",
+  },
+})
 
 vim.lsp.enable(servers)
 

@@ -22,14 +22,11 @@ vim.g.skip_ts_context_commentstring_module = true
 -------------------------------------------------------
 local opt = vim.opt
 
-vim.opt.confirm = true
-vim.opt.autoread = true
-opt.numberwidth = 2
-
 opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
-opt.signcolumn = "yes"
+-- (sem opt.signcolumn: o statuscol.nvim, configurado mais abaixo, assume
+-- a coluna esquerda via 'statuscolumn' e essa opção nativa deixa de ter efeito)
 opt.termguicolors = true
 opt.mouse = "a"
 opt.scrolloff = 8
@@ -94,13 +91,13 @@ local ignore_files = { ".DS_Store", ".git", ".astro", "dist", "package-lock.json
 
 vim.pack.add({
   -- Tema + ícones
-  { src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
+  { src = "https://github.com/catppuccin/nvim",                     name = "catppuccin" },
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
 
   -- Interface: statusline (lualine) + abas (bufferline) + indent guides + dicas de tecla
   { src = "https://github.com/nvim-lualine/lualine.nvim" },
   { src = "https://github.com/akinsho/bufferline.nvim" },
-  -- { src = "https://github.com/lukas-reineke/indent-blankline.nvim" },
+  { src = "https://github.com/lukas-reineke/indent-blankline.nvim" },
   { src = "https://github.com/folke/which-key.nvim" },
 
   -- Árvore de arquivos
@@ -125,7 +122,7 @@ vim.pack.add({
   { src = "https://github.com/folke/lazydev.nvim" },
 
   -- Autocomplete: blink.cmp + LuaSnip (em vez de mini.snippets)
-  { src = "https://github.com/Saghen/blink.cmp", version = "v1" },
+  { src = "https://github.com/Saghen/blink.cmp",                    version = "v1" },
   { src = "https://github.com/L3MON4D3/LuaSnip" },
   { src = "https://github.com/rafamadriz/friendly-snippets" },
 
@@ -145,11 +142,9 @@ vim.pack.add({
 -- telescope-fzf-native precisa ser compilado (make) na primeira instalação
 do
   local fzf_native_path = vim.fn.stdpath("data") .. "/site/pack/core/opt/telescope-fzf-native.nvim"
-  if
-    vim.fn.isdirectory(fzf_native_path) == 1
-    and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.so") == 0
-    and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.dylib") == 0
-  then
+  if vim.fn.isdirectory(fzf_native_path) == 1
+      and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.so") == 0
+      and vim.fn.filereadable(fzf_native_path .. "/build/libfzf.dylib") == 0 then
     vim.fn.jobstart({ "make" }, { cwd = fzf_native_path })
   end
 end
@@ -169,7 +164,7 @@ require("lualine").setup({
   extensions = { "nvim-tree", "trouble", "lazy" },
 })
 require("bufferline").setup({ options = { diagnostics = "nvim_lsp", separator_style = "slant" } })
--- require("ibl").setup({ indent = { char = "│" }, scope = { enabled = true } })
+require("ibl").setup({ indent = { char = "│" }, scope = { enabled = true } })
 
 -- which-key: mostra dicas de tecla enquanto você segura o leader, "g" etc.
 local wk = require("which-key")
@@ -221,48 +216,28 @@ require("grug-far").setup({
   },
 })
 vim.keymap.set("n", "<leader>sr", function() require("grug-far").open() end, { desc = "Search & Replace (grug-far)" })
-vim.keymap.set(
-  "n",
-  "<leader>sw",
-  function() require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } }) end,
-  { desc = "Substituir palavra sob o cursor" }
-)
+vim.keymap.set("n", "<leader>sw", function()
+  require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+end, { desc = "Substituir palavra sob o cursor" })
 
 -- Treesitter (branch "main"): instala os parsers e liga highlight/indent
 -- via API nativa do Neovim, já que o módulo antigo "nvim-treesitter.configs"
 -- não existe mais nessa versão do plugin.
 require("nvim-treesitter").install({
-  "typescript",
-  "tsx",
-  "javascript",
-  "astro",
-  "html",
-  "css",
-  "json",
-  "yaml",
-  "markdown",
-  "markdown_inline",
-  "lua",
-  "vim",
-  "vimdoc",
-  "bash",
-  "graphql",
-  "query",
+  "typescript", "tsx", "javascript", "astro",
+  "html", "css", "json", "yaml", "markdown", "markdown_inline",
+  "lua", "vim", "vimdoc", "bash", "graphql", "query",
 })
 
 vim.api.nvim_create_autocmd("FileType", {
   callback = function(ev)
     local ft = ev.match
-    if ft == "" then
-      return
-    end
+    if ft == "" then return end
     -- Filetypes "de interface" de plugins (árvore, telescope, etc.) não têm
     -- parser de verdade; o pcall abaixo já protege contra erro nesses casos,
     -- então não precisamos de uma lista de exclusão explícita aqui.
     local lang = vim.treesitter.language.get_lang(ft) or ft
-    if not pcall(vim.treesitter.language.add, lang) then
-      return
-    end
+    if not pcall(vim.treesitter.language.add, lang) then return end
     if pcall(vim.treesitter.start, ev.buf, lang) then
       vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
       -- Sem isso, foldmethod fica em "manual" (padrão do Vim) e não existe
@@ -286,14 +261,7 @@ require("lazydev").setup({})
 require("mason").setup({})
 require("mason-lspconfig").setup({
   ensure_installed = {
-    "ts_ls",
-    "astro",
-    "tailwindcss",
-    "cssls",
-    "html",
-    "jsonls",
-    "emmet_ls",
-    "lua_ls",
+    "ts_ls", "astro", "tailwindcss", "cssls", "html", "jsonls", "emmet_ls", "lua_ls",
     "biome",
   },
 })
@@ -301,7 +269,9 @@ require("mason-lspconfig").setup({
 local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 local on_attach = function(_, bufnr)
-  local map = function(keys, fn, desc) vim.keymap.set("n", keys, fn, { buffer = bufnr, desc = desc }) end
+  local map = function(keys, fn, desc)
+    vim.keymap.set("n", keys, fn, { buffer = bufnr, desc = desc })
+  end
   map("gd", vim.lsp.buf.definition, "Ir para definição")
   map("gr", vim.lsp.buf.references, "Ver referências")
   map("K", vim.lsp.buf.hover, "Documentação (hover)")
@@ -315,9 +285,9 @@ vim.lsp.config("*", { capabilities = capabilities, on_attach = on_attach })
 -- reaproveitar em outro lugar que precise dos mesmos glifos).
 local icons = {
   error = "󰅚 ", -- U+F015A
-  warn = "󰀪 ", -- U+F002A
-  info = "󰋽 ", -- U+F02FD
-  hint = "󰌶 ", -- U+F0336
+  warn  = "󰀪 ", -- U+F002A
+  info  = "󰋽 ", -- U+F02FD
+  hint  = "󰌶 ", -- U+F0336
 }
 
 vim.diagnostic.config({
@@ -340,26 +310,13 @@ vim.api.nvim_create_autocmd("CursorHold", {
 -- "biome" só "ativa de verdade" em projetos que tenham biome.json/biome.jsonc
 -- na raiz (comportamento padrão do root_dir/root_markers do nvim-lspconfig).
 local servers = {
-  "ts_ls",
-  "astro",
-  "cssls",
-  "html",
-  "jsonls",
-  "lua_ls",
-  "biome",
-  "tailwindcss",
-  "emmet_ls",
+  "ts_ls", "astro", "cssls", "html", "jsonls", "lua_ls", "biome", "tailwindcss", "emmet_ls",
 }
 
 vim.lsp.config("tailwindcss", {
   filetypes = {
-    "html",
-    "css",
-    "astro",
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
+    "html", "css", "astro", "javascript", "javascriptreact",
+    "typescript", "typescriptreact",
   },
   init_options = { userLanguages = { astro = "html" } },
 })
@@ -403,12 +360,9 @@ require("conform").setup({
   },
   format_on_save = { timeout_ms = 1000, lsp_fallback = true },
 })
-vim.keymap.set(
-  { "n", "v" },
-  "<leader>cf",
-  function() require("conform").format({ lsp_fallback = true }) end,
-  { desc = "Formatar código" }
-)
+vim.keymap.set({ "n", "v" }, "<leader>cf", function()
+  require("conform").format({ lsp_fallback = true })
+end, { desc = "Formatar código" })
 
 require("mason-conform").setup()
 
@@ -416,9 +370,11 @@ require("mason-conform").setup()
 require("gitsigns").setup({
   on_attach = function(bufnr)
     local gs = require("gitsigns")
-    local map = function(mode, keys, fn, desc) vim.keymap.set(mode, keys, fn, { buffer = bufnr, desc = desc }) end
-    map("n", "]c", gs.nav_hunk("next"), "Próximo hunk git")
-    map("n", "[c", gs.nav_hunk("prev"), "Hunk git anterior")
+    local map = function(mode, keys, fn, desc)
+      vim.keymap.set(mode, keys, fn, { buffer = bufnr, desc = desc })
+    end
+    map("n", "]c", gs.next_hunk, "Próximo hunk git")
+    map("n", "[c", gs.prev_hunk, "Hunk git anterior")
     map("n", "<leader>hs", gs.stage_hunk, "Stage hunk")
     map("n", "<leader>hr", gs.reset_hunk, "Reset hunk")
     map("n", "<leader>hp", gs.preview_hunk, "Preview hunk")
@@ -449,9 +405,9 @@ local statuscol_builtin = require("statuscol.builtin")
 require("statuscol").setup({
   relculright = true,
   segments = {
-    { text = { statuscol_builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
+    { text = { statuscol_builtin.foldfunc }, click = "v:lua.ScFa" },
     { text = { "%s" }, click = "v:lua.ScSa" },
-    { text = { statuscol_builtin.foldfunc, " " }, click = "v:lua.ScFa" },
+    { text = { statuscol_builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
   },
 })
 
