@@ -187,6 +187,7 @@ require("nvim-tree").setup({
   actions = { open_file = { quit_on_open = true } },
 })
 vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Abrir/fechar árvore de arquivos" })
+vim.keymap.set("n", "-", "<cmd>NvimTreeToggle<CR>", { desc = "Abrir/fechar árvore de arquivos" })
 
 -- Telescope: busca fuzzy
 local telescope = require("telescope")
