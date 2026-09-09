@@ -38,10 +38,12 @@ mkdir -p ~/.config/_BKP
 mv ~/.config/alacritty ~/.config/_BKP/
 mv ~/.config/wezterm ~/.config/_BKP/
 mv ~/.config/nvim ~/.config/_BKP/
+mv ~/.config/kitty ~/.config/_BKP/
 
 # Cria o link
 ln -s ~/.dotfiles-mac/config/alacrity/ ~/.config/alacritty
 ln -s ~/.dotfiles-mac/config/wezterm ~/.config/wezterm
+ln -s ~/.dotfiles-mac/config/kitty/ ~/.config/kitty
 ln -s ~/.dotfiles-mac/config/nvim ~/.config/nvim
 
 mv ~/.zshrc ~/.zshrc-original
