@@ -59,6 +59,19 @@ opt.fillchars = { eob = " " }
 opt.completeopt = { "menu", "menuone", "noselect" }
 opt.pumheight = 12
 opt.conceallevel = 0
--- (sem opt.laststatus manual: o lualine com globalstatus=true já cuida disso)
 
-vim.filetype.add({ extension = { astro = "astro" } })
+vim.filetype.add({
+	extension = {
+		astro = "astro",
+		mdx = "markdown",
+		conf = "config",
+		ejs = "html",
+	},
+	filename = {
+		[".env"] = "config",
+		["config"] = "config",
+	},
+	pattern = {
+		["gitconf.*"] = "gitconfig",
+	},
+})
