@@ -17,7 +17,7 @@ sudo port install eza -cf
 sudo port install wezterm -cf
 sudo port install bottom -cf
 sudo port install lazygit -cf
-sudo port install alacritty -cf
+sudo port install kitty -cf
 
 echo "install oh-my-zsh ---------------------------------------------------"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
