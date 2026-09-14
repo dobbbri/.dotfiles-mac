@@ -59,6 +59,8 @@ return {
 				filetypes = { "html", "css", "astro", "javascriptreact", "typescriptreact" },
 			})
 
+			vim.lsp.config("lua_ls", { settings = { Lua = { diagnostics = { globals = { "vim", "require" } } } } })
+
 			-- "biome" só "ativa de verdade" em projetos com biome.json/biome.jsonc
 			-- na raiz (root_dir/root_markers padrão do nvim-lspconfig).
 			vim.lsp.enable({

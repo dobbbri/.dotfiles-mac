@@ -45,13 +45,10 @@ opt.confirm = true
 -- options
 opt.encoding = "utf-8"
 opt.fileencoding = "utf-8"
-
 opt.swapfile = false
 opt.undofile = false
-
 opt.timeoutlen = 700
 opt.updatetime = 250
-
 opt.cursorline = false
 -- opt.cursorlineopt = "both"
 opt.cursorlineopt = "screenline,number" -- Show cursor line per screen line

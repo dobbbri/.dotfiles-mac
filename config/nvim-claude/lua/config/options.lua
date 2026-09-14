@@ -6,6 +6,10 @@ local opt = vim.opt
 opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
+
+-- nice confirmation dialog
+opt.confirm = true
+
 -- Fallback pra janela entre o boot e o statuscol.nvim carregar (VeryLazy);
 -- depois que ele assume a coluna via 'statuscolumn', essas duas opções
 -- deixam de ter efeito visual, mas evitam "pulo" de layout antes disso.
@@ -23,6 +27,10 @@ opt.softtabstop = 2
 opt.expandtab = true
 opt.smartindent = true
 opt.autoindent = true
+
+-- title
+opt.title = true
+opt.titlestring = '%t%( %M%)%( (%{expand("%:~:h")})%)%a [nvim]'
 
 -- Busca
 opt.ignorecase = true
@@ -54,11 +62,12 @@ opt.foldcolumn = "1"
 -- Visual
 opt.wrap = false
 opt.list = true
-opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+opt.listchars = { trail = "·", nbsp = "␣" }
 opt.fillchars = { eob = " " }
 opt.completeopt = { "menu", "menuone", "noselect" }
 opt.pumheight = 12
 opt.conceallevel = 0
+-- (sem opt.laststatus manual: o lualine com globalstatus=true já cuida disso)
 
 vim.filetype.add({
 	extension = {

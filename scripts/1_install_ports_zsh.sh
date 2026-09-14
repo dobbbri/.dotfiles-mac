@@ -14,7 +14,7 @@ sudo port install ripgrep -cf
 sudo port install rust -cf
 sudo port install cargo -cf
 sudo port install eza -cf
-sudo port install wezterm -cf
+sudo port install alacritty -cf
 sudo port install bottom -cf
 sudo port install lazygit -cf
 sudo port install kitty -cf
