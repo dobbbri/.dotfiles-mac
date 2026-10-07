@@ -1,8 +1,9 @@
 # If you come from bash you might have to change your $PATH.
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
 export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
+export PATH="$HOME/.config/emacs/bin:$PATH"
 
 # Path to your Oh My Zsh installation.
 #export ZSH="$HOME/.oh-my-zsh"

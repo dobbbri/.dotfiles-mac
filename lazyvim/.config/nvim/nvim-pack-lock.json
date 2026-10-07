@@ -1,0 +1,76 @@
+{
+  "plugins": {
+    "conform.nvim": {
+      "rev": "619363c30309d29ffa631e67c8183f2a72caa373",
+      "src": "https://github.com/stevearc/conform.nvim"
+    },
+    "darcula-solid.nvim": {
+      "rev": "abd698d7e4630b5c8ccfaa0f07b8ad1a3db8bd08",
+      "src": "https://codeberg.org/brargenzilian/darcula-solid.nvim"
+    },
+    "dracula-night": {
+      "rev": "8722f99c8d044bdc213d524de255c99c087c72a6",
+      "src": "https://github.com/ryovoid/dracula-night"
+    },
+    "evangelion.nvim": {
+      "rev": "08cf52a0931a81bf5b64c93b744e136b5edb6d85",
+      "src": "https://github.com/xero/evangelion.nvim"
+    },
+    "friendly-snippets": {
+      "rev": "6cd7280adead7f586db6fccbd15d2cac7e2188b9",
+      "src": "https://github.com/rafamadriz/friendly-snippets"
+    },
+    "gitsigns.nvim": {
+      "rev": "31d6fb2d618bca1482b9f274751ead5f03461408",
+      "src": "https://github.com/lewis6991/gitsigns.nvim"
+    },
+    "grug-far.nvim": {
+      "rev": "6e05398cf6cad05b3fb46569db96b1ccfcbbd402",
+      "src": "https://github.com/MagicDuck/grug-far.nvim"
+    },
+    "mason-auto-install.nvim": {
+      "rev": "f1138b65d9d03f2c752c1b00a4c26ceede82ccb6",
+      "src": "https://github.com/owallb/mason-auto-install.nvim"
+    },
+    "mason.nvim": {
+      "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
+      "src": "https://github.com/mason-org/mason.nvim"
+    },
+    "mini.nvim": {
+      "rev": "629bf6792187e11b4829411c1648f86f28df3963",
+      "src": "https://github.com/nvim-mini/mini.nvim"
+    },
+    "nvim-colorizer.lua": {
+      "rev": "72a05f62c52241bc7441c820eb53946f92b2e6a4",
+      "src": "https://github.com/catgoose/nvim-colorizer.lua"
+    },
+    "nvim-lspconfig": {
+      "rev": "43ed3797b266e1ee8d222e491379ad471c9d3146",
+      "src": "https://github.com/neovim/nvim-lspconfig"
+    },
+    "nvim-treesitter": {
+      "rev": "3d3321b560a63ff92a8692401f303a5123336b86",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "statusline.nvim": {
+      "rev": "aefbc812ce435b293674f7a2bbb96af36a0d006b",
+      "src": "https://github.com/dobbbri/statusline.nvim"
+    },
+    "trouble.nvim": {
+      "rev": "bd67efe408d4816e25e8491cc5ad4088e708a69a",
+      "src": "https://github.com/folke/trouble.nvim"
+    },
+    "vim-fugitive": {
+      "rev": "3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0",
+      "src": "https://github.com/tpope/vim-fugitive"
+    },
+    "vim-visual-multi": {
+      "rev": "a6975e7c1ee157615bbc80fc25e4392f71c344d4",
+      "src": "https://github.com/mg979/vim-visual-multi"
+    },
+    "visual-multi.nvim": {
+      "rev": "92c96c6d2187979f59c2c84a745eda91d7d46462",
+      "src": "https://github.com/yaocccc/visual-multi.nvim"
+    }
+  }
+}

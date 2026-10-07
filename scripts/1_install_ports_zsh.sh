@@ -36,22 +36,21 @@ cd ~/.dotfiles-mac/ || return
 mkdir -p ~/.config/_BKP
 
 mv ~/.config/alacritty ~/.config/_BKP/
-mv ~/.config/wezterm ~/.config/_BKP/
 mv ~/.config/nvim ~/.config/_BKP/
 mv ~/.config/kitty ~/.config/_BKP/
-
-# Cria o link
-ln -s ~/.dotfiles-mac/config/alacrity/ ~/.config/alacritty
-ln -s ~/.dotfiles-mac/config/wezterm ~/.config/wezterm
-ln -s ~/.dotfiles-mac/config/kitty/ ~/.config/kitty
-ln -s ~/.dotfiles-mac/config/nvim ~/.config/nvim
 
 mv ~/.zshrc ~/.zshrc-original
 
 echo "\.DS_Store" >>~/.stow-global-ignore
 
-# stow config/
-stow home/
+stow alacritty
+stow lazyvim
+stow kitty
+stow home
 
 echo "fix ssh permission -----------------------------------------------------"
 cd ~ && ./.ssh/fix_ssh_permission.sh
+
+#show hidden files
+defaults write com.apple.finder AppleShowAllFiles TRUE
+killall Finder
