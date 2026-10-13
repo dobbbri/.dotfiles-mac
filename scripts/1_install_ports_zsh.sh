@@ -45,6 +45,7 @@ stow home
 
 echo "fix ssh permission -----------------------------------------------------"
 cd ~ && ./.ssh/fix_ssh_permission.sh
+ssh-add -K
 
 #show hidden files
 defaults write com.apple.finder AppleShowAllFiles TRUE
