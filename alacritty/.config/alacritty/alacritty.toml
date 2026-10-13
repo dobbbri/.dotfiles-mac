@@ -9,11 +9,13 @@ osc52 = "CopyPaste"
 
 [font]
 builtin_box_drawing = true
-size = 16.0
+# size = 16.0
+size = 18.0
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
-# family = "GoogleSansCode Nerd Font"
+# family = "JetBrainsMono Nerd Font"
+# family = "Aporetic Sans Mono"
+family = "AporeticSansMonoNerdFont"
 # family = "AtkynsonMono Nerd Font"
 # family = "UbuntuSansMono Nerd Font"
 # family = "UbuntuMono Nerd Font"
