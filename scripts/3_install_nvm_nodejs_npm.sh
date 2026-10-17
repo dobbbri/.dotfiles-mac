@@ -3,9 +3,10 @@
 # chmod +x install_nodejs.sh
 
 echo "- Install Nodejs@24, npm and pnpm --------------------------------------------------"
-sudo port install nvm -cf
 
-nvm install 24
+sudo port install nvm
+source /opt/local/share/nvm/init-nvm.sh
+nvm install 22
 
 # sudo port install pnpm && corepack enable
 

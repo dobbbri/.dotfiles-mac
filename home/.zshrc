@@ -1,9 +1,10 @@
 # If you come from bash you might have to change your $PATH.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
-export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
+export PATH="/opt/local/bin:$PATH"
+export PATH="/opt/local/sbin:$PATH="
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.config/emacs/bin:$PATH"
+export PATH="$HOME/.config/doom:$PATH"
+export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
 
 # Path to your Oh My Zsh installation.
 #export ZSH="$HOME/.oh-my-zsh"
@@ -108,3 +109,4 @@ fi
 
 # nvm
 source /opt/local/share/nvm/init-nvm.sh
+export PATH="$HOME/.local/bin:$HOME/.config/emacs/bin:$PATH"
