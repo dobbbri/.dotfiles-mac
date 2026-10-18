@@ -45,7 +45,6 @@ npm i -g \
   @tailwindcss/language-server \
   vscode-langservers-extracted \
   bash-language-server \
-  @biomejs/biome \
   @fsouza/prettierd
 
 # ---------------------------------------------------------------- Fonte Nerd Font

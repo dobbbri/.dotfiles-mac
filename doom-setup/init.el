@@ -18,13 +18,12 @@
        treemacs
        vc-gutter
        vi-tilde-fringe
-       workspaces
 
        :editor
        (evil +everywhere)
        file-templates
        fold
-       (format +onsave)                 ; apheleia (prettierd, biome, shfmt) ao salvar
+       (format +onsave)                 ; apheleia (prettierd, shfmt) ao salvar
        snippets
        (whitespace +guess +trim)
 
@@ -36,13 +35,13 @@
        vc
 
        :checkers
-       syntax                           ; flycheck (diagnósticos do LSP/Biome)
+       syntax                           ; flycheck (diagnósticos do LSP)
 
        :tools
        editorconfig
        (eval +overlay)
        lookup
-       (lsp +peek)                      ; lsp-mode
+       lsp                              ; lsp-mode (sem lsp-ui)
        magit
        tree-sitter
 
