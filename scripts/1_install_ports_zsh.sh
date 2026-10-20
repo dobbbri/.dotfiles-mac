@@ -7,17 +7,16 @@ sudo port install wget -cf
 sudo port install tree -cf
 sudo port install fd -cf
 sudo port install bat -cf
-sudo port install fzf -cf
-sudo port install go -cf
+# sudo port install fzf -cf
+# sudo port install go -cf
 sudo port install ripgrep -cf
-sudo port install rust -cf
-sudo port install cargo -cf
-sudo port install eza -cf
+# sudo port install rust -cf
+# sudo port install cargo -cf
 sudo port install alacritty -cf
-sudo port install lazygit -cf
+# sudo port install lazygit -cf
 
 echo "install oh-my-zsh ---------------------------------------------------"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 echo "install Nerd Fonts --------------------------------------------------"
 curl -fsSL https://raw.githubusercontent.com/getnf/getnf/main/install.sh | bash

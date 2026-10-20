@@ -2,9 +2,17 @@
 export PATH="/opt/local/bin:$PATH"
 export PATH="/opt/local/sbin:$PATH="
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.config/emacs/bin:$PATH"
-export PATH="$HOME/.config/doom:$PATH"
-export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
+
+# Ajusta o PATH temporariamente caso o Emacs do MacPorts não esteja mapeado globalmente
+if ! command -v emacs >/dev/null; then
+    if [ -x "/opt/local/bin/emacs" ]; then
+        export PATH="/opt/local/bin:$PATH"
+    elif [ -x "/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs" ]; then
+        export PATH="/Applications/MacPorts/Emacs.app/Contents/MacOS:$PATH"
+    else
+        error_exit "GNU Emacs não encontrado. Certifique-se de que instalou o Emacs via MacPorts."
+    fi
+fi
 
 # Path to your Oh My Zsh installation.
 #export ZSH="$HOME/.oh-my-zsh"
@@ -18,6 +26,7 @@ set rtp+=/opt/local/share/fzf/vim
 # ZSH_THEME="dst"
 
 CASE_SENSITIVE="true"
+export CLICOLOR=1
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -101,12 +110,7 @@ fi
 # aliases
 [[ ! -f $HOME/.zsh-aliases ]] || source $HOME/.zsh-aliases
 
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # nvm
 source /opt/local/share/nvm/init-nvm.sh
-export PATH="$HOME/.local/bin:$HOME/.config/emacs/bin:$PATH"
+
