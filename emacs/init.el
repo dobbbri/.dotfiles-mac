@@ -62,8 +62,8 @@
 
 ;; Tema (modus é embutido) e fonte
 (load-theme 'modus-vivendi-tinted t)
-(when (find-font (font-spec :name "JetBrains Mono"))
-  (set-face-attribute 'default nil :family "JetBrains Mono" :height 140))
+(when (find-font (font-spec :name "Lekton Nerd Font Mono"))
+  (set-face-attribute 'default nil :family "Lekton Nerd Font Mono" :height 160))
 
 ;; Dired decente no macOS (usa gls do coreutils)
 (use-package dired
