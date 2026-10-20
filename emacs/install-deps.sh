@@ -30,12 +30,15 @@ BASE_PORTS="git coreutils ripgrep fd"
 # Ferramentas com fallback (npm/go) se a porta não existir ou falhar
 TOOL_PORTS="lua-language-server shfmt stylua taplo yamlfmt"
 
+# typescript fixado na 6.x: astro-ls e typescript-language-server precisam do
+# typescript.js/tsserver (API JavaScript do compilador); o astro-ls não é
+# compatível com TypeScript 7.
 NPM_PKGS="
   @astrojs/language-server
   bash-language-server
   vscode-langservers-extracted
   @tailwindcss/language-server
-  typescript
+  typescript@6
   typescript-language-server
   prettier
   prettier-plugin-astro

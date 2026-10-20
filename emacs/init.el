@@ -60,10 +60,32 @@
 (repeat-mode 1)
 (editorconfig-mode 1)                     ; respeita .editorconfig (embutido)
 
-;; Tema (modus é embutido) e fonte
-(load-theme 'modus-vivendi-tinted t)
-(when (find-font (font-spec :name "Lekton Nerd Font Mono"))
-  (set-face-attribute 'default nil :family "Lekton Nerd Font Mono" :height 160))
+;;;; Temas
+;; doom-themes traz dezenas de temas (doom-one, doom-gruvbox, doom-nord,
+;; doom-tokyo-night, doom-dracula...). catppuccin e gruvbox são coleções à parte.
+;; Troque de tema na hora com SPC t t (consult-theme).
+(defvar my/theme 'doom-one
+  "Tema carregado na inicialização.")
+
+(use-package doom-themes
+  :custom
+  (doom-themes-enable-bold t)
+  (doom-themes-enable-italic t)
+  :config
+  (load-theme my/theme t)
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config))
+
+(use-package catppuccin-theme
+  :defer t
+  :init (setq catppuccin-flavor 'macchiato)) ; latte, frappe, macchiato ou mocha
+
+(use-package gruvbox-theme
+  :defer t)
+
+;; Fonte
+(when (find-font (font-spec :name "JetBrains Mono"))
+  (set-face-attribute 'default nil :family "JetBrains Mono" :height 140))
 
 ;; Dired decente no macOS (usa gls do coreutils)
 (use-package dired
@@ -131,6 +153,48 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev))
 
 ;;;; ------------------------------------------------------------
+;;;; Ícones (nerd-icons)
+;;;; ------------------------------------------------------------
+;; Na primeira vez, baixa a fonte "Symbols Nerd Font Mono" (só em GUI).
+;; Se os ícones aparecerem como quadrados, reinicie o Emacs uma vez.
+(use-package nerd-icons
+  :config
+  (when (and (display-graphic-p)
+             (not (find-font (font-spec :name nerd-icons-font-family))))
+    (nerd-icons-install-fonts t)))
+
+;; Ícones nos candidatos do minibuffer (vertico + marginalia)
+(use-package nerd-icons-completion
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+;; Ícones de tipo (função, variável, classe...) no popup do corfu
+(use-package nerd-icons-corfu
+  :after corfu
+  :config (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+;; Ícones por tipo de arquivo no dired
+(use-package nerd-icons-dired
+  :hook (dired-mode . nerd-icons-dired-mode))
+
+;;;; ------------------------------------------------------------
+;;;; Modeline
+;;;; ------------------------------------------------------------
+(column-number-mode 1)
+(add-hook 'prog-mode-hook #'hl-line-mode)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-height 28)
+  (doom-modeline-icon t)
+  (doom-modeline-buffer-file-name-style 'relative-from-project)
+  (doom-modeline-minor-modes nil)
+  (doom-modeline-buffer-encoding nil))
+
+;;;; ------------------------------------------------------------
 ;;;; Git
 ;;;; ------------------------------------------------------------
 (use-package magit
@@ -142,6 +206,13 @@
          (dired-mode . diff-hl-dired-mode)
          (magit-post-refresh . diff-hl-magit-post-refresh))
   :config (diff-hl-flydiff-mode 1))
+
+;;;; ------------------------------------------------------------
+;;;; Terminal (eat: Elisp puro, não precisa compilar nada)
+;;;; ------------------------------------------------------------
+(use-package eat
+  :defer t
+  :custom (eat-kill-buffer-on-exit t))
 
 ;;;; ------------------------------------------------------------
 ;;;; Tree-sitter
@@ -201,9 +272,19 @@
 ;;;; ------------------------------------------------------------
 ;;;; LSP: eglot + flymake
 ;;;; ------------------------------------------------------------
+;; Emacs 30+: o backend elisp-flymake-byte-compile só roda em conteúdo "confiável".
+;; Marcamos como confiável a sua pasta de configuração; o *scratch* fica de fora.
+(when (boundp 'trusted-content)
+  (add-to-list 'trusted-content (abbreviate-file-name (file-name-as-directory user-emacs-directory))))
+
+(defun my/flymake-maybe ()
+  "Liga o flymake, exceto no *scratch* (conteúdo não confiável)."
+  (unless (derived-mode-p 'lisp-interaction-mode)
+    (flymake-mode 1)))
+
 (use-package flymake
   :ensure nil
-  :hook (prog-mode . flymake-mode)
+  :hook (prog-mode . my/flymake-maybe)
   :custom
   (flymake-show-diagnostics-at-end-of-line 'short)) ; Emacs 30+
 
@@ -221,14 +302,26 @@
   (eglot-sync-connect nil)
   (eglot-extend-to-xref t))
 
+(defun my/tsdk-valid-p (dir)
+  "Non-nil se DIR contém typescript.js ou tsserverlibrary.js (o que o astro-ls exige)."
+  (and dir
+       (or (file-exists-p (expand-file-name "typescript.js" dir))
+           (file-exists-p (expand-file-name "tsserverlibrary.js" dir)))))
+
 (defun my/tsdk ()
-  "Diretório lib do typescript do projeto (ou global)."
+  "Diretório lib do TypeScript para o astro-ls.
+Usa o do projeto se for válido; senão, cai para o TypeScript global."
   (let* ((root (locate-dominating-file default-directory "node_modules/typescript"))
-         (local (and root (expand-file-name "node_modules/typescript/lib" root))))
-    (or local
-        (when-let* ((tsc (executable-find "tsc")))
-          (expand-file-name "../lib/node_modules/typescript/lib"
-                            (file-name-directory (file-truename tsc)))))))
+         (local (and root (expand-file-name "node_modules/typescript/lib" root)))
+         (global (when-let* ((tsc (executable-find "tsc")))
+                   ;; .../typescript/bin/tsc  ->  .../typescript/lib
+                   (expand-file-name "../lib" (file-name-directory (file-truename tsc))))))
+    (cond ((my/tsdk-valid-p local) local)
+          ((my/tsdk-valid-p global)
+           (message "astro-ls: typescript do projeto ausente/inválido; usando o global (%s)" global)
+           global)
+          (t (message "astro-ls: nenhum typescript.js encontrado (projeto: %s, global: %s)" local global)
+             (or local global "")))))
 
 ;; Tailwind junto com ts_ls/astro-ls exige multiplexar servidores.
 ;; Instale `rass` (pip install rassumfrassum) e ponha t abaixo.
@@ -239,6 +332,18 @@
   (if (and my/use-rass (executable-find "rass"))
       `("rass" "--" ,@cmd "--" "tailwindcss-language-server" "--stdio")
     cmd))
+
+(defun my/toggle-rass ()
+  "Liga/desliga o rass (Tailwind junto com ts_ls/astro-ls) e reinicia o eglot."
+  (interactive)
+  (when (and (not my/use-rass) (not (executable-find "rass")))
+    (user-error "rass não encontrado no PATH (rode: bash install-deps.sh --with-rass)"))
+  (setq my/use-rass (not my/use-rass))
+  (message "rass: %s" (if my/use-rass "ligado (Tailwind ativo)" "desligado"))
+  ;; eglot-reconnect reusaria o comando antigo, então desligamos e iniciamos de novo
+  (when-let* ((server (and (fboundp 'eglot-current-server) (eglot-current-server))))
+    (eglot-shutdown server)
+    (call-interactively #'eglot)))
 
 (with-eval-after-load 'eglot
   (setf (alist-get 'bash-ts-mode eglot-server-programs)
@@ -307,7 +412,13 @@
       evil-undo-system 'undo-redo
       evil-respect-visual-line-mode t
       evil-split-window-below t
-      evil-vsplit-window-right t)
+      evil-vsplit-window-right t
+      ;; formato do cursor por estado (como no Vim)
+      evil-normal-state-cursor  '(box)
+      evil-insert-state-cursor  '(bar)
+      evil-visual-state-cursor  '(hollow)
+      evil-replace-state-cursor '(hbar)
+      evil-emacs-state-cursor   '(box))
 
 (use-package evil
   :init (evil-mode 1)
@@ -375,8 +486,12 @@
     (kbd "<leader>cd") #'consult-flymake
     (kbd "<leader>ce") #'eglot
     ;; Toggle
-    (kbd "<leader>tt") #'modus-themes-toggle
+    (kbd "<leader>tt") #'consult-theme
     (kbd "<leader>tl") #'display-line-numbers-mode
+    (kbd "<leader>tr") #'my/toggle-rass
+    ;; Abrir
+    (kbd "<leader>ot") #'eat-project
+    (kbd "<leader>oT") #'eat
     ;; Ajuda e sair
     (kbd "<leader>h")  help-map
     (kbd "<leader>qq") #'save-buffers-kill-terminal
@@ -396,6 +511,7 @@
     "SPC g" "git"
     "SPC c" "código"
     "SPC t" "toggle"
+    "SPC o" "abrir"
     "SPC h" "ajuda"
     "SPC q" "sair"))
 
