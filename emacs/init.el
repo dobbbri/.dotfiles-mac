@@ -1,6 +1,6 @@
 ;;; init.el --- Emacs vanilla moderno: tree-sitter + eglot + evil -*- lexical-binding: t; -*-
 
-;; Requer Emacs 30+ (testado pensando no 31).
+;; Requer Emacs 31+ (usa treesit-enabled-modes e treesit-auto-install-grammar).
 ;; Coloque early-init.el ao lado deste arquivo, em ~/.emacs.d/.
 ;;
 ;; Binários externos (servidores LSP, formatadores, rg/fd):
@@ -10,6 +10,15 @@
 ;;;; ------------------------------------------------------------
 ;;;; Pacotes
 ;;;; ------------------------------------------------------------
+;; Compatibilidade com o Emacs 31: `treesit-ready-p' não existe mais, mas alguns
+;; pacotes ainda a chamam nos seus autoloads (erro "void-function treesit-ready-p").
+;; Definimos um substituto ANTES de carregar os pacotes.
+(unless (fboundp 'treesit-ready-p)
+  (defun treesit-ready-p (language &optional _quiet)
+    "Substituto de compatibilidade: non-nil se a gramática de LANGUAGE está disponível."
+    (and (fboundp 'treesit-language-available-p)
+         (treesit-language-available-p language))))
+
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
@@ -21,8 +30,28 @@
 (setopt custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file 'noerror 'nomessage)
 
+;; ~/.emacs.d organizado: só a configuração fica na raiz; dados de uso (recentes,
+;; histórico, cache...) vão para var/ e arquivos de apoio para etc/.
+;; Precisa carregar ANTES dos pacotes que gravam estado (recentf, savehist...).
+(use-package no-littering
+  :demand t
+  :config
+  ;; nomes fixos, para o migrate-emacs-d.sh saber para onde mover os arquivos antigos
+  (setq recentf-save-file      (no-littering-expand-var-file-name "recentf.eld")
+        savehist-file          (no-littering-expand-var-file-name "savehist.el")
+        save-place-file        (no-littering-expand-var-file-name "saveplace.el")
+        project-list-file      (no-littering-expand-var-file-name "projects.eld"))
+  ;; arquivos de estado não entram na lista de recentes
+  (with-eval-after-load 'recentf
+    (add-to-list 'recentf-exclude (recentf-expand-file-name no-littering-var-directory))
+    (add-to-list 'recentf-exclude (recentf-expand-file-name no-littering-etc-directory))))
+
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
+  :init
+  ;; Shell de login SEM modo interativo: não lê o ~/.zshrc (onde o nvm costuma
+  ;; ser carregado, o que deixava o boot ~2s mais lento). O PATH vem do ~/.zprofile.
+  (setopt exec-path-from-shell-arguments '("-l"))
   :config (exec-path-from-shell-initialize))
 
 ;;;; ------------------------------------------------------------
@@ -83,9 +112,54 @@
 (use-package gruvbox-theme
   :defer t)
 
-;; Fonte
+;; Fonte: tamanho 16 (altura em décimos de ponto: 160 = 16pt).
+;; O tamanho vale mesmo que a JetBrains Mono não esteja instalada.
+(defvar my/font-height 160
+  "Altura da fonte padrão (160 = 16pt).")
+(set-face-attribute 'default nil :height my/font-height)
 (when (find-font (font-spec :name "JetBrains Mono"))
-  (set-face-attribute 'default nil :family "JetBrains Mono" :height 140))
+  (set-face-attribute 'default nil :family "JetBrains Mono"))
+
+;; Abrir maximizado. No macOS o parâmetro do early-init.el às vezes é ignorado,
+;; então reforçamos depois que a janela está pronta (window-setup-hook).
+(add-hook 'window-setup-hook
+          (lambda ()
+            (when (display-graphic-p)
+              (set-frame-parameter nil 'fullscreen 'maximized)))
+          90)
+
+;; ---- Dotfiles e node_modules -------------------------------------------
+;; node_modules fica SEMPRE oculto (find-file, projetos e dired).
+;; Dotfiles ficam ocultos por padrão; alterne com SPC t . (my/toggle-dotfiles).
+(defvar my/show-dotfiles nil
+  "Se não-nil, mostra dotfiles em find-file, projetos e dired.")
+
+;; Também acelera o project-find-file em projetos sem git (não varre node_modules)
+(add-to-list 'vc-directory-exclusion-list "node_modules")
+
+(defun my/dired-omit-regexp ()
+  "Regexp dos arquivos que o dired deve omitir, conforme `my/show-dotfiles'."
+  (concat "\\`[.]?#\\|\\`[.][.]?\\'\\|\\`node_modules\\'"
+          (unless my/show-dotfiles "\\|\\`[.][^.]")))
+
+(defun my/toggle-dotfiles ()
+  "Mostra/oculta dotfiles em find-file, projetos e dired (node_modules segue oculto)."
+  (interactive)
+  (setq my/show-dotfiles (not my/show-dotfiles))
+  (setq dired-omit-files (my/dired-omit-regexp))
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (derived-mode-p 'dired-mode)
+        (revert-buffer))))
+  (message "Dotfiles: %s" (if my/show-dotfiles "visíveis" "ocultos")))
+
+(defun my/toggle-dotfiles-in-minibuffer ()
+  "Alterna dotfiles sem sair do prompt e atualiza a lista de candidatos na hora."
+  (interactive)
+  (my/toggle-dotfiles)
+  ;; força o Vertico a recalcular os candidatos (variável interna do Vertico)
+  (when (boundp 'vertico--input)
+    (setq vertico--input nil)))
 
 ;; Dired decente no macOS (usa gls do coreutils)
 (use-package dired
@@ -99,12 +173,99 @@
             dired-use-ls-dired t
             dired-listing-switches "-alh --group-directories-first")))
 
+;; dired-omit-mode esconde dotfiles e node_modules na listagem
+(use-package dired-x
+  :ensure nil
+  :after dired
+  :hook (dired-mode . dired-omit-mode)
+  :custom (dired-omit-files (my/dired-omit-regexp)))
+
 ;;;; ------------------------------------------------------------
 ;;;; Completion: vertico + orderless + marginalia + consult + embark + corfu
 ;;;; ------------------------------------------------------------
 (use-package vertico
   :init (vertico-mode)
-  :custom (vertico-cycle t))
+  :custom (vertico-cycle t)
+  :bind (:map vertico-map
+         ("M-." . my/toggle-dotfiles-in-minibuffer)))
+
+;; Ordem alfabética (sem diferenciar maiúsculas e acentos) para arquivos e projetos,
+;; escondendo node_modules e (opcionalmente) dotfiles. Por padrão o Vertico ordena
+;; por histórico e tamanho, o que parece "bagunçado".
+;; Comandos (M-x), buffers etc. continuam ordenados por uso recente.
+(defvar my/emacs-d-storage-dirs
+  '("elpa" "eln-cache" "var" "tree-sitter" "auto-save-list" "transient")
+  "Pastas de dados dentro de ~/.emacs.d, ocultas nas listagens (só a configuração aparece).")
+
+(defun my/dot-part-p (part)
+  "Non-nil se PART é um nome oculto (começa com ponto), exceto ., .. e .emacs.d."
+  (and (string-prefix-p "." part)
+       (not (member part '("." ".." ".emacs.d")))))
+
+(defun my/typing-dot-p ()
+  "Non-nil se o último componente digitado no minibuffer começa com ponto."
+  (and (minibufferp)
+       (string-prefix-p "." (file-name-nondirectory (minibuffer-contents-no-properties)))))
+
+(defun my/in-emacs-d-listing-p (deep)
+  "Non-nil se a listagem atual é de dentro de ~/.emacs.d.
+DEEP: arquivos de um projeto (vale o `default-directory'); senão, a pasta
+que está sendo navegada no find-file (precisa ser a raiz de ~/.emacs.d)."
+  (and (minibufferp)
+       (let ((root (expand-file-name user-emacs-directory))
+             (dir (expand-file-name
+                   (if deep
+                       default-directory
+                     (or (file-name-directory (minibuffer-contents-no-properties))
+                         default-directory)))))
+         (if deep
+             (string-prefix-p root dir)
+           (string= (file-name-as-directory dir) root)))))
+
+(defun my/hidden-candidate-p (cand show-dots deep emacs-d)
+  "Non-nil se CAND deve ficar oculto.
+DEEP: confere todos os componentes do caminho (arquivos do projeto);
+senão, só o nome simples (listagem de um diretório).
+EMACS-D: a listagem é de ~/.emacs.d, então pastas de dados também ficam ocultas."
+  (let ((parts (split-string cand "/" t)))
+    (or (member "node_modules" parts)
+        (and emacs-d parts (member (car parts) my/emacs-d-storage-dirs))
+        (and (not show-dots)
+             (if deep
+                 (seq-some #'my/dot-part-p parts)
+               (and parts (null (cdr parts)) (my/dot-part-p (car parts))))))))
+
+(defun my/remove-hidden (candidates deep)
+  "Remove de CANDIDATES o que deve ficar oculto (ver `my/hidden-candidate-p')."
+  (let ((show-dots (or my/show-dotfiles (my/typing-dot-p)))
+        (emacs-d (my/in-emacs-d-listing-p deep)))
+    (seq-remove (lambda (c) (my/hidden-candidate-p c show-dots deep emacs-d)) candidates)))
+
+(defun my/sort-plain (candidates)
+  "Ordena CANDIDATES alfabeticamente, ignorando caixa e acentos."
+  (sort candidates (lambda (a b) (string-collate-lessp a b nil t))))
+
+(defun my/sort-dirs-first (candidates)
+  "Arquivos de um diretório: filtra, ordena e põe os diretórios (com /) primeiro."
+  (let ((sorted (my/sort-plain (my/remove-hidden candidates nil))))
+    (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) sorted)
+           (seq-remove (lambda (x) (string-suffix-p "/" x)) sorted))))
+
+(defun my/sort-project-files (candidates)
+  "Arquivos/diretórios de um projeto: filtra e ordena alfabeticamente."
+  (my/sort-plain (my/remove-hidden candidates t)))
+
+(use-package vertico-multiform
+  :ensure nil
+  :after vertico
+  :custom
+  (vertico-multiform-categories
+   '((file         (vertico-sort-function . my/sort-dirs-first))
+     (project-file (vertico-sort-function . my/sort-project-files))))
+  (vertico-multiform-commands
+   '((project-switch-project (vertico-sort-function . my/sort-plain))
+     (project-find-dir       (vertico-sort-function . my/sort-project-files))))
+  :config (vertico-multiform-mode 1))
 
 (use-package orderless
   :custom
@@ -157,11 +318,23 @@
 ;;;; ------------------------------------------------------------
 ;; Na primeira vez, baixa a fonte "Symbols Nerd Font Mono" (só em GUI).
 ;; Se os ícones aparecerem como quadrados, reinicie o Emacs uma vez.
+;; Ícone do Astro (nf-dev-astro, U+E735): desenhado direto com a fonte Nerd, sem
+;; depender de o nerd-icons conhecer esse nome. Troque a cor mudando a face.
+(defun my/nerd-icon-astro (&rest _)
+  "Ícone do Astro no formato esperado pelas tabelas do nerd-icons."
+  (propertize "\ue735"
+              'face (list :family nerd-icons-font-family :inherit 'nerd-icons-orange)
+              'font-lock-face (list :family nerd-icons-font-family :inherit 'nerd-icons-orange)
+              'rear-nonsticky t))
+
 (use-package nerd-icons
   :config
   (when (and (display-graphic-p)
              (not (find-font (font-spec :name nerd-icons-font-family))))
-    (nerd-icons-install-fonts t)))
+    (nerd-icons-install-fonts t))
+  ;; Arquivos .astro (dired, minibuffer, dashboard) e o modo astro-ts-mode (modeline)
+  (add-to-list 'nerd-icons-extension-icon-alist '("astro" my/nerd-icon-astro))
+  (add-to-list 'nerd-icons-mode-icon-alist '(astro-ts-mode my/nerd-icon-astro)))
 
 ;; Ícones nos candidatos do minibuffer (vertico + marginalia)
 (use-package nerd-icons-completion
@@ -177,7 +350,9 @@
 
 ;; Ícones por tipo de arquivo no dired
 (use-package nerd-icons-dired
-  :hook (dired-mode . nerd-icons-dired-mode))
+  :hook (dired-mode . nerd-icons-dired-mode)
+  ;; Por padrão os ícones do dired são monocromáticos; nil = ícones coloridos.
+  :init (setq nerd-icons-dired-monochrome nil))
 
 ;;;; ------------------------------------------------------------
 ;;;; Modeline
@@ -193,6 +368,31 @@
   (doom-modeline-buffer-file-name-style 'relative-from-project)
   (doom-modeline-minor-modes nil)
   (doom-modeline-buffer-encoding nil))
+
+;;;; ------------------------------------------------------------
+;;;; Dashboard (tela inicial: arquivos e projetos recentes)
+;;;; ------------------------------------------------------------
+;; ~/.emacs.d é tratado como projeto (mesmo sem git): o early-init.el marca a raiz.
+;; Assim ele pode ser listado e selecionado em SPC p p e no dashboard.
+(setopt project-vc-extra-root-markers '("early-init.el"))
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (when-let* ((pr (project-current nil user-emacs-directory)))
+              (project-remember-project pr))))
+
+(use-package dashboard
+  :custom
+  (dashboard-items '((recents  . 8)     ; últimos arquivos abertos
+                     (projects . 6)))   ; últimos projetos
+  (dashboard-projects-backend 'project-el)
+  (dashboard-icon-type 'nerd-icons)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-center-content t)
+  (dashboard-startup-banner 'logo)
+  (dashboard-banner-logo-title "Emacs")
+  (dashboard-set-footer nil)
+  :config (dashboard-setup-startup-hook))
 
 ;;;; ------------------------------------------------------------
 ;;;; Git
@@ -217,11 +417,15 @@
 ;;;; ------------------------------------------------------------
 ;;;; Tree-sitter
 ;;;; ------------------------------------------------------------
-(setq treesit-font-lock-level 4)
+(setopt treesit-font-lock-level 4)
 
-;; Emacs 31: oferece instalar a gramática automaticamente ao abrir o arquivo
-;; (se a variável não existir na sua versão, é ignorada).
-(setq treesit-auto-install-grammar 'ask)
+;; Emacs 31: se faltar a gramática, oferece baixar e compilar ao abrir o arquivo
+;; ('ask é o padrão; use 'always para instalar sem perguntar).
+(setopt treesit-auto-install-grammar 'ask)
+
+;; Emacs 31: troca automaticamente cada modo pela variante tree-sitter
+;; (sh-mode -> bash-ts-mode, js-mode -> js-ts-mode, etc.).
+(setopt treesit-enabled-modes t)
 
 (setq treesit-language-source-alist
       '((bash       "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
@@ -245,17 +449,6 @@
       (message "Instalando gramática tree-sitter: %s" lang)
       (treesit-install-language-grammar lang))))
 
-(setq major-mode-remap-alist
-      '((sh-mode         . bash-ts-mode)
-        (bash-mode       . bash-ts-mode)
-        (js-mode         . js-ts-mode)
-        (javascript-mode . js-ts-mode)
-        (typescript-mode . typescript-ts-mode)
-        (js-json-mode    . json-ts-mode)
-        (json-mode       . json-ts-mode)
-        (yaml-mode       . yaml-ts-mode)
-        (conf-toml-mode  . toml-ts-mode)))
-
 (add-to-list 'auto-mode-alist '("\\.\\(?:[cm]?js\\|jsx\\)\\'" . js-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.\\(?:[cm]?ts\\)\\'"       . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'"                   . tsx-ts-mode))
@@ -278,8 +471,8 @@
   (add-to-list 'trusted-content (abbreviate-file-name (file-name-as-directory user-emacs-directory))))
 
 (defun my/flymake-maybe ()
-  "Liga o flymake, exceto no *scratch* (conteúdo não confiável)."
-  (unless (derived-mode-p 'lisp-interaction-mode)
+  "Liga o flymake, exceto em buffers Elisp sem arquivo (ex.: *scratch*, não confiáveis)."
+  (unless (and (derived-mode-p 'emacs-lisp-mode) (not buffer-file-name))
     (flymake-mode 1)))
 
 (use-package flymake
@@ -323,8 +516,8 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
           (t (message "astro-ls: nenhum typescript.js encontrado (projeto: %s, global: %s)" local global)
              (or local global "")))))
 
-;; Tailwind junto com ts_ls/astro-ls exige multiplexar servidores.
-;; Instale `rass` (pip install rassumfrassum) e ponha t abaixo.
+;; Tailwind junto com ts_ls/astro-ls exige multiplexar servidores (Eglot 31 + rass).
+;; Instale o `rass` (bash install-deps.sh --with-rass) e ligue com SPC t r.
 (defvar my/use-rass nil
   "Se não-nil e `rass' estiver no PATH, combina o servidor principal + tailwindcss.")
 
@@ -345,15 +538,15 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
     (eglot-shutdown server)
     (call-interactively #'eglot)))
 
+;; O Eglot já conhece bash-language-server, vscode-json-language-server e
+;; lua-language-server (com os language-ids corretos). Só sobrescrevemos o que
+;; precisa de lógica própria: o tsserver (Tailwind via rass) e o astro-ls.
 (with-eval-after-load 'eglot
-  (setf (alist-get 'bash-ts-mode eglot-server-programs)
-        '("bash-language-server" "start"))
-  (setf (alist-get 'json-ts-mode eglot-server-programs)
-        '("vscode-json-language-server" "--stdio"))
-  (setf (alist-get 'lua-ts-mode eglot-server-programs)
-        '("lua-language-server"))
-  (setf (alist-get '(js-ts-mode typescript-ts-mode tsx-ts-mode) eglot-server-programs
-                   nil nil #'equal)
+  ;; Os :language-id precisam ser mantidos: é por eles que o tsserver distingue JS, TS e TSX.
+  (setf (alist-get '((js-ts-mode :language-id "javascript")
+                     (tsx-ts-mode :language-id "typescriptreact")
+                     (typescript-ts-mode :language-id "typescript"))
+                   eglot-server-programs nil nil #'equal)
         (lambda (&rest _) (my/with-tailwind '("typescript-language-server" "--stdio"))))
   (setf (alist-get 'astro-ts-mode eglot-server-programs)
         (lambda (&rest _)
@@ -370,6 +563,9 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
   (setf (alist-get 'prettier-astro apheleia-formatters)
         '("apheleia-npx" "prettier" "--stdin-filepath" filepath
           "--plugin" "prettier-plugin-astro" "--parser" "astro"))
+  ;; prettier GLOBAL (usado quando o projeto não tem o seu; ver my/pick-prettier abaixo)
+  (setf (alist-get 'prettier-global apheleia-formatters)
+        '("prettier" "--stdin-filepath" filepath))
   (setf (alist-get 'shfmt   apheleia-formatters) '("shfmt" "-filename" filepath "-i" "2"))
   (setf (alist-get 'stylua  apheleia-formatters) '("stylua" "--search-parent-directories"
                                                    "--stdin-filepath" filepath "-"))
@@ -385,6 +581,59 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
                    (toml-ts-mode       . taplo)
                    (yaml-ts-mode       . yamlfmt)))
     (setf (alist-get (car entry) apheleia-mode-alist) (cdr entry))))
+
+;; ---- Prettier: usa o do projeto; se não houver, usa o global ---------------
+;; shfmt, stylua, taplo e yamlfmt já são binários globais, então só o prettier
+;; (que costuma ficar em node_modules) precisa dessa lógica.
+(require 'subr-x)
+
+(defvar my/global-node-modules nil
+  "Cache do diretório de pacotes npm globais (saída de `npm root -g').")
+
+(defun my/global-node-modules ()
+  "Diretório de pacotes npm globais, ou nil se não houver npm."
+  (or my/global-node-modules
+      (setq my/global-node-modules
+            (when (executable-find "npm")
+              (string-trim (shell-command-to-string "npm root -g 2>/dev/null"))))))
+
+(defun my/local-node-p (relative-path)
+  "Non-nil se node_modules/RELATIVE-PATH existe acima do arquivo atual."
+  (locate-dominating-file default-directory (concat "node_modules/" relative-path)))
+
+(defun my/global-astro-plugin ()
+  "Arquivo de entrada do prettier-plugin-astro instalado globalmente, ou nil."
+  (when-let* ((root (my/global-node-modules))
+              (dir (expand-file-name "prettier-plugin-astro" root))
+              ((file-directory-p dir)))
+    (let* ((pkg (expand-file-name "package.json" dir))
+           (main (or (and (file-exists-p pkg)
+                          (alist-get 'main (json-parse-file pkg :object-type 'alist)))
+                     "dist/index.js"))
+           (entry (expand-file-name main dir)))
+      (and (file-exists-p entry) entry))))
+
+(defun my/pick-prettier ()
+  "Escolhe o prettier do projeto se existir; senão, cai para o global.
+Em arquivos Astro, o projeto precisa ter o prettier E o prettier-plugin-astro."
+  (let* ((astro (derived-mode-p 'astro-ts-mode))
+         (project-ok (and (my/local-node-p ".bin/prettier")
+                          (or (not astro) (my/local-node-p "prettier-plugin-astro"))))
+         (global (executable-find "prettier")))
+    (cond
+     (project-ok nil)                   ; mantém o padrão (apheleia-npx, local)
+     ((not global) nil)                 ; sem prettier global: deixa o padrão
+     (astro
+      (when-let* ((plugin (my/global-astro-plugin)))
+        (setf (alist-get 'prettier-astro-global apheleia-formatters)
+              `("prettier" "--stdin-filepath" filepath
+                "--plugin" ,plugin "--parser" "astro"))
+        (setq-local apheleia-formatter 'prettier-astro-global)))
+     (t (setq-local apheleia-formatter 'prettier-global)))))
+
+(dolist (hook '(astro-ts-mode-hook js-ts-mode-hook typescript-ts-mode-hook
+                tsx-ts-mode-hook json-ts-mode-hook))
+  (add-hook hook #'my/pick-prettier))
 
 ;; .prettierrc para Astro:
 ;;   { "plugins": ["prettier-plugin-astro"],
@@ -431,6 +680,10 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
 
 (use-package evil-collection
   :after evil
+  :init
+  ;; O evil-collection ocupa SPC e , em dired/magit/help; liberamos para o leader.
+  ;; Precisa ser definido antes do evil-collection-init.
+  (setq evil-collection-key-blacklist '("SPC" ","))
   :config (evil-collection-init))
 
 (use-package evil-commentary
@@ -458,6 +711,7 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
     ;; Buffers
     (kbd "<leader>bb") #'consult-buffer
     (kbd "<leader>bd") #'kill-current-buffer
+    (kbd "<leader>bh") #'dashboard-open
     (kbd "<leader>bn") #'next-buffer
     (kbd "<leader>bp") #'previous-buffer
     ;; Janelas
@@ -488,6 +742,7 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
     ;; Toggle
     (kbd "<leader>tt") #'consult-theme
     (kbd "<leader>tl") #'display-line-numbers-mode
+    (kbd "<leader>t.") #'my/toggle-dotfiles
     (kbd "<leader>tr") #'my/toggle-rass
     ;; Abrir
     (kbd "<leader>ot") #'eat-project
@@ -501,6 +756,10 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
     (kbd "K")  #'eldoc-doc-buffer
     (kbd "]d") #'flymake-goto-next-error
     (kbd "[d") #'flymake-goto-prev-error)
+
+  ;; No dired: g . mostra/oculta dotfiles (como no Doom Emacs)
+  (with-eval-after-load 'dired
+    (evil-define-key 'normal dired-mode-map "g." #'my/toggle-dotfiles))
 
   (which-key-add-key-based-replacements
     "SPC f" "arquivos"

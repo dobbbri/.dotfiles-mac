@@ -13,9 +13,15 @@
 (setq frame-inhibit-implied-resize t)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
+(push '(fullscreen . maximized) default-frame-alist) ; abre maximizado
 (when (eq system-type 'darwin)
   (push '(ns-transparent-titlebar . t) default-frame-alist)
   (push '(ns-appearance . dark) default-frame-alist))
+
+;; Cache de compilação nativa em var/eln-cache (mantém a raiz do ~/.emacs.d limpa)
+(when (fboundp 'startup-redirect-eln-cache)
+  (startup-redirect-eln-cache
+   (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory))))
 
 ;; Avisos de compilação nativa de pacotes de terceiros: silencia
 (setq native-comp-async-report-warnings-errors 'silent)

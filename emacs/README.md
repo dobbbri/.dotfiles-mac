@@ -1,6 +1,6 @@
 # Configuração do Emacs
 
-Emacs vanilla moderno (30+) com **Evil**, **tree-sitter**, **LSP (eglot)**, formatação ao salvar e um stack de completion atual.
+Emacs vanilla moderno (31+) com **Evil**, **tree-sitter**, **LSP (eglot)**, formatação ao salvar e um stack de completion atual.
 
 **Linguagens:** Astro, Bash, JSON, Lua, TypeScript/TSX, JavaScript, YAML, TOML.
 
@@ -14,7 +14,26 @@ Emacs vanilla moderno (30+) com **Evil**, **tree-sitter**, **LSP (eglot)**, form
    ```
 3. Abra o Emacs (na primeira vez ele baixa os pacotes).
 4. Instale as gramáticas tree-sitter: `M-x my/treesit-install-all`.
+   Já tinha um `~/.emacs.d` com arquivos de uso antigos? Com o Emacs fechado, rode
+   `bash migrate-emacs-d.sh --dry-run` para ver o que seria movido e depois `bash migrate-emacs-d.sh`.
 5. Reinicie o Emacs. Se os ícones aparecerem como quadrados, rode `M-x nerd-icons-install-fonts` e reinicie de novo.
+
+## Organização do `~/.emacs.d`
+
+Só a configuração fica na raiz; os dados de uso vão para pastas (pacote `no-littering`):
+
+| Pasta/arquivo | Conteúdo |
+|---|---|
+| `early-init.el`, `init.el`, `custom.el` | Configuração |
+| `etc/` | Arquivos de apoio (ex.: bookmarks) |
+| `var/` | Dados de uso: recentes (`recentf.eld`), histórico, posição nos arquivos, lista de projetos, cache de compilação (`eln-cache/`), histórico do Magit... |
+| `elpa/`, `tree-sitter/` | Pacotes e gramáticas (gerenciados pelo Emacs) |
+
+Ao listar `~/.emacs.d` (`SPC f f`) ou os arquivos do projeto `~/.emacs.d` (`SPC p p`), as pastas `elpa`, `eln-cache`, `var` e `tree-sitter` ficam ocultas: só a configuração aparece. A pasta `.emacs.d` não é escondida pelo filtro de dotfiles, e o `~/.emacs.d` funciona como projeto mesmo sem git.
+
+## Dashboard
+
+Ao abrir o Emacs sem arquivo, aparece a tela inicial com os **últimos 8 arquivos** e os **últimos 6 projetos**. Use `j`/`k` para andar e `RET` para abrir (ou `r` / `p` para pular para a lista de recentes / projetos). O `~/.emacs.d` aparece normalmente como projeto. Para mudar as quantidades, edite `dashboard-items` no `init.el`.
 
 ## Convenções
 
@@ -54,6 +73,7 @@ O resto é o Vim de sempre (`h j k l`, `w b e`, `dd`, `yy`, `p`, `u`, `C-r`, `/`
 | `SPC b b` | Trocar de buffer |
 | `SPC b d` | Fechar o buffer atual |
 | `SPC b n` / `SPC b p` | Próximo / anterior |
+| `SPC b h` | Abrir o dashboard (arquivos e projetos recentes) |
 
 ### Janelas (`SPC w`)
 
@@ -108,6 +128,9 @@ No Magit: `?` abre o menu com todas as teclas, `TAB` expande/recolhe, `s` / `u` 
 |---|---|
 | `SPC t t` | Trocar de tema (`doom-one`, gruvbox, catppuccin...) |
 | `SPC t l` | Ligar/desligar números de linha |
+| `SPC t .` | Mostrar/ocultar dotfiles (find-file, projetos e dired). `node_modules` fica sempre oculto |
+| `M-.` (no prompt de arquivos) | Mostrar/ocultar dotfiles sem sair do prompt; a lista atualiza na hora |
+| `g .` (no dired, modo normal) | Mostrar/ocultar dotfiles na pasta aberta |
 | `SPC t r` | Ligar/desligar o `rass` (Tailwind junto com `ts_ls`/`astro-ls`) |
 
 ### Abrir (`SPC o`)
@@ -166,6 +189,8 @@ O popup do código aparece sozinho enquanto você digita (com ícones e document
 
 A formatação roda ao salvar (apheleia), sem mover o cursor.
 
+**Projeto primeiro, global como reserva:** para `prettier`, o Emacs usa o que estiver em `node_modules` do projeto. Se o projeto não tiver (ou, em arquivos Astro, se faltar o `prettier` ou o `prettier-plugin-astro`), usa o `prettier` global instalado pelo `install-deps.sh`. Os demais formatadores (`shfmt`, `stylua`, `taplo`, `yamlfmt`) já são globais.
+
 | Linguagem | Formatador |
 |---|---|
 | JS, TS, TSX, JSON | `prettier` |
@@ -194,6 +219,83 @@ Para Astro, crie um `.prettierrc` no projeto:
 | `eglot-events-buffer` | Ver a conversa com o servidor LSP (depuração) |
 | `nerd-icons-install-fonts` | Baixar a fonte dos ícones |
 | `my/tsdk` (via `M-:`) | Ver qual TypeScript o `astro-ls` está usando |
+
+## Pacotes usados
+
+Os links são de memória (só o do `dashboard` e o manual do `eglot` foram conferidos); se algum não abrir, procure o nome em melpa.org.
+
+### Pacotes do Emacs (instalados pelo `package.el`)
+
+| Pacote | URL | Função |
+|---|---|---|
+| `no-littering` | https://github.com/emacscollective/no-littering | Move os arquivos de uso do `~/.emacs.d` para `var/` e `etc/` |
+| `exec-path-from-shell` | https://github.com/purcell/exec-path-from-shell | Copia o `PATH` do shell para o Emacs |
+| `dashboard` | https://github.com/emacs-dashboard/emacs-dashboard | Tela inicial com arquivos e projetos recentes |
+| `doom-themes` | https://github.com/doomemacs/themes | Coleção de temas (`doom-one` e outros) |
+| `catppuccin-theme` | https://github.com/catppuccin/emacs | Tema Catppuccin |
+| `gruvbox-theme` | https://github.com/greduan/emacs-theme-gruvbox | Tema Gruvbox |
+| `doom-modeline` | https://github.com/seagle0128/doom-modeline | Barra de status com ícones |
+| `nerd-icons` | https://github.com/rainstormstudio/nerd-icons.el | Biblioteca de ícones (fonte Nerd) |
+| `nerd-icons-completion` | https://github.com/rainstormstudio/nerd-icons-completion | Ícones nos candidatos do minibuffer |
+| `nerd-icons-corfu` | https://github.com/LuigiPiucco/nerd-icons-corfu | Ícones no popup de completion de código |
+| `nerd-icons-dired` | https://github.com/rainstormstudio/nerd-icons-dired | Ícones por tipo de arquivo no dired |
+| `vertico` | https://github.com/minad/vertico | Lista vertical de candidatos no minibuffer (inclui `vertico-multiform`) |
+| `orderless` | https://github.com/oantolin/orderless | Filtra candidatos por várias palavras, em qualquer ordem |
+| `marginalia` | https://github.com/minad/marginalia | Anotações ao lado dos candidatos |
+| `consult` | https://github.com/minad/consult | Buscas e navegação (`ripgrep`, `fd`, buffers, imenu, temas) |
+| `embark` | https://github.com/oantolin/embark | Menu de ações sobre o item sob o cursor |
+| `embark-consult` | https://github.com/oantolin/embark | Integração do Embark com o Consult |
+| `corfu` | https://github.com/minad/corfu | Popup de completion enquanto você digita (inclui `corfu-popupinfo`) |
+| `cape` | https://github.com/minad/cape | Fontes extras de completion (arquivos e palavras) |
+| `evil` | https://github.com/emacs-evil/evil | Teclas do Vim |
+| `evil-collection` | https://github.com/emacs-evil/evil-collection | Teclas do Vim em dired, Magit, help etc. |
+| `evil-commentary` | https://github.com/linktohack/evil-commentary | Comentar com `gcc` e `gc{movimento}` |
+| `evil-surround` | https://github.com/emacs-evil/evil-surround | Pares ao redor do texto (`ys`, `cs`, `ds`) |
+| `astro-ts-mode` | https://github.com/Sorixelle/astro-ts-mode | Modo para arquivos `.astro` (tree-sitter) |
+| `apheleia` | https://github.com/radian-software/apheleia | Formata o arquivo ao salvar, sem mover o cursor |
+| `magit` | https://github.com/magit/magit | Interface completa de git |
+| `diff-hl` | https://github.com/dgutov/diff-hl | Marcas de alteração na margem |
+| `eat` | https://codeberg.org/akib/emacs-eat | Terminal dentro do Emacs (sem compilar nada) |
+
+### Embutidos no Emacs (não instalam nada)
+
+| Recurso | Função |
+|---|---|
+| `use-package` | Declarar e carregar os pacotes |
+| `eglot` | Cliente LSP (manual: https://www.gnu.org/software/emacs/manual/html_mono/eglot.html) |
+| `flymake` e `eldoc` | Diagnósticos de erros e documentação rápida |
+| `which-key` | Mostra as teclas disponíveis depois do `SPC` |
+| `project.el` | Detecta e troca de projetos |
+| `treesit` | Realce e análise de código com tree-sitter |
+| `dired` e `dired-x` | Gerenciador de arquivos (e ocultar dotfiles e `node_modules`) |
+| `recentf`, `savehist`, `saveplace` | Lembram arquivos recentes, histórico do minibuffer e posição nos arquivos |
+| `editorconfig`, `electric-pair`, `so-long`, `repeat-mode` | Respeitar `.editorconfig`, fechar pares, proteger contra linhas gigantes, repetir comandos |
+
+### Ferramentas externas (instaladas pelo `install-deps.sh`)
+
+| Ferramenta | URL | Função |
+|---|---|---|
+| `nvm` | https://github.com/nvm-sh/nvm | Instala e gerencia o Node.js |
+| `typescript` (6.x) | https://github.com/microsoft/TypeScript | Compilador, exigido pelo `astro-ls` e pelo `ts_ls` |
+| `@astrojs/language-server` | https://github.com/withastro/language-tools | LSP do Astro (`astro-ls`) |
+| `typescript-language-server` | https://github.com/typescript-language-server/typescript-language-server | LSP de JS/TS/TSX |
+| `bash-language-server` | https://github.com/bash-lsp/bash-language-server | LSP de Bash |
+| `vscode-langservers-extracted` | https://github.com/hrsh7th/vscode-langservers-extracted | Traz o LSP de JSON (`vscode-json-language-server`) |
+| `@tailwindcss/language-server` | https://github.com/tailwindlabs/tailwindcss-intellisense | LSP do Tailwind |
+| `lua-language-server` | https://github.com/LuaLS/lua-language-server | LSP de Lua |
+| `prettier` + `prettier-plugin-astro` | https://github.com/prettier/prettier e https://github.com/withastro/prettier-plugin-astro | Formata JS/TS/JSON e Astro |
+| `shfmt` | https://github.com/mvdan/sh | Formata Bash |
+| `stylua` | https://github.com/JohnnyMorganz/StyLua | Formata Lua |
+| `taplo` | https://github.com/tamasfe/taplo | Formata TOML |
+| `yamlfmt` | https://github.com/google/yamlfmt | Formata YAML |
+| `ripgrep` (`rg`) | https://github.com/BurntSushi/ripgrep | Busca de texto rápida (`SPC /`) |
+| `fd` | https://github.com/sharkdp/fd | Busca de arquivos rápida (`SPC s f`) |
+| `coreutils` | https://www.gnu.org/software/coreutils/ | Fornece o `gls`, usado pelo dired |
+| `git` | https://git-scm.com | Controle de versão (Magit e projetos) |
+| MacPorts | https://www.macports.org | Instala as ferramentas nativas acima |
+| `rass` (opcional) | https://github.com/joaotavora/rassumfrassum | Multiplexa servidores LSP (Tailwind junto com `ts_ls`/`astro-ls`), só com `--with-rass` |
+
+As gramáticas tree-sitter (bash, astro, typescript etc.) vêm dos repositórios listados no `treesit-language-source-alist` do `init.el`.
 
 ## Problemas comuns
 
