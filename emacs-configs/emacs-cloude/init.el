@@ -164,14 +164,28 @@
 ;; Dired decente no macOS (usa gls do coreutils)
 (use-package dired
   :ensure nil
+  :hook (dired-mode . dired-hide-details-mode)   ; só os nomes; ( alterna os detalhes
   :custom
   (dired-kill-when-opening-new-dired-buffer t)
-  (dired-dwim-target t)
+  (dired-dwim-target t)                 ; sugere a pasta do outro dired aberto como destino
+  (dired-create-destination-dirs 'ask)  ; ao copiar/mover, oferece criar a pasta de destino
   :config
   (when-let* ((gls (executable-find "gls")))
     (setopt insert-directory-program gls
             dired-use-ls-dired t
             dired-listing-switches "-alh --group-directories-first")))
+
+;; Árvore no próprio dired: TAB expande/recolhe a pasta sob o cursor (ver teclas no fim)
+(use-package dired-subtree
+  :after dired
+  :custom (dired-subtree-use-backgrounds nil)
+  :config
+  ;; os ícones das linhas inseridas precisam ser desenhados de novo
+  (add-hook 'dired-subtree-after-insert-hook
+            (lambda ()
+              (when (and (bound-and-true-p nerd-icons-dired-mode)
+                         (fboundp 'nerd-icons-dired--refresh))
+                (nerd-icons-dired--refresh)))))
 
 ;; dired-omit-mode esconde dotfiles e node_modules na listagem
 (use-package dired-x
@@ -375,6 +389,17 @@ EMACS-D: a listagem é de ~/.emacs.d, então pastas de dados também ficam ocult
 ;; ~/.emacs.d é tratado como projeto (mesmo sem git): o early-init.el marca a raiz.
 ;; Assim ele pode ser listado e selecionado em SPC p p e no dashboard.
 (setopt project-vc-extra-root-markers '("early-init.el"))
+
+;; Escolher um projeto (SPC p p) abre a raiz dele no dired, sem menu de comandos.
+;; Para achar arquivos dentro do projeto: SPC SPC (project-find-file).
+(setopt project-switch-commands #'project-dired)
+
+(defun my/open-project-dired (dir)
+  "Abre DIR (raiz do projeto) no dired e registra o projeto. Usado pelo dashboard."
+  (let ((dir (file-name-as-directory (expand-file-name dir))))
+    (dired dir)
+    (when-let* ((pr (project-current nil dir)))
+      (project-remember-project pr))))
 (add-hook 'emacs-startup-hook
           (lambda ()
             (when-let* ((pr (project-current nil user-emacs-directory)))
@@ -385,6 +410,7 @@ EMACS-D: a listagem é de ~/.emacs.d, então pastas de dados também ficam ocult
   (dashboard-items '((recents  . 8)     ; últimos arquivos abertos
                      (projects . 6)))   ; últimos projetos
   (dashboard-projects-backend 'project-el)
+  (dashboard-projects-switch-function #'my/open-project-dired)
   (dashboard-icon-type 'nerd-icons)
   (dashboard-set-heading-icons t)
   (dashboard-set-file-icons t)
@@ -537,6 +563,61 @@ Usa o do projeto se for válido; senão, cai para o TypeScript global."
   (when-let* ((server (and (fboundp 'eglot-current-server) (eglot-current-server))))
     (eglot-shutdown server)
     (call-interactively #'eglot)))
+
+(defun my/check-completion ()
+  "Abre um relatório sobre o LSP e o autocompletar do buffer atual.
+Serve para depurar quando o completion não aparece (ex.: em arquivos .astro)."
+  (interactive)
+  (let* ((buf (current-buffer))
+         (server (and (fboundp 'eglot-current-server) (eglot-current-server)))
+         (local (remq t completion-at-point-functions))
+         (chain (append local (default-value 'completion-at-point-functions)))
+         (report
+          (list
+           (format "major-mode ............ %s" major-mode)
+           (format "arquivo ............... %s" (or buffer-file-name "(sem arquivo)"))
+           (format "eglot conectado ....... %s" (if server "sim" "NÃO"))
+           (format "completionProvider .... %S"
+                   (if server (eglot-server-capable :completionProvider) "(sem servidor)"))
+           (format "1ª fonte completion ... %s" (or (car chain) "nenhuma"))
+           (format "cadeia de fontes ...... %S" chain)
+           (format "diagnósticos (flymake)  %s"
+                   (if (bound-and-true-p flymake-mode)
+                       (length (flymake-diagnostics))
+                     "flymake desligado"))
+           (format "astro-ls no PATH ...... %s" (or (executable-find "astro-ls") "NÃO ENCONTRADO"))
+           (format "node no PATH .......... %s" (or (executable-find "node") "NÃO ENCONTRADO"))
+           (format "eglot-ensure no hook .. %s"
+                   (if (and (boundp 'astro-ts-mode-hook) (memq 'eglot-ensure astro-ts-mode-hook))
+                       "sim" "não"))
+           (format "servidor escolhido .... %s"
+                   (condition-case err
+                       (format "%S" (nth 3 (eglot--guess-contact)))
+                     (error (format "ERRO: %s" (error-message-string err)))))
+           (format "tsdk (astro-ls) ....... %s" (my/tsdk))
+           (format "gramática astro ....... %s"
+                   (if (fboundp 'treesit-language-available-p)
+                       (treesit-language-available-p 'astro)
+                     "?")))))
+    (with-current-buffer (get-buffer-create "*Diagnóstico LSP*")
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (insert (string-join report "\n") "\n\n"
+                "Dica: em .astro, digite console. no frontmatter (entre as linhas ---)\n"
+                "e aperte C-M-i. Feche este buffer com q.\n"))
+      (special-mode)
+      (setq-local default-directory (buffer-local-value 'default-directory buf)))
+    (pop-to-buffer "*Diagnóstico LSP*")))
+
+(defun my/eglot-toggle-log ()
+  "Liga/desliga o log das mensagens LSP (`eglot-events-buffer'); vale após reconectar.
+Fica desligado por padrão para não gastar memória."
+  (interactive)
+  (let ((on (zerop (or (plist-get eglot-events-buffer-config :size) 0))))
+    (setopt eglot-events-buffer-config
+            (if on '(:size 2000000 :format full) '(:size 0)))
+    (message "Log do eglot: %s (rode M-x eglot-reconnect e depois M-x eglot-events-buffer)"
+             (if on "ligado" "desligado"))))
 
 ;; O Eglot já conhece bash-language-server, vscode-json-language-server e
 ;; lua-language-server (com os language-ids corretos). Só sobrescrevemos o que
@@ -708,6 +789,8 @@ Em arquivos Astro, o projeto precisa ter o prettier E o prettier-plugin-astro."
     (kbd "<leader>ff") #'find-file
     (kbd "<leader>fr") #'consult-recent-file
     (kbd "<leader>fs") #'save-buffer
+    (kbd "<leader>fn") #'dired-create-empty-file   ; novo arquivo vazio na pasta atual
+    (kbd "<leader>fN") #'make-directory            ; nova pasta
     ;; Buffers
     (kbd "<leader>bb") #'consult-buffer
     (kbd "<leader>bd") #'kill-current-buffer
@@ -739,6 +822,8 @@ Em arquivos Astro, o projeto precisa ter o prettier E o prettier-plugin-astro."
     (kbd "<leader>co") #'eglot-code-action-organize-imports
     (kbd "<leader>cd") #'consult-flymake
     (kbd "<leader>ce") #'eglot
+    (kbd "<leader>cc") #'my/check-completion      ; o autocompletar usa o LSP?
+    (kbd "<leader>cl") #'my/eglot-toggle-log      ; log das mensagens LSP (depuração)
     ;; Toggle
     (kbd "<leader>tt") #'consult-theme
     (kbd "<leader>tl") #'display-line-numbers-mode
@@ -759,7 +844,11 @@ Em arquivos Astro, o projeto precisa ter o prettier E o prettier-plugin-astro."
 
   ;; No dired: g . mostra/oculta dotfiles (como no Doom Emacs)
   (with-eval-after-load 'dired
-    (evil-define-key 'normal dired-mode-map "g." #'my/toggle-dotfiles))
+    (evil-define-key 'normal dired-mode-map
+      "g."           #'my/toggle-dotfiles
+      (kbd "TAB")    #'dired-subtree-toggle   ; expande/recolhe a pasta sob o cursor
+      (kbd "<backtab>") #'dired-subtree-cycle ; S-TAB: expande por níveis
+      "gu"           #'dired-subtree-up))     ; sobe para a pasta que contém o item
 
   (which-key-add-key-based-replacements
     "SPC f" "arquivos"

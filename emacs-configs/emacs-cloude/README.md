@@ -33,7 +33,19 @@ Ao listar `~/.emacs.d` (`SPC f f`) ou os arquivos do projeto `~/.emacs.d` (`SPC 
 
 ## Dashboard
 
-Ao abrir o Emacs sem arquivo, aparece a tela inicial com os **últimos 8 arquivos** e os **últimos 6 projetos**. Use `j`/`k` para andar e `RET` para abrir (ou `r` / `p` para pular para a lista de recentes / projetos). O `~/.emacs.d` aparece normalmente como projeto. Para mudar as quantidades, edite `dashboard-items` no `init.el`.
+Ao abrir o Emacs sem arquivo, aparece a tela inicial com os **últimos 8 arquivos** e os **últimos 6 projetos**. Para mudar as quantidades, edite `dashboard-items` no `init.el`. O `~/.emacs.d` aparece normalmente como projeto.
+
+| Tecla | Ação |
+|---|---|
+| `RET` ou clique | Abrir o item (arquivo recente, ou projeto no dired) |
+| `TAB` / `S-TAB` | Próximo / item anterior |
+| `r` | Ir para os arquivos recentes (apertar de novo avança de item) |
+| `p` | Ir para os projetos (idem) |
+| `{` / `}` | Seção anterior / próxima |
+| `g` | Atualizar a lista |
+| `SPC b h` | Voltar ao dashboard de qualquer lugar |
+
+Escolher um **projeto** (no dashboard ou em `SPC p p`) abre a pasta raiz dele no dired. Para achar arquivos dentro dele, use `SPC SPC`. Com o Evil, algumas teclas do dashboard podem diferir (o `evil-collection` as remapeia); `TAB`, `RET` e o clique sempre funcionam.
 
 ## Convenções
 
@@ -65,6 +77,8 @@ O resto é o Vim de sempre (`h j k l`, `w b e`, `dd`, `yy`, `p`, `u`, `C-r`, `/`
 | `SPC f f` | Abrir arquivo |
 | `SPC f r` | Arquivos recentes |
 | `SPC f s` | Salvar |
+| `SPC f n` | Criar um arquivo vazio na pasta atual (pede o nome) |
+| `SPC f N` | Criar uma pasta (cria também as pastas intermediárias) |
 
 ### Buffers (`SPC b`)
 
@@ -97,7 +111,7 @@ O resto é o Vim de sempre (`h j k l`, `w b e`, `dd`, `yy`, `p`, `u`, `C-r`, `/`
 
 | Tecla | Ação |
 |---|---|
-| `SPC p p` | Trocar de projeto |
+| `SPC p p` | Trocar de projeto (abre a raiz no dired) |
 | `SPC p f` | Abrir arquivo do projeto |
 | `SPC p b` | Buffers do projeto |
 
@@ -121,6 +135,8 @@ No Magit: `?` abre o menu com todas as teclas, `TAB` expande/recolhe, `s` / `u` 
 | `SPC c o` | Organizar imports |
 | `SPC c d` | Listar diagnósticos (erros e avisos) |
 | `SPC c e` | Iniciar o eglot manualmente |
+| `SPC c c` | Abre um relatório do LSP e do autocompletar do buffer atual (depuração) |
+| `SPC c l` | Ligar/desligar o log das mensagens LSP (depois reconecte e use `M-x eglot-events-buffer`) |
 
 ### Toggle (`SPC t`)
 
@@ -149,6 +165,30 @@ No Magit: `?` abre o menu com todas as teclas, `TAB` expande/recolhe, `s` / `u` 
 | `SPC h k` | Descrever uma tecla |
 | `SPC h m` | Descrever o modo atual |
 | `SPC q q` | Sair do Emacs |
+
+## Arquivos no dired
+
+Abra uma pasta com `SPC f f` (ou escolha um projeto em `SPC p p`). No dired, as operações valem para o arquivo sob o cursor ou, se houver arquivos marcados, para todos os marcados.
+
+| Tarefa | Teclas |
+|---|---|
+| **Criar arquivo** | `SPC f n` (pede o nome). Alternativa: `SPC f f`, digite um nome novo e salve com `SPC f s` |
+| **Criar pasta** | `+` no dired (ou `SPC f N`) |
+| **Renomear / mover** | `R` (digite o novo nome, ou a pasta de destino para mover) |
+| **Copiar / duplicar** | `C` (digite a pasta de destino, ou um novo nome para duplicar na mesma pasta) |
+| **Excluir** | `D` (pede confirmação). Ou `d` para marcar e `x` para excluir os marcados |
+| **Editar o conteúdo** | `RET` abre o arquivo; `SPC f s` salva |
+| **Editar nomes direto no buffer** | `M-x wdired-change-to-wdired-mode` (ou `C-x C-q`); edite os nomes, `C-c C-c` aplica |
+
+**Marcar vários arquivos:** `m` marca, `u` desmarca, `U` desmarca todos, `t` inverte a seleção, `% m` marca por expressão regular. Depois use `R`, `C` ou `D`.
+
+**Mover ou copiar entre pastas sem digitar o caminho:** divida a janela (`SPC w v`), abra a pasta de destino na outra janela e use `R` ou `C`: o Emacs já sugere a pasta da outra janela. Se a pasta de destino não existir, ele oferece criá-la.
+
+**Ver a estrutura do projeto (árvore):** `TAB` expande/recolhe a pasta sob o cursor, mostrando o conteúdo logo abaixo, com recuo. `S-TAB` expande por níveis, e `g u` sobe para a pasta que contém o item. `node_modules` e (com os dotfiles ocultos) as pastas com ponto não aparecem na árvore. O dired mostra só os nomes por padrão; `(` alterna os detalhes (permissões, tamanho, data).
+
+**Outras teclas úteis:** `^` sobe uma pasta, `o` abre em outra janela, `w` copia o nome do arquivo, `g r` atualiza a lista, `g .` mostra/oculta dotfiles, `K` remove linhas da lista (sem apagar o arquivo).
+
+Atenção: no Emacs, excluir é **permanente** (não vai para a Lixeira).
 
 ## Navegação de código (modo normal)
 
@@ -216,7 +256,7 @@ Para Astro, crie um `.prettierrc` no projeto:
 | `my/treesit-install-all` | Instalar as gramáticas tree-sitter que faltam |
 | `my/toggle-rass` | Ligar/desligar o Tailwind via `rass` (também em `SPC t r`) |
 | `eglot-reconnect` | Reiniciar a conexão com o LSP |
-| `eglot-events-buffer` | Ver a conversa com o servidor LSP (depuração) |
+| `eglot-events-buffer` | Ver a conversa com o servidor LSP (depuração). O log fica desligado por padrão: ligue antes com `SPC c l` e reconecte |
 | `nerd-icons-install-fonts` | Baixar a fonte dos ícones |
 | `my/tsdk` (via `M-:`) | Ver qual TypeScript o `astro-ls` está usando |
 
@@ -255,6 +295,7 @@ Os links são de memória (só o do `dashboard` e o manual do `eglot` foram conf
 | `apheleia` | https://github.com/radian-software/apheleia | Formata o arquivo ao salvar, sem mover o cursor |
 | `magit` | https://github.com/magit/magit | Interface completa de git |
 | `diff-hl` | https://github.com/dgutov/diff-hl | Marcas de alteração na margem |
+| `dired-subtree` | https://github.com/Fuco1/dired-hacks | Árvore de pastas dentro do dired (`TAB` expande/recolhe) |
 | `eat` | https://codeberg.org/akib/emacs-eat | Terminal dentro do Emacs (sem compilar nada) |
 
 ### Embutidos no Emacs (não instalam nada)

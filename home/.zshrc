@@ -3,16 +3,30 @@ export PATH="/opt/local/bin:$PATH"
 export PATH="/opt/local/sbin:$PATH="
 export PATH="$HOME/.local/bin:$PATH"
 
-# Ajusta o PATH temporariamente caso o Emacs do MacPorts não esteja mapeado globalmente
+# adding an appropriate PATH variable for use with MacPorts.
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# adicionado por install-deps.sh
+export PATH="/Users/sdobri/.nvm/current/bin:$PATH"
+
+# adicionado por install-deps.sh
+export PATH="/Users/sdobri/.local/bin:$PATH"
+
+
 if ! command -v emacs >/dev/null; then
-    if [ -x "/opt/local/bin/emacs" ]; then
+    if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
+        export PATH="/Applications/Emacs.app/Contents/MacOS:/Applications/Emacs.app/Contents/MacOS/bin:$PATH"
+    elif [ -x "/opt/local/bin/emacs" ]; then
         export PATH="/opt/local/bin:$PATH"
-    elif [ -x "/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs" ]; then
-        export PATH="/Applications/MacPorts/Emacs.app/Contents/MacOS:$PATH"
     else
-        error_exit "GNU Emacs não encontrado. Certifique-se de que instalou o Emacs via MacPorts."
+        error_exit "GNU Emacs não encontrado. Instale o Emacs 31.1 (emacsformacosx.com) em /Applications."
     fi
 fi
+
 
 # Path to your Oh My Zsh installation.
 #export ZSH="$HOME/.oh-my-zsh"
@@ -112,5 +126,5 @@ fi
 
 
 # nvm
-source /opt/local/share/nvm/init-nvm.sh
+# source /opt/local/share/nvm/init-nvm.sh
 
