@@ -60,6 +60,9 @@ alias ....='cd ../../../'
 # update node packages
 alias update-pkg="ncu --interactive --format group"
 
+alias clear-ds-store='find . -type f \( -name ".DS_Store" -o -name "._.DS_Store" \) -delete -print 2>&1 | grep -v "Permission denied"'
+alias cds=clear-ds-store
+
 # Git
 alias gsync="git pull && git push && git status --short"
 alias gps="git push && git status --short"
