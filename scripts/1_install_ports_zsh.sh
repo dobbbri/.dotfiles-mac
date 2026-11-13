@@ -38,9 +38,10 @@ mv ~/.zshrc ~/.zshrc-original
 
 echo "\.DS_Store" >>~/.stow-global-ignore
 
-stow alacritty
-stow lazyvim
-stow home
+stow --adopt alacritty
+stow --adopt nvim
+stow --adopt lazyvim
+stow --adopt home
 
 echo "fix ssh permission -----------------------------------------------------"
 cd ~ && ./.ssh/fix_ssh_permission.sh

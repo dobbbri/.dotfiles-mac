@@ -1,7 +1,8 @@
 # If you come from bash you might have to change your $PATH.
 export PATH="/opt/local/bin:$PATH"
-export PATH="/opt/local/sbin:$PATH="
+export PATH="/opt/local/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
 
 # adding an appropriate PATH variable for use with MacPorts.
 export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
