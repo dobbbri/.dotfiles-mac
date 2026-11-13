@@ -1,10 +1,11 @@
 [core]
 	editor = nvim
+	excludesfile = /Users/sdobri/.gitignore_global
 
 [user]
 	name = Sergio Dobri
 	email = sergiodobri@gmail.com
-  username = dobbbri
+    username = dobbbri
 	signingkey = /Users/sdobri/.ssh/id_ed25519
 	
 [filter "lfs"]
@@ -18,7 +19,7 @@
 	smudge = cat	
 
 [commit]
-  gpgsign = true
+  	gpgsign = true
   
 [gpg]
 	format = ssh
