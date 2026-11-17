@@ -20,6 +20,9 @@ family = "Lekton Nerd Font Mono"
 # family = "UbuntuSansMono Nerd Font"
 # family = "UbuntuMono Nerd Font"
 
+[selection]
+save_to_clipboard = true
+
 [window]
 opacity = 0.75
 blur = true

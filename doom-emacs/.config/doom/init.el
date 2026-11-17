@@ -1,5 +1,8 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+;; Garante que treesit-ready-p exista antes de carregar qualquer autoload de pacote no Emacs 31.1
+(require 'treesit)
+
 (doom! :input
        ;;bidi
        ;;chinese
