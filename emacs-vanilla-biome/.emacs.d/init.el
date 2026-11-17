@@ -89,7 +89,7 @@
 
 ;; Fonte JetBrains Mono, tamanho 13 (:height é em décimos de ponto).
 ;; Os ícones vêm de outra fonte: rode `M-x nerd-icons-install-fonts' uma vez.
-(set-face-attribute 'default nil :family "JetBrains Mono" :height 130)
+(set-face-attribute 'default nil :family "Lekton Nerd Font Mono" :height 180)
 
 (defvar my/theme-escuro 'doom-one "Tema escuro usado por `my/toggle-theme'.")
 (defvar my/theme-claro 'doom-one-light "Tema claro usado por `my/toggle-theme'.")
@@ -353,20 +353,31 @@ Evita reformatar com os padrões do Biome projetos que não o usam."
        (not (my/biome-config-p))))
 
 (use-package apheleia
+  :ensure t
   :config
-  ;; Formata ao salvar (só formatação, como o Prettier fazia).
-  (setf (alist-get 'my-biome apheleia-formatters)
-        '("apheleia-npx" "biome" "format" "--stdin-file-path" filepath))
-  ;; Formata, organiza imports e aplica correções seguras do lint.
-  (setf (alist-get 'my-biome-check apheleia-formatters)
-        '("apheleia-npx" "biome" "check" "--write" "--stdin-file-path" filepath))
-  (dolist (modo my/biome-modos)
-    (setf (alist-get modo apheleia-mode-alist) 'my-biome))
-  ;; O Biome não formata YAML: remove o formatador padrão (Prettier).
-  (dolist (modo '(yaml-ts-mode yaml-mode))
-    (setf (alist-get modo apheleia-mode-alist nil 'remove) nil))
-  (add-hook 'apheleia-inhibit-functions #'my/biome-sem-config-p)
-  (apheleia-global-mode 1))
+  ;; Associa os modos tree-sitter do Emacs 31 ao formatador biome
+  (dolist (mode '(astro-ts-mode js-mode js-ts-mode
+                  typescript-mode typescript-ts-mode tsx-ts-mode
+                  json-mode json-ts-mode
+                  css-mode css-ts-mode))
+    (setf (alist-get mode apheleia-mode-alist) 'biome))
+  (apheleia-global-mode +1))
+
+;; (use-package apheleia
+;;   :config
+;;   ;; Formata ao salvar (só formatação, como o Prettier fazia).
+;;   (setf (alist-get 'my-biome apheleia-formatters)
+;;         '("apheleia-npx" "biome" "format" "--stdin-file-path" filepath))
+;;   ;; Formata, organiza imports e aplica correções seguras do lint.
+;;   (setf (alist-get 'my-biome-check apheleia-formatters)
+;;         '("apheleia-npx" "biome" "check" "--write" "--stdin-file-path" filepath))
+;;   (dolist (modo my/biome-modos)
+;;     (setf (alist-get modo apheleia-mode-alist) 'my-biome))
+;;   ;; O Biome não formata YAML: remove o formatador padrão (Prettier).
+;;   (dolist (modo '(yaml-ts-mode yaml-mode))
+;;     (setf (alist-get modo apheleia-mode-alist nil 'remove) nil))
+;;   (add-hook 'apheleia-inhibit-functions #'my/biome-sem-config-p)
+;;   (apheleia-global-mode 1))
 
 (defun my/biome-corrigir ()
   "Formata o buffer, organiza imports e aplica correções seguras do Biome.

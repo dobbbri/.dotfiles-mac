@@ -38,12 +38,12 @@ alias reload='source ~/.zshrc'
 
 myos="$(uname)"
 case $myos in
-Linux) alias ls='ls --color-auto';;
-Darwin) alias ls='ls -FG';;
+Linux) alias ls='ls -lha --color-auto';;
+Darwin) alias ls='ls -lha -FG';;
 *);;
 esac
 
-alias ll='ls -lha'
+alias ll='ls'
 
 
 

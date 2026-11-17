@@ -21,8 +21,9 @@ export PATH="/Users/sdobri/.local/bin:$PATH"
 if ! command -v emacs >/dev/null; then
     if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
         export PATH="/Applications/Emacs.app/Contents/MacOS:/Applications/Emacs.app/Contents/MacOS/bin:$PATH"
-    elif [ -x "/opt/local/bin/emacs" ]; then
-        export PATH="/opt/local/bin:$PATH"
+    elif [ -x "/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs" ]; then
+        export PATH="/Applications/MacPorts/Emacs.app/Contents/MacOS:/Applications/MacPorts/Emacs.app/Contents/MacOS/bin:$PATH"
+        export PATH="$HOME/.config/emacs/bin/:$PATH"
     else
         error_exit "GNU Emacs não encontrado. Instale o Emacs 31.1 (emacsformacosx.com) em /Applications."
     fi
