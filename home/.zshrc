@@ -7,15 +7,15 @@ export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
 # adding an appropriate PATH variable for use with MacPorts.
 export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#
+# # adicionado por install-deps.sh
+# export PATH="/Users/sdobri/.nvm/current/bin:$PATH"
 
 # adicionado por install-deps.sh
-export PATH="/Users/sdobri/.nvm/current/bin:$PATH"
-
-# adicionado por install-deps.sh
-export PATH="/Users/sdobri/.local/bin:$PATH"
+# export PATH="/Users/sdobri/.local/bin:$PATH"
 
 
 if ! command -v emacs >/dev/null; then
@@ -128,5 +128,5 @@ fi
 
 
 # nvm
-# source /opt/local/share/nvm/init-nvm.sh
+source /opt/local/share/nvm/init-nvm.sh
 

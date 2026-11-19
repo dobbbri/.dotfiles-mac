@@ -8,7 +8,7 @@ PREFIX="${HOME}/.local"
 # Portas do Node.js e do npm no MacPorts. Confira as versões atuais com:
 #   port search nodejs   e   port search npm
 NODE_PORT="nodejs22"
-NPM_PORT="npm10"
+NPM_PORT="npm12"
 
 # O MacPorts instala em /opt/local; garante que o script o enxergue
 export PATH="/opt/local/bin:/opt/local/sbin:${PATH}"
