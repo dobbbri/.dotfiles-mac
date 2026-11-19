@@ -106,9 +106,13 @@ stow -v -R -t "$HOME" "$PKG_NAME"
 if [ ! -d "$HOME/.config/emacs" ]; then
   echo "--> Clonando repositório oficial do Doom Emacs..."
   git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+  # O `doom install' roda sem o config.el: os links no cache do Doom evitam o aviso
+  # "grammar for astro failed to load" ao instalar o astro-ts-mode.
+  "$SCRIPT_DIR/build-grammars.sh" --link-only || true
   ~/.config/emacs/bin/doom install --no-config
 else
   echo "--> Doom Emacs já encontrado em ~/.config/emacs"
+  "$SCRIPT_DIR/build-grammars.sh" --link-only || true
 fi
 
 # 7. Sincronizar o Doom, capturar o ambiente do macOS e rodar o doctor.

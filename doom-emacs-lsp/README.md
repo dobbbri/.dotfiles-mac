@@ -67,10 +67,20 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 > **Se o erro continuar depois de rodar o script**, confira de onde o Emacs procura (o aviso "Gramáticas faltando" já mostra a pasta esperada, se ela existe e se está no `treesit-extra-load-path`):
 > * no terminal: `ls ~/.local/lib/tree-sitter` deve listar nove arquivos `libtree-sitter-*.dylib` (astro, bash, css, html, javascript, json, typescript, tsx e yaml);
 > * no Emacs: `M-: treesit-extra-load-path` deve incluir `~/.local/lib/tree-sitter`;
-> * o `build-grammars.sh` também cria links em `~/.config/emacs/.local/cache/tree-sitter` (pasta que o Emacs sempre consulta no Doom), como reserva caso o `treesit-extra-load-path` não inclua `~/.local/lib/tree-sitter`;
+> * o `build-grammars.sh` também cria links em `~/.config/emacs/.local/cache/tree-sitter`, a pasta que o Emacs sempre consulta no Doom. Os comandos `doom sync`, `doom install` e `doom doctor` rodam **sem** o seu `config.el` (portanto sem o `treesit-extra-load-path`) e só enxergam as gramáticas ali. Se aparecer `⛔ Warning (treesit): Cannot activate tree-sitter, because language grammar for astro failed to load` durante o `doom sync`, é isso: rode `./build-grammars.sh --link-only` (só refaz os links, sem recompilar) e o `doom sync` de novo;
 > * reinicie o Emacs por completo (`SPC q r` não recarrega o `treesit-extra-load-path` de uma sessão antiga).
 >
 > O `build-grammars.sh` lista no fim quais gramáticas estão `ok` ou `FALTA`. Depois reinicie o Emacs e confira com `M-: (mapcar #'treesit-language-available-p '(astro css tsx))` (tudo deve ser `t`) ou com `M-x my/treesit-checar-gramaticas`.
+
+> **🔧 Correção manual dos links (aviso no `doom sync`).** Se o `⛔ Warning (treesit): … grammar for astro failed to load` aparecer durante o `doom sync`, `doom install` ou `doom doctor`, crie os links na pasta de cache do Doom e sincronize de novo (testado e funcionou):
+>
+> ```bash
+> mkdir -p ~/.config/emacs/.local/cache/tree-sitter
+> ln -sf ~/.local/lib/tree-sitter/*.dylib ~/.config/emacs/.local/cache/tree-sitter/
+> ~/.config/emacs/bin/doom sync
+> ```
+>
+> É o mesmo que `./build-grammars.sh --link-only` faz, seguido do `doom sync`.
 
 > **📝 Nota Pós-Instalação (Ícones):** caso os ícones apareçam como quadrados vazios no macOS, instale a fonte **Symbols Nerd Font** (disponível em [nerdfonts.com](https://nerdfonts.com)) pelo Catálogo de Fontes (Font Book).
 
