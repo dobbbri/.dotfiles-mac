@@ -25,7 +25,7 @@
 ;; (setq projectile-project-search-path '("~/projects/"))
 
 ;; 4. Módulos (cada um num arquivo ao lado deste)
-(load! "+treesit")   ; tree-sitter e checagem das gramáticas
+(load! "+treesit")   ; caminho das gramáticas tree-sitter
 (load! "+lsp")       ; lsp-mode, Astro e Tailwind
 (load! "+biome")     ; formatação, lint e diagnóstico do Biome
 (load! "+org")       ; Org-mode

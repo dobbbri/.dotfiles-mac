@@ -14,7 +14,7 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 └── .config/
     └── doom/
         ├── config.el    # Base (PATH, tema, interface) e carrega os módulos abaixo
-        ├── +treesit.el  # Tree-sitter e checagem das gramáticas
+        ├── +treesit.el  # Caminho das gramáticas tree-sitter
         ├── +lsp.el      # lsp-mode, Astro (astro-ls) e Tailwind
         ├── +biome.el    # Formatação, lint e diagnóstico do Biome
         ├── +org.el      # Org-mode (capturas e atalhos)
@@ -25,7 +25,7 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 ## 🚀 Recursos Configurados
 
 * **Emacs 31.1 + Tree-sitter Nativo:** Realce de sintaxe e análise estrutural ultrarrápida para Astro, TSX, TypeScript, JavaScript, HTML, CSS e JSON.
-* **lsp-mode (módulo `lsp` do Doom):** Conecta os servidores do **Astro**, **TypeScript 6** e **Tailwind CSS** ao mesmo tempo no mesmo buffer (o Tailwind roda como add-on via `lsp-tailwindcss`). Ajustes leves para 8 GB de RAM (sem lens e sem breadcrumb, `lsp-idle-delay` 0.5, file watchers sem `.astro`, `dist`, `.vercel` e `.next`). A formatação nunca passa pelo LSP (`+format-with-lsp` desligado): quem formata é sempre o Biome via Apheleia.
+* **lsp-mode (módulo `lsp` do Doom):** Conecta os servidores do **Astro**, **TypeScript 6** e **Tailwind CSS** ao mesmo tempo no mesmo buffer (o Tailwind roda como add-on via `lsp-tailwindcss`). Ajustes leves para 8 GB de RAM (sem lens e sem breadcrumb, `lsp-idle-delay` 0.5, file watchers sem `.astro`, `dist` e `.vercel`). O `astro-ls` usa o TypeScript de `node_modules/typescript` do projeto (o do Astro já traz um). A formatação nunca passa pelo LSP (`+format-with-lsp` desligado): quem formata é sempre o Biome via Apheleia.
 * **Linter + Formatador BiomeJS:** Formatação ao salvar via `apheleia` (inclui `.astro`) e lint/diagnósticos em tempo real via `lsp-biome` (cliente do lsp-mode que roda `biome lsp-proxy` junto dos outros servidores, só em projetos com `biome.json`). Tudo segue o `biome.json` do projeto; em projetos sem ele o Biome não roda. YAML fica sem formatador. HTML (`.html` e a marcação dos `.astro`) só é formatado se o `biome.json` do projeto tiver `html.experimentalFullSupportEnabled: true` (veja a seção abaixo).
 * **Tema Catppuccin:** Sabor *Mocha* ativo por padrão.
 * **Org-mode Produtivo:** Templates de captura rápida (`SPC X`) e atalhos dedicados (`SPC n`).
@@ -55,7 +55,7 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 >
 > Se ocorrer algo parecido com isto, **rode o script de instalação**:
 > * um `.astro` abre só como "Astro", sem tree-sitter, e sem realce;
-> * aparece "Tree-sitter for … isn't available" ou o aviso "Gramáticas faltando" ao abrir o primeiro arquivo;
+> * aparece "Tree-sitter for … isn't available" ao abrir um arquivo;
 > * depois de atualizar o Emacs ou o macOS, as gramáticas deixam de carregar.
 >
 > ```bash
@@ -64,13 +64,13 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 > ./install.sh                   # alternativa: refaz a instalação completa
 > ```
 >
-> **Se o erro continuar depois de rodar o script**, confira de onde o Emacs procura (o aviso "Gramáticas faltando" já mostra a pasta esperada, se ela existe e se está no `treesit-extra-load-path`):
+> **Se o erro continuar depois de rodar o script**, confira de onde o Emacs procura:
 > * no terminal: `ls ~/.local/lib/tree-sitter` deve listar nove arquivos `libtree-sitter-*.dylib` (astro, bash, css, html, javascript, json, typescript, tsx e yaml);
 > * no Emacs: `M-: treesit-extra-load-path` deve incluir `~/.local/lib/tree-sitter`;
 > * o `build-grammars.sh` também cria links em `~/.config/emacs/.local/cache/tree-sitter`, a pasta que o Emacs sempre consulta no Doom. Os comandos `doom sync`, `doom install` e `doom doctor` rodam **sem** o seu `config.el` (portanto sem o `treesit-extra-load-path`) e só enxergam as gramáticas ali. Se aparecer `⛔ Warning (treesit): Cannot activate tree-sitter, because language grammar for astro failed to load` durante o `doom sync`, é isso: rode `./build-grammars.sh --link-only` (só refaz os links, sem recompilar) e o `doom sync` de novo;
 > * reinicie o Emacs por completo (`SPC q r` não recarrega o `treesit-extra-load-path` de uma sessão antiga).
 >
-> O `build-grammars.sh` lista no fim quais gramáticas estão `ok` ou `FALTA`. Depois reinicie o Emacs e confira com `M-: (mapcar #'treesit-language-available-p '(astro css tsx))` (tudo deve ser `t`) ou com `M-x my/treesit-checar-gramaticas`.
+> O `build-grammars.sh` lista no fim quais gramáticas estão `ok` ou `FALTA`. Depois reinicie o Emacs e confira com `M-: (mapcar #'treesit-language-available-p '(astro css tsx))` (tudo deve ser `t`).
 
 > **🔧 Correção manual dos links (aviso no `doom sync`).** Se o `⛔ Warning (treesit): … grammar for astro failed to load` aparecer durante o `doom sync`, `doom install` ou `doom doctor`, crie os links na pasta de cache do Doom e sincronize de novo (testado e funcionou):
 >
@@ -146,7 +146,6 @@ O Emacs também lê o `indentStyle` do `biome.json`: com `"tab"`, os buffers `.a
 
 ## 🩺 Diagnóstico
 
-* `M-x my/treesit-checar-gramaticas`: lista as gramáticas tree-sitter que faltam. Roda sozinho ao abrir o primeiro arquivo e mostra um aviso se algo estiver faltando.
 * `SPC c D` (`my/biome-diagnostico`): mostra o Biome em uso (projeto ou global) e sua versão, o `biome.json` encontrado, a indentação, se o suporte a HTML está ligado, se o Biome roda no buffer atual e avisos (versão diferente do `$schema`, versões com desalinhamento de JSX no Astro: 2.5.14, 2.6.0 e 2.6.1).
 
 O `biome.json` é lido como JSON de verdade (comentários e `extends` relativos incluídos) e fica em cache até o arquivo mudar.
@@ -163,6 +162,13 @@ for f in install.sh update.sh build-grammars.sh; do
 done
 stow -v doom-emacs-lsp
 ```
+
+## 🩹 Aviso "Unable to find typescript server path for astro-ls"
+
+O `astro-ls` lê o TypeScript de `<raiz do projeto>/node_modules/typescript/lib`. Se o aviso mostrar um caminho de subpasta (por exemplo `…/src/components/Footer/node_modules/typescript/lib`), o lsp-mode registrou uma subpasta como raiz, porque no primeiro arquivo você escolheu a opção `.` ("Import project at current directory"). O `+lsp.el` usa `lsp-auto-guess-root` para achar a raiz pelo Git/projectile. Para apagar a raiz errada que já ficou salva e reiniciar:
+
+* `M-x lsp-workspace-folders-remove` e escolha a subpasta errada;
+* `M-x lsp-workspace-restart` (ou feche e reabra o arquivo).
 
 ## 🔌 Trocar Eglot por lsp-mode
 
