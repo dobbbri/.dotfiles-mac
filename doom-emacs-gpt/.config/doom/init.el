@@ -1,47 +1,68 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(doom!
- :input
+;; Garante que treesit-ready-p exista antes de carregar qualquer autoload de pacote no Emacs 31.1
+(require 'treesit)
 
- :completion
- (company +childframe)
+(doom! :input
+       ;;bidi
+       ;;chinese
+       ;;japanese
+       ;;layout
 
- :ui
- doom
- doom-dashboard
- hl-todo
- modeline
- nav-flash
- ophints
- (popup +defaults)
- treemacs
- vc-gutter
- vi-tilde-fringe
- window-select
+       :completion
+       company
+       vertico
 
- :editor
- (format +onsave)
- snippets
+       :ui
+       doom
+       doom-dashboard
+       hl-todo
+       modeline
+       ophints
+       (popup +defaults)
+       vc-gutter
+       vi-tilde-fringe
+       workspaces
 
- :emacs
- dired
- electric
- undo
- vc
+       :editor
+       (evil +everywhere)
+       file-templates
+       fold
+       (format +onsave)
+       snippets
 
- :checkers
- (syntax +flycheck)
+       :emacs
+       dired
+       electric
+       ibuffer
+       undo
+       vc
 
- :tools
- (lsp +peek)
- magit
+       :term
+       vterm
 
- :lang
- (javascript +lsp)
- (web +lsp)
- (json +lsp)
- (css +lsp)
+       :checkers
+       syntax
 
- :config
- (default +bindings +smartparens)
-)
+       :tools
+       (eval +overlay)
+       lookup
+       lsp
+       magit
+       tree-sitter
+
+       :os
+       (:if (featurep :system 'macos) macos)
+
+       :lang
+       emacs-lisp
+       (javascript +lsp +tree-sitter)
+       json
+       markdown
+       (org +pretty)
+       sh
+       (web +lsp +tree-sitter)
+       yaml
+
+       :config
+       (default +bindings +smartparens))

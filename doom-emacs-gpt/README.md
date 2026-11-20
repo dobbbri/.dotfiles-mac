@@ -1,186 +1,194 @@
-# Doom Emacs — configuração para macOS / Emacs 31.1
+# Doom Emacs Dotfiles — macOS Ventura (Intel 2015 / 8GB RAM) + MacPorts
 
-Configuração gerenciada por **GNU Stow**, com foco em Astro, JavaScript, TypeScript, TSX, Tailwind CSS e Biome 2.5.
+Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, gerenciada via **GNU Stow** (`~/.dotfiles-mac/doom-emacs-gpt`). Otimizada para desenvolvimento web moderno (**Astro, React, TypeScript 6, Tailwind CSS, Node.js, BiomeJS**) e organização pessoal (**Org-mode**).
 
-O pacote instala o Doom Emacs em `~/.config/emacs` e liga os arquivos desta pasta a `~/.config/doom`. **O Emacs já instalado não é reinstalado nem substituído.**
-
-## Estrutura
+## 📁 Estrutura do Pacote Stow
 
 ```text
-doom-emacs-gpt/
-├── README.md
-├── install.sh
-├── .config/
-│   └── doom/
-│       ├── init.el
-│       ├── packages.el
-│       └── config.el
-├── scripts/
-│   ├── install-biome-project.sh
-│   └── install-treesit.el
-└── templates/
-    └── biome.json
+~/.dotfiles-mac/doom-emacs-gpt/
+├── .stow-local-ignore   # Impede o Stow de linkar os scripts e o README em ~/
+├── install.sh           # Instalador completo (MacPorts, Node, Stow, Doom)
+├── update.sh            # Script de atualização de pacotes e sistema
+├── build-grammars.sh    # Compila as gramáticas tree-sitter
+├── README.md            # Documentação
+└── .config/
+    └── doom/
+        ├── config.el    # Base (PATH, tema, interface) e carrega os módulos abaixo
+        ├── +treesit.el  # Caminho das gramáticas tree-sitter
+        ├── +lsp.el      # lsp-mode, Astro (astro-ls) e Tailwind
+        ├── +biome.el    # Formatação, lint e diagnóstico do Biome
+        ├── +org.el      # Org-mode (capturas e atalhos)
+        ├── init.el      # Módulos ativos do Doom Emacs
+        └── packages.el  # Pacotes externos (Catppuccin, astro-ts-mode, lsp-biome, lsp-tailwindcss)
 ```
 
-## Requisitos
+## 🚀 Recursos Configurados
 
-- macOS e GNU Emacs 31.1.
-- Git.
-- Node.js e npm.
-- GNU Stow.
-- `cc` / Xcode Command Line Tools para compilar as gramáticas Tree-sitter.
-- `ripgrep` é recomendado para a busca do Doom.
+* **Emacs 31.1 + Tree-sitter Nativo:** Realce de sintaxe e análise estrutural ultrarrápida para Astro, TSX, TypeScript, JavaScript, HTML, CSS e JSON.
+* **lsp-mode (módulo `lsp` do Doom):** Conecta os servidores do **Astro**, **TypeScript 6** e **Tailwind CSS** ao mesmo tempo no mesmo buffer (o Tailwind roda como add-on via `lsp-tailwindcss`). Ajustes leves para 8 GB de RAM (sem lens e sem breadcrumb, `lsp-idle-delay` 0.5, file watchers sem `.astro`, `dist` e `.vercel`). O `astro-ls` usa o TypeScript de `node_modules/typescript` do projeto (o do Astro já traz um). A formatação nunca passa pelo LSP (`+format-with-lsp` desligado): quem formata é sempre o Biome via Apheleia.
+* **Linter + Formatador BiomeJS:** Formatação ao salvar via `apheleia` (inclui `.astro`) e lint/diagnósticos em tempo real via `lsp-biome` (cliente do lsp-mode que roda `biome lsp-proxy` junto dos outros servidores, só em projetos com `biome.json`). Tudo segue o `biome.json` do projeto; em projetos sem ele o Biome não roda. YAML fica sem formatador. HTML (`.html` e a marcação dos `.astro`) só é formatado se o `biome.json` do projeto tiver `html.experimentalFullSupportEnabled: true` (veja a seção abaixo).
+* **Tema Catppuccin:** Sabor *Mocha* ativo por padrão.
+* **Org-mode Produtivo:** Templates de captura rápida (`SPC X`) e atalhos dedicados (`SPC n`).
 
-No macOS, caso ainda faltem ferramentas auxiliares:
+## 🛠️ Instalação
+
+1. Dê permissão de execução aos scripts:
+   ```bash
+   cd ~/.dotfiles-mac/doom-emacs-gpt
+   chmod +x install.sh update.sh build-grammars.sh
+   ```
+
+2. *(Se precisar)* ajuste a versão do Node.js em `NODE_VERSION` no topo do `install.sh` e do `update.sh` (hoje `22`). O Node vem do **nvm** (porta `nvm` do MacPorts): o instalador roda `sudo port install nvm`, carrega `/opt/local/share/nvm/init-nvm.sh`, executa `nvm install 22` e define a versão como padrão.
+
+3. Execute o instalador:
+   ```bash
+   ./install.sh
+   ```
+
+4. *(Opcional)* Adicione o CLI do `doom` ao seu `~/.zshrc`:
+   ```bash
+   echo 'export PATH="$HOME/.config/emacs/bin:$PATH"' >> ~/.zshrc
+   source ~/.zshrc
+   ```
+
+> **🌳 Lembrete: gramáticas tree-sitter.** O Emacs **não** instala gramáticas sozinho (`treesit-auto-install-grammar` está em `never`). Todas (`astro`, `bash`, `css`, `html`, `javascript`, `json`, `yaml`, `typescript` e `tsx`) vêm do `build-grammars.sh`, que o `install.sh` já executa.
+>
+> Se ocorrer algo parecido com isto, **rode o script de instalação**:
+> * um `.astro` abre só como "Astro", sem tree-sitter, e sem realce;
+> * aparece "Tree-sitter for … isn't available" ao abrir um arquivo;
+> * depois de atualizar o Emacs ou o macOS, as gramáticas deixam de carregar.
+>
+> ```bash
+> cd ~/.dotfiles-mac/doom-emacs-gpt
+> ./build-grammars.sh            # recompila todas (rápido); ou só uma: ./build-grammars.sh tsx
+> ./install.sh                   # alternativa: refaz a instalação completa
+> ```
+>
+> **Se o erro continuar depois de rodar o script**, confira de onde o Emacs procura:
+> * no terminal: `ls ~/.local/lib/tree-sitter` deve listar nove arquivos `libtree-sitter-*.dylib` (astro, bash, css, html, javascript, json, typescript, tsx e yaml);
+> * no Emacs: `M-: treesit-extra-load-path` deve incluir `~/.local/lib/tree-sitter`;
+> * o `build-grammars.sh` também cria links em `~/.config/emacs/.local/cache/tree-sitter`, a pasta que o Emacs sempre consulta no Doom. Os comandos `doom sync`, `doom install` e `doom doctor` rodam **sem** o seu `config.el` (portanto sem o `treesit-extra-load-path`) e só enxergam as gramáticas ali. Se aparecer `⛔ Warning (treesit): Cannot activate tree-sitter, because language grammar for astro failed to load` durante o `doom sync`, é isso: rode `./build-grammars.sh --link-only` (só refaz os links, sem recompilar) e o `doom sync` de novo;
+> * reinicie o Emacs por completo (`SPC q r` não recarrega o `treesit-extra-load-path` de uma sessão antiga).
+>
+> O `build-grammars.sh` lista no fim quais gramáticas estão `ok` ou `FALTA`. Depois reinicie o Emacs e confira com `M-: (mapcar #'treesit-language-available-p '(astro css tsx))` (tudo deve ser `t`).
+
+> **🔧 Correção manual dos links (aviso no `doom sync`).** Se o `⛔ Warning (treesit): … grammar for astro failed to load` aparecer durante o `doom sync`, `doom install` ou `doom doctor`, crie os links na pasta de cache do Doom e sincronize de novo (testado e funcionou):
+>
+> ```bash
+> mkdir -p ~/.config/emacs/.local/cache/tree-sitter
+> ln -sf ~/.local/lib/tree-sitter/*.dylib ~/.config/emacs/.local/cache/tree-sitter/
+> ~/.config/emacs/bin/doom sync
+> ```
+>
+> É o mesmo que `./build-grammars.sh --link-only` faz, seguido do `doom sync`.
+
+> **📝 Nota Pós-Instalação (Ícones):** caso os ícones apareçam como quadrados vazios no macOS, instale a fonte **Symbols Nerd Font** (disponível em [nerdfonts.com](https://nerdfonts.com)) pelo Catálogo de Fontes (Font Book).
+
+> **Como confirmar o nome exato da família no Emacs**
+>
+> Caso o Emacs exiba um erro dizendo que a fonte não foi encontrada, execute o comando abaixo dentro do próprio Emacs para listar o nome exato que ele está lendo da sua pasta Fonts:
+> 1. Pressione M-x (no Mac, geralmente Option + x ou Esc seguido de x).
+> 2. Digite eval-expression e pressione Enter.
+> 3. Cole o código abaixo e pressione Enter:
+>
+> ```elisp
+> (seq-filter (lambda (f) (string-match-p "JetBrains" f)) (font-family-list))
+> ```
+>
+> O resultado aparecerá na barra inferior (minibuffer) mostrando o nome exato entre aspas que você deve usar no seu config.el.
+
+## ⌨️ Atalhos Principais
+
+| Atalho | Ação |
+| :--- | :--- |
+| `SPC f f` | Buscar arquivo no projeto |
+| `SPC c x` | Listar erros e avisos do Linter (BiomeJS + LSP) |
+| `SPC c a` | Code Actions (correções rápidas do LSP/Biome) |
+| `SPC c B` | Biome: aplicar todas as correções automáticas (`lsp-biome-fix-all`) |
+| `SPC c O` | Biome: organizar imports (`lsp-biome-organize-imports`) |
+| `SPC c L` | Biome: lint do projeto inteiro (buffer de compilação) |
+| `SPC c D` | Biome: diagnóstico rápido no minibuffer |
+| `SPC g g` | Abrir Git (Magit) |
+| `SPC o t` | Abrir terminal integrado (vterm) |
+| `SPC X` | Captura rápida no Org-mode (`t` Tarefa, `d` Diário, `p` Projeto) |
+| `SPC n i` / `d` | Abrir `inbox.org` ou `diario.org` |
+
+## 🧾 Log da instalação
+
+No final, o `install.sh` roda `doom sync --env` e `doom doctor` e grava a saída de ambos (também mostrada na tela) em `~/.local/state/doom-emacs/install-AAAAMMDD-HHMMSS.log`. Se o `doom doctor` apontar problemas, o script avisa em vez de parar. Para ver só o que importa: `grep -n -i 'error\|warn' ~/.local/state/doom-emacs/install-*.log`.
+
+## 🧱 Pacotes do MacPorts
+
+Além do Emacs, o `install.sh` instala `ripgrep`, `fd`, `git`, `stow`, `nvm`, `cmake`, `libtool`, `shfmt` e `shellcheck`. O `cmake` e o `libtool` servem para compilar o `vterm` (`SPC o t`); o `shfmt` e o `shellcheck`, para formatar e checar shell scripts.
+
+## 📦 Pacotes npm globais em `~/.local`
+
+O `install.sh` instala `typescript@6`, `typescript-language-server`, `@astrojs/language-server`, `@tailwindcss/language-server`, `@biomejs/biome`, `stylelint` e `js-beautify` em `~/.local` (`npm install -g --prefix ~/.local`), **sem sudo**. Assim eles não dependem do MacPorts nem da versão do Node do nvm e continuam lá quando o Node é atualizado. O `update.sh` atualiza no mesmo lugar. O Emacs já inclui `~/.local/bin` no `exec-path`; para usar os comandos no terminal, o `~/.zshrc` precisa de `export PATH="$HOME/.local/bin:$PATH"` (o instalador avisa se faltar).
+
+Se você já tinha esses pacotes instalados com `sudo npm install -g` (em `/opt/local`), a cópia de `~/.local/bin` passa na frente; para limpar as antigas: `sudo npm uninstall -g typescript typescript-language-server @astrojs/language-server @tailwindcss/language-server @biomejs/biome stylelint js-beautify`.
+
+### Node (nvm) no Emacs e no terminal
+
+* **Emacs:** o app gráfico não carrega o nvm, então o `install.sh` cria links estáveis `~/.local/bin/node`, `npm` e `npx` apontando para a versão ativa do nvm (o `update.sh` os refaz depois de `nvm install 22`). Os servidores LSP usam esse `node`.
+* **Terminal:** adicione ao `~/.zshrc` a linha `source /opt/local/share/nvm/init-nvm.sh` para usar `nvm`, `node` e `npm` normalmente.
+* Não defina `prefix` no `~/.npmrc`: o nvm não funciona com essa opção. Os pacotes globais usam `--prefix ~/.local` direto na linha de comando.
+
+## 🧰 Biome no projeto
+
+O Biome global (instalado pelo `install.sh`) serve de reserva. Em cada projeto, instale a mesma versão do `$schema` do `biome.json`:
 
 ```bash
-xcode-select --install
-sudo macport install stow ripgrep fd
+npm i -D --save-exact @biomejs/biome
 ```
 
-Não execute `brew install emacs`: o instalador deste pacote não instala nem atualiza o Emacs.
+## 🌐 Formatação de HTML
 
-## Instalação
+O Biome só formata a marcação HTML (em `.astro` e `.html`) com o suporte a HTML ligado. Sem isso, nos `.astro` ele formata apenas o frontmatter e deixa o `<div>…</div>` como está, e os `.html` ficam sem formatação. Adicione ao `biome.json` do projeto:
 
-Coloque a pasta `doom-emacs-gpt` diretamente dentro do diretório que você usa como repositório de dotfiles. Exemplo:
-
-```text
-~/.dotfiles-mac/
-└── doom-emacs-gpt/
+```json
+"html": {
+	"experimentalFullSupportEnabled": true,
+	"formatter": { "enabled": true },
+	"linter": { "enabled": true }
+}
 ```
 
-Então:
+O Emacs detecta essa chave sozinho: com ela, `.html` passa a ser formatado ao salvar; sem ela, o Apheleia pula o arquivo em vez de dar erro.
+
+O Emacs também lê o `indentStyle` do `biome.json`: com `"tab"`, os buffers `.astro`, `.ts`, `.tsx`, `.js`, `.css` e `.json` passam a indentar com tabs (largura 2), para não divergir do que o Biome grava ao salvar. Para aplicar o Biome de uma vez em um projeto que ainda usa espaços (um commit grande, mas só uma vez): `npx biome format --write src`.
+
+## 🩺 Diagnóstico
+
+* `SPC c D` (`my/biome-diagnostico`): mostra no minibuffer o executável do Biome em uso, o `biome.json` encontrado e se o suporte a HTML está ativo.
+
+## 🔗 Stow: migrando dos pacotes antigos `doom-emacs` ou `doom-emacs-lsp`
+
+O `.stow-local-ignore` deste pacote impede o Stow de linkar `install.sh`, `update.sh`, `build-grammars.sh` e `README.md` em `~/`. Se algum pacote antigo já criou esses links, remova-os antes de aplicar o novo:
 
 ```bash
-cd ~/.dotfiles-mac/doom-emacs-gpt
-chmod +x install.sh scripts/install-biome-project.sh
-./install.sh
+cd ~/.dotfiles-mac
+stow -D doom-emacs 2>/dev/null || true
+stow -D doom-emacs-lsp 2>/dev/null || true
+for f in install.sh update.sh build-grammars.sh README.md; do
+  [ -L "$HOME/$f" ] && rm "$HOME/$f"
+done
+stow -v doom-emacs-gpt
 ```
 
-O instalador:
+## 🩹 Aviso "Unable to find typescript server path for astro-ls"
 
-1. verifica Emacs, Git, Node.js, npm, Stow e compilador C;
-2. clona Doom em `~/.config/emacs`, caso ainda não exista;
-3. preserva uma configuração real já existente em `~/.config/doom`, movendo-a para um diretório de backup com data e hora;
-4. aplica os links do GNU Stow;
-5. instala os servidores LSP globais de Astro, TypeScript, Tailwind e HTML/CSS/JSON;
-6. instala as gramáticas Tree-sitter necessárias;
-7. executa `doom install` na primeira instalação ou `doom sync` nas seguintes e salva o ambiente do shell.
+O `astro-ls` lê o TypeScript de `<raiz do projeto>/node_modules/typescript/lib`. Se o aviso mostrar um caminho de subpasta (por exemplo `…/src/components/Footer/node_modules/typescript/lib`), o lsp-mode registrou uma subpasta como raiz, porque no primeiro arquivo você escolheu a opção `.` ("Import project at current directory"). O `+lsp.el` usa `lsp-auto-guess-root` para achar a raiz pelo Git/projectile. Para apagar a raiz errada que já ficou salva e reiniciar:
 
-Opções:
+* `M-x lsp-workspace-folders-remove` e escolha a subpasta errada;
+* `M-x lsp-workspace-restart` (ou feche e reabra o arquivo).
 
+## 🔌 Trocar Eglot por lsp-mode
+
+Depois de aplicar estes arquivos, rode `doom sync` e reinicie o Emacs. Na primeira vez em CSS/HTML/JSON o lsp-mode pode oferecer a instalação do servidor correspondente; aceite com `y`.
+
+## 🔄 Manutenção
+
+Para atualizar o MacPorts, pacotes do Node (mantendo o TypeScript 6), links do Stow e o Doom Emacs de uma só vez:
 ```bash
-./install.sh --skip-npm       # não instala/atualiza servidores npm globais
-./install.sh --skip-treesit   # não compila gramáticas Tree-sitter
-./install.sh --help
+./update.sh
 ```
-
-Se Doom já estiver instalado, o script não o clona novamente. Se `~/.config/emacs` existir e não for um clone Git do Doom, o instalador para sem apagar esse diretório.
-
-## Biome 2.5 em cada projeto
-
-O executável do Biome deve ser instalado **localmente em cada projeto**. Isso permite que o cliente LSP use a versão travada pelo projeto em vez de uma versão global.
-
-A partir da pasta desta configuração:
-
-```bash
-./scripts/install-biome-project.sh /caminho/do/seu/projeto
-```
-
-Ou, estando dentro do projeto:
-
-```bash
-/path/para/doom-emacs-gpt/scripts/install-biome-project.sh .
-```
-
-O script executa `npm install --save-dev @biomejs/biome@~2.5.0` e copia `templates/biome.json` se o projeto ainda não tiver `biome.json` ou `biome.jsonc`. Ele **não sobrescreve** uma configuração Biome já existente.
-
-Configuração incluída:
-
-- indentação com 2 espaços;
-- limite de 120 colunas;
-- formatter habilitado;
-- linter habilitado;
-- ação `organizeImports` habilitada.
-
-Comandos úteis no projeto:
-
-```bash
-npx biome --version
-npx biome check .
-npx biome check --write .
-npx biome format --write .
-npx biome lint .
-```
-
-`npx biome check --write .` executa as verificações e aplica as correções disponíveis, inclusive organização de imports configurada no `biome.json`.
-
-## Astro e a fronteira do Biome
-
-O LSP do Astro fornece recursos de linguagem para arquivos `.astro`, e o LSP do Tailwind é configurado como servidor adicional para coexistir com outros servidores no mesmo buffer.
-
-**O Biome não é configurado como formatador de arquivos `.astro`.** A integração Biome desta configuração fica para JavaScript, TypeScript, TSX/JSX, JSON/JSONC e CSS. O servidor Astro pode oferecer formatação por meio de Prettier, mas isso exige instalar Prettier e `prettier-plugin-astro` no projeto; eles não são instalados por este pacote.
-
-## Tree-sitter
-
-O instalador compila as gramáticas `astro`, `css`, `html`, `javascript`, `json`, `tsx` e `typescript`.
-
-Astro depende especialmente das gramáticas `astro`, `tsx` e `css`. As gramáticas são compiladas na máquina local e ficam no diretório de dados do Doom, fora desta pasta de dotfiles.
-
-Para instalar ou reparar manualmente as gramáticas depois:
-
-```bash
-DOOM_EMACS_DIR="$HOME/.config/emacs" \
-  emacs --batch -Q -l scripts/install-treesit.el
-```
-
-## Atalhos e comandos
-
-O prefixo do LSP é `C-c l`:
-
-- `C-c l o`: organizar imports com Biome.
-- `C-c l f`: aplicar correções disponíveis do Biome.
-- `C-c l w d`: descrever a sessão LSP.
-- `C-c l w r`: reiniciar os servidores da sessão.
-- `M-x lsp-format-buffer`: solicitar formatação ao servidor LSP ativo.
-
-O formatador automático no salvamento usa Apheleia com `npx --no-install biome format` para os modos JavaScript/TypeScript/TSX, JSON e CSS. Por isso, instale Biome localmente em cada projeto antes de ativar a formatação nesse projeto.
-
-## Diagnóstico
-
-Depois da instalação:
-
-```bash
-~/.config/emacs/bin/doom doctor
-~/.config/emacs/bin/doom sync
-```
-
-Dentro do Emacs, abra um projeto que tenha `package.json` e `biome.json` e execute:
-
-```text
-M-x lsp-describe-session
-```
-
-Para verificar se o executável do Biome local é encontrado, no terminal do projeto:
-
-```bash
-./node_modules/.bin/biome --version
-```
-
-Se o Emacs aberto pelo Dock não encontrar executáveis globais do npm, feche-o e abra-o novamente depois de executar `doom sync --env` no terminal.
-
-## Arquivos gerenciados
-
-| Caminho no pacote | Destino via Stow |
-|---|---|
-| `.config/doom/init.el` | `~/.config/doom/init.el` |
-| `.config/doom/packages.el` | `~/.config/doom/packages.el` |
-| `.config/doom/config.el` | `~/.config/doom/config.el` |
-
-Para retirar os links do Stow, execute no diretório pai do pacote:
-
-```bash
-stow -D doom-emacs-gpt
-```
-
-Isso remove os links gerenciados pelo Stow; não desinstala Doom, Emacs, npm ou os pacotes já instalados.

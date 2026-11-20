@@ -1,12 +1,14 @@
-;;; packages.el -*- lexical-binding: t; -*-
+;; -*- no-byte-compile: t; -*-
 
-;; Catppuccin Mocha.
+;; Tema Catppuccin
 (package! catppuccin-theme)
 
-;; Major mode Tree-sitter para arquivos Astro (.astro).
+;; Major mode nativo em Tree-sitter para Astro
 (package! astro-ts-mode)
 
-;; Cliente lsp-mode comunitário que inicia o Biome local do projeto
-;; com `biome lsp-proxy` e disponibiliza ações de organizar imports/fix-all.
+;; Cliente do BiomeJS para o lsp-mode (lint, diagnósticos e code actions)
 (package! lsp-biome
   :recipe (:host github :repo "cxa/lsp-biome"))
+
+;; Tailwind CSS para o lsp-mode (roda como add-on, junto dos outros servidores)
+(package! lsp-tailwindcss)

@@ -1,0 +1,7 @@
+^/install\.sh$
+^/update\.sh$
+^/build-grammars\.sh$
+^/README\.md$
+^/\.git
+^/\.gitignore$
+^/\.DS_Store$
