@@ -18,9 +18,9 @@
 ;; 3. Interface
 (setq display-line-numbers-type 'relative)   ; use t para números absolutos
 
-;; Define a fonte principal e o tamanho 15
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 15 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 15))
+;; Define a fonte principal e o tamanho 18
+(setq doom-font (font-spec :family "Lekton Nerd Font Mono" :size 18 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "Lekton Nerd Font Mono" :size 18))
 
 ;; Garante que os ícones do Doom usem a família correta (caso necessário)
 (setq nerd-icons-font-family "JetBrainsMono Nerd Font")
