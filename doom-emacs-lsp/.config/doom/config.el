@@ -18,11 +18,15 @@
 ;; 3. Interface
 (setq display-line-numbers-type 'relative)   ; use t para números absolutos
 
-;; Fonte (exemplo; descomente e ajuste. A Symbols Nerd Font cobre os ícones):
-;; (setq doom-font (font-spec :family "JetBrains Mono" :size 14))
+;; Define a fonte principal e o tamanho 15
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 15 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 15))
+
+;; Garante que os ícones do Doom usem a família correta (caso necessário)
+(setq nerd-icons-font-family "JetBrainsMono Nerd Font")
 
 ;; Onde ficam seus projetos, para o `SPC p p' achá-los sozinho (exemplo):
-;; (setq projectile-project-search-path '("~/projects/"))
+(setq projectile-project-search-path '("~/Codes/"))
 
 ;; 4. Módulos (cada um num arquivo ao lado deste)
 (load! "+treesit")   ; caminho das gramáticas tree-sitter

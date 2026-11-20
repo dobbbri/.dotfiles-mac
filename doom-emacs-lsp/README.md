@@ -84,6 +84,20 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 
 > **📝 Nota Pós-Instalação (Ícones):** caso os ícones apareçam como quadrados vazios no macOS, instale a fonte **Symbols Nerd Font** (disponível em [nerdfonts.com](https://nerdfonts.com)) pelo Catálogo de Fontes (Font Book).
 
+
+> ** Como confirmar o nome exato da família no Emacs
+>
+>Caso o Emacs exiba um erro dizendo que a fonte não foi encontrada, execute o comando abaixo dentro do próprio Emacs para listar o nome exato que ele está lendo da sua pasta Fonts:
+> 1. Pressione M-x (no Mac, geralmente Option + x ou Esc seguido de x).
+> 2. Digite eval-expression e pressione Enter.
+> 3. Cole o código abaixo e pressione Enter:
+
+> ```elisp
+(seq-filter (lambda (f) (string-match-p "JetBrains" f)) (font-family-list))
+```
+> Use o código com cuidado.
+> O resultado aparecerá na barra inferior (minibuffer) mostrando o nome exato entre aspas que você deve usar no seu init.el.
+
 ## ⌨️ Atalhos Principais
 
 | Atalho | Ação |
