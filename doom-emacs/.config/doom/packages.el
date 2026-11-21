@@ -6,6 +6,9 @@
 ;; Major mode nativo em Tree-sitter para Astro
 (package! astro-ts-mode)
 
-;; Linter do BiomeJS integrado ao Flycheck
-(package! flycheck-biomejs
-  :recipe (:host github :repo "craneduck/flycheck-biomejs"))
+;; Cliente do BiomeJS para o lsp-mode (lint, diagnósticos e code actions)
+(package! lsp-biome
+  :recipe (:host github :repo "cxa/lsp-biome"))
+
+;; Tailwind CSS para o lsp-mode (roda como add-on, junto dos outros servidores)
+(package! lsp-tailwindcss)

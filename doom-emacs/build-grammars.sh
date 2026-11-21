@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 # Compila as gramáticas tree-sitter usadas no config.el e instala em
 # ~/.local/lib/tree-sitter (mesmo caminho do treesit-extra-load-path).
+# Uso: ./build-grammars.sh               (compila todas)
+#      ./build-grammars.sh tsx css       (compila só as indicadas)
+#      ./build-grammars.sh --link-only   (não compila: só refaz os links no cache do Doom)
 set -euo pipefail
+
+LINK_ONLY=0
+if [ "${1:-}" = "--link-only" ]; then
+  LINK_ONLY=1
+  shift
+fi
 
 DEST="$HOME/.local/lib/tree-sitter"
 WORK="$(mktemp -d)"
@@ -21,8 +30,19 @@ GRAMMARS=(
   "tsx|https://github.com/tree-sitter/tree-sitter-typescript|tsx"
 )
 
+# Nomes pedidos na linha de comando (vazio = todas)
+WANT=("$@")
+wanted() {
+  [ "${#WANT[@]}" -eq 0 ] && return 0
+  local w
+  for w in "${WANT[@]}"; do [ "$w" = "$1" ] && return 0; done
+  return 1
+}
+
 for entry in "${GRAMMARS[@]}"; do
+  [ "$LINK_ONLY" -eq 1 ] && break
   IFS='|' read -r name repo sub <<< "$entry"
+  wanted "$name" || continue
   echo "--> $name"
 
   repodir="$WORK/$(basename "$repo")"
@@ -51,5 +71,31 @@ for entry in "${GRAMMARS[@]}"; do
   fi
 done
 
-echo "Pronto. Gramáticas em $DEST:"
-ls "$DEST"
+# Links no cache do Doom. O Emacs sempre procura em <user-emacs-directory>/tree-sitter,
+# que no Doom é ~/.config/emacs/.local/cache/tree-sitter. Os comandos `doom sync' e
+# `doom doctor' rodam SEM o seu config.el (logo, sem o treesit-extra-load-path) e
+# só enxergam as gramáticas ali; sem os links, o astro-ts-mode avisa "grammar for
+# astro failed to load" ao ser instalado.
+DOOM_CACHE="$HOME/.config/emacs/.local/cache/tree-sitter"
+if [ -d "$HOME/.config/emacs" ]; then
+  mkdir -p "$DOOM_CACHE"
+  for f in "$DEST"/libtree-sitter-*.dylib; do
+    [ -e "$f" ] && ln -sf "$f" "$DOOM_CACHE/$(basename "$f")"
+  done
+  echo "Links criados em $DOOM_CACHE"
+fi
+
+# Confere se todas as gramáticas esperadas existem
+missing=0
+for entry in "${GRAMMARS[@]}"; do
+  IFS='|' read -r name _ _ <<< "$entry"
+  if [ -f "$DEST/libtree-sitter-$name.dylib" ]; then
+    echo "   ok     $name"
+  else
+    echo "   FALTA  $name"
+    missing=1
+  fi
+done
+
+echo "Gramáticas em $DEST"
+[ "$missing" -eq 0 ] || { echo "Atenção: há gramáticas faltando (veja acima)."; exit 1; }

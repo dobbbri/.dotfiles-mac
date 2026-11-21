@@ -47,7 +47,7 @@
        :tools
        (eval +overlay)
        lookup
-       (lsp +eglot)
+       lsp
        magit
        tree-sitter
 
@@ -57,7 +57,7 @@
        :lang
        emacs-lisp
        (javascript +lsp +tree-sitter)
-       json
+       (json +lsp +tree-sitter)
        markdown
        (org +pretty)
        sh
