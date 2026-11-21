@@ -1,43 +1,90 @@
-[core]
-	editor = nvim
-	excludesfile = /Users/sdobri/.gitignore_global
-
 [user]
 	name = Sergio Dobri
 	email = sergiodobri@gmail.com
-    username = dobbbri
-	signingkey = /Users/sdobri/.ssh/id_ed25519
-	
+	signingkey = ~/.ssh/id_ed25519
+
+# "username" não é uma chave válida em [user]; o padrão para o usuário do GitHub é esta seção
+[github]
+	user = dobbbri
+
+[core]
+	editor = nvim
+	pager = delta
+	excludesfile = ~/.gitignore_global
+	quotepath = false
+
+[init]
+	defaultBranch = main
+
+# ---------------------------------------------------------------- assinatura SSH
+[commit]
+	gpgsign = true
+	verbose = true
+
+[gpg]
+	format = ssh
+
+# Para `git log --show-signature` validar assinaturas:
+# [gpg "ssh"]
+# 	allowedSignersFile = ~/.ssh/allowed_signers
+
+# ---------------------------------------------------------------- fluxo
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+	followTags = true
+
+[fetch]
+	prune = true
+
+[rebase]
+	autoSquash = true
+	autoStash = true
+	updateRefs = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[rerere]
+	enabled = true
+
+# ---------------------------------------------------------------- saída
+[diff]
+	algorithm = histogram
+	colorMoved = default
+
+[branch]
+	sort = -committerdate
+
+[column]
+	ui = auto
+
+[help]
+	autocorrect = prompt
+
+[advice]
+	detachedHead = false
+
+# delta (MacPorts: sudo port install git-delta)
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	line-numbers = true
+	# side-by-side = true
+
+# ---------------------------------------------------------------- filtros
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
 
+# Remove no commit as linhas terminadas em "# git-ignore".
+# Uso (no .gitattributes do repositório): arquivo.ext filter=git-ignore
 [filter "git-ignore"]
-	clean = "sed '/#\\s*git-ignore$/d'"
-	smudge = cat	
-
-[commit]
-  	gpgsign = true
-  
-[gpg]
-	format = ssh
-
-[init]
-	defaultBranch = main
-
-[interactive]
-	diffFilter = delta --color-only
-
-[merge]
-	conflictstyle = diff3
-
-[pull]
-	rebase = true
-
-[push]
-	autoSetupRemote = true
-
-[advice]
-	detachedHead = false
+	clean = "sed '/#[[:space:]]*git-ignore$/d'"
+	smudge = cat

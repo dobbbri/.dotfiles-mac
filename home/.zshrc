@@ -1,97 +1,53 @@
-# If you come from bash you might have to change your $PATH.
-export PATH="/opt/local/bin:$PATH"
-export PATH="/opt/local/sbin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/nvim-macos-x86_64/bin:$PATH"
+# ---------------------------------------------------------------- PATH
+# typeset -U remove entradas duplicadas; a primeira da lista tem prioridade.
+typeset -U path PATH
+path=(
+	/opt/local/bin
+	/opt/local/sbin
+	$HOME/nvim-macos-x86_64/bin
+	$HOME/.local/bin
+	$HOME/.config/emacs/bin   # Doom Emacs (comando `doom`)
+	$path
+)
+export PATH
 
-# adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-#
-# # adicionado por install-deps.sh
-# export PATH="/Users/sdobri/.nvm/current/bin:$PATH"
-
-# adicionado por install-deps.sh
-# export PATH="/Users/sdobri/.local/bin:$PATH"
-
-
+# Emacs fora do PATH padrão (MacPorts já está acima)
 if ! command -v emacs >/dev/null; then
-    if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
-        export PATH="/Applications/Emacs.app/Contents/MacOS:/Applications/Emacs.app/Contents/MacOS/bin:$PATH"
-    elif [ -x "/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs" ]; then
-        export PATH="/Applications/MacPorts/Emacs.app/Contents/MacOS:/Applications/MacPorts/Emacs.app/Contents/MacOS/bin:$PATH"
-        export PATH="$HOME/.config/emacs/bin/:$PATH"
-    else
-        error_exit "GNU Emacs não encontrado. Instale o Emacs 31.1 (emacsformacosx.com) em /Applications."
-    fi
+	if [ -x "/Applications/Emacs.app/Contents/MacOS/Emacs" ]; then
+		path=(/Applications/Emacs.app/Contents/MacOS /Applications/Emacs.app/Contents/MacOS/bin $path)
+	elif [ -x "/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs" ]; then
+		path=(/Applications/MacPorts/Emacs.app/Contents/MacOS /Applications/MacPorts/Emacs.app/Contents/MacOS/bin $path)
+	else
+		echo "GNU Emacs não encontrado. Instale o Emacs 31.1 (emacsformacosx.com) em /Applications." >&2
+	fi
 fi
 
+# ---------------------------------------------------------------- fzf (MacPorts)
+# Ajuste os caminhos se necessário: `port contents fzf`
+[[ -r /opt/local/share/fzf/shell/key-bindings.zsh ]] && source /opt/local/share/fzf/shell/key-bindings.zsh
+[[ -r /opt/local/share/fzf/shell/completion.zsh ]] && source /opt/local/share/fzf/shell/completion.zsh
 
-# Path to your Oh My Zsh installation.
-#export ZSH="$HOME/.oh-my-zsh"
-
-set rtp+=/opt/local/share/fzf/vim
-
-# Would you like to use another custom folder than $ZSH/custom?
-# export ZSH_CUSTOM="$ZSH/custom"
-
-# themes
-# ZSH_THEME="dst"
-
-CASE_SENSITIVE="true"
+# ---------------------------------------------------------------- Shell
 export CLICOLOR=1
+export LANG=en_US.UTF-8
 
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+# Completion
+autoload -Uz compinit && compinit
 
-zstyle ':omz:update' frequency 7
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE EXTENDED_HISTORY
 
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-HIST_STAMPS="yyyy-mm-dd"
-
-plugins=(
-	git
-)
-
-# source $ZSH/oh-my-zsh.sh
-
-# Ubuntu  = "󰕈"
-# Arch    = "󰣇"
-# Macos   = ""
-
-# User configuration
+# ---------------------------------------------------------------- Prompt
+# Macos = ""
 autoload -Uz colors && colors
 setopt PROMPT_SUBST
 
 RED='%F{red}'
 GREEN='%F{green}'
-ORANGE='%F{orange}'
+ORANGE='%F{208}'
 YELLOW='%F{yellow}'
 BLUE='%F{blue}'
 MAGENTA='%F{magenta}'
@@ -104,29 +60,15 @@ ENDC='%f'
 PROMPT=" ${ENDC}${CYAN}%n${WHITE} at ${YELLOW}%m${RED}${ssh_message} ${WHITE}in ${BLUE}%~${ENDC}
 ${CYAN}->${ENDC} "
 
-# export MANPATH="/usr/local/man:$MANPATH"
-
-export LANG=en_US.UTF-8
-
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
+	export EDITOR='vim'
 else
-  export EDITOR='nvim'
+	export EDITOR='nvim'
 fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-
-# aliases
+# ---------------------------------------------------------------- aliases
 [[ ! -f $HOME/.zsh-aliases ]] || source $HOME/.zsh-aliases
 
-
-# nvm
-source /opt/local/share/nvm/init-nvm.sh
-
+# ---------------------------------------------------------------- nvm
+[[ -s /opt/local/share/nvm/init-nvm.sh ]] && source /opt/local/share/nvm/init-nvm.sh

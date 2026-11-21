@@ -1,0 +1,57 @@
+# Ghostty config
+# Caminhos: ~/.config/ghostty/config  (ou ~/Library/Application Support/com.mitchellh.ghostty/config)
+# Recarregar: cmd+shift+, | Validar: ghostty +validate-config
+
+# ---------------------------------------------------------------- Fonte
+# (Ghostty desenha box-drawing e powerline nativamente; não existe
+#  opção "builtin_box_drawing" — o comportamento já vem ligado.)
+font-family = "Lekton Nerd Font Mono"
+# font-family = "JetBrainsMono Nerd Font"
+# font-family = "Aporetic Sans Mono"
+# font-family = "AtkynsonMono Nerd Font"
+# font-family = "UbuntuSansMono Nerd Font"
+# font-family = "UbuntuMono Nerd Font"
+
+# font-size = 16
+font-size = 18
+
+# Lekton é uma fonte fina: no macOS isso deixa o texto mais encorpado
+font-thicken = true
+# adjust-cell-height = 10%
+
+# ---------------------------------------------------------------- Seleção / clipboard
+# Copiar automaticamente ao selecionar (clipboard do sistema)
+copy-on-select = clipboard
+clipboard-trim-trailing-spaces = true
+
+# ---------------------------------------------------------------- Janela
+# background-opacity = 0.75
+# em versões antigas: background-blur-radius = 20
+background-blur = true
+# startup maximizado
+maximize = true
+window-padding-x = 8
+window-padding-y = 6
+window-padding-balance = true
+window-save-state = never
+confirm-close-surface = false
+quit-after-last-window-closed = true
+
+# macOS
+macos-titlebar-style = tabs
+# Option esquerdo = Meta (Emacs/Doom no terminal)
+macos-option-as-alt = left
+
+# ---------------------------------------------------------------- Cursor / mouse
+cursor-style = block
+cursor-style-blink = false
+mouse-hide-while-typing = true
+
+# ---------------------------------------------------------------- Shell
+shell-integration = zsh
+window-inherit-working-directory = true
+
+# ---------------------------------------------------------------- Tema
+# Veja os temas disponíveis com: ghostty +list-themes
+# theme = catppuccin-mocha
+# theme = light:catppuccin-latte,dark:catppuccin-mocha

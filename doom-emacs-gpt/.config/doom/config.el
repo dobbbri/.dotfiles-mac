@@ -22,9 +22,6 @@
 (setq doom-font (font-spec :family "Lekton Nerd Font Mono" :size 18 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Lekton Nerd Font Mono" :size 18))
 
-;; Garante que os ícones do Doom usem a família correta (caso necessário)
-(setq nerd-icons-font-family "JetBrainsMono Nerd Font")
-
 ;; Onde ficam seus projetos, para o `SPC p p' achá-los sozinho (exemplo):
 (setq projectile-project-search-path '("~/Codes/"))
 

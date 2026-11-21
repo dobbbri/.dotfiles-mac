@@ -7,6 +7,7 @@ sudo port install wget -cf
 sudo port install tree -cf
 sudo port install fd -cf
 sudo port install bat -cf
+sudo port install coreutils tree
 # sudo port install fzf -cf
 # sudo port install go -cf
 sudo port install ripgrep -cf

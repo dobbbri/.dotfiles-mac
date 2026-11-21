@@ -1,4 +1,5 @@
 #!/bin/zsh
+# vim: ft=zsh
 
 # home
 alias hh='cd ~'
@@ -8,9 +9,9 @@ alias ff='cd ~/.dotfiles-mac/'
 alias sc='cd ~/.dotfiles-mac/scripts/'
 alias vv='cd ~/.dotfiles-mac/config/nvim/'
 
-# folders
+# folders  (dd renomeado para dev: `dd` é um comando do sistema)
 alias ww='cd ~/Work/'
-alias dd='cd ~/Dev/'
+alias dev='cd ~/Dev/'
 alias ss='cd ~/Sites/'
 alias dl='cd ~/Downloads/'
 alias oo='cd ~/Obsidian/'
@@ -32,20 +33,47 @@ alias x="exit"
 # alias ls='eza -al --header --icons --group-directories-first'
 # alias lt='eza --tree --level=2 --long --icons --git --color=always --group-directories-first'
 alias grep='grep --color=auto'
-alias myip="ip -f inet address | grep inet | grep -v 'lo$' | cut -d ' ' -f 6,13 && curl ifconfig.me && echo ' external ip'"
 alias reload='source ~/.zshrc'
 
+myip() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    echo "local: $(ipconfig getifaddr en0 || ipconfig getifaddr en1)"
+  else
+    ip -f inet address | grep inet | grep -v 'lo$' | awk '{print $2, $NF}'
+  fi
+  echo "external: $(curl -s ifconfig.me)"
+}
 
+# ls / l / ll / lt  (sem eza)
+# macOS: para --group-directories-first instale `sudo port install coreutils` (gls)
+# e, para a árvore, `sudo port install tree`. Sem eles, usa o ls do BSD.
 myos="$(uname)"
 case $myos in
-Linux) alias ls='ls -lha --color-auto';;
-Darwin) alias ls='ls -lha -FG';;
-*);;
+Linux)
+  alias ls='ls --color=auto'
+  alias l='ls -l --color=auto --group-directories-first'
+  alias ll='ls -lha --color=auto --group-directories-first'
+  ;;
+Darwin)
+  if command -v gls >/dev/null; then
+    alias ls='gls --color=auto'
+    alias l='gls -l --color=always --group-directories-first'
+    alias ll='gls -lha --color=auto --group-directories-first'
+  else
+    alias ls='ls -FG'
+    alias l='ls -lG'
+    alias ll='ls -lhaFG'
+  fi
+  ;;
+*) ;;
 esac
 
-alias ll='ls'
-
-
+# árvore com 2 níveis
+if command -v tree >/dev/null; then
+  alias lt='tree -L 2 -C --dirsfirst -phD'
+else
+  lt() { find "${1:-.}" -maxdepth 2 -not -path '*/.git/*' | sort; }
+fi
 
 # nvim
 alias v='nvim'
@@ -66,20 +94,26 @@ alias cds=clear-ds-store
 # Git
 alias gsync="git pull && git push && git status --short"
 alias gps="git push && git status --short"
-alias gnah="git reset --hard && git clean -df"
+
+# descarta TUDO (alterações e arquivos não rastreados) — pede confirmação
+gnah() {
+  read -q "REPLY?Descartar TODAS as alterações e arquivos não rastreados? [y/N] " || { echo; return 1; }
+  echo
+  git reset --hard && git clean -df
+}
 
 alias gaa="git add ."
 alias gs="git status --short"
 alias gl="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches"
 alias gc="git commit -m"
-alias gp="git push"
-alias gP="git pull"
+alias gph="git push"
+alias gpl="git pull"
 
 alias gac="git add . && git commit -m"
 alias gpp="git pull && git push"
 alias ggg="gac 'update...' && gps"
 
-# npm
+# npm  (nvm: instalações globais são do usuário, sem sudo)
 alias nr="npm run"
 alias naf="npm audit fix"
 alias nrf="npm run fix"
@@ -89,9 +123,9 @@ alias nrb="npm run build"
 alias nrs="npm run start"
 alias ni="npm install"
 alias nid="npm install --save-dev"
-alias nig="sudo npm install -g"
+alias nig="npm install -g"
 alias nu="npm uninstall"
-alias nug="sudo npm uninstall -g"
+alias nug="npm uninstall -g"
 alias nlsg="npm ls -g"            # List installed packages
 alias nls="npm ls"                # List installed packages
 alias nlp="npm prune"             # Remove un-used packages from node_modules folder
@@ -101,7 +135,7 @@ alias nclean="npm cache clean -f" # Clean npm cache
 
 alias macport-update="sudo port -d selfupdate"
 
-alias neovim-clear-log="rm ~/.local/state/nvim/lsp.log"
+alias neovim-clear-log="rm -f ~/.local/state/nvim/lsp.log"
 
 mkcd() {
   mkdir -p "$1" && cd "$1"
@@ -112,40 +146,18 @@ neovim-clear() {
   rm -rf ~/.cache/nvim
   rm -rf ~/.local/share/nvim
   rm -rf ~/.local/state/nvim
-  rm ~/.config/nvim/nvim-pack-lock.json
+  rm -f ~/.config/nvim/nvim-pack-lock.json
 }
 
-neovim-update() {
-  cd ~ &&
+# subshell (...): não muda o diretório atual; baixa antes de apagar a versão antiga
+neovim-update() (
+  cd ~ || exit 1
+  curl -fLO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-x86_64.tar.gz || exit 1
   rm -rf ~/nvim-macos-x86_64 &&
-  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-x86_64.tar.gz &&
-  tar xzf nvim-macos-x86_64.tar.gz
-}
+  tar xzf nvim-macos-x86_64.tar.gz &&
+  rm -f nvim-macos-x86_64.tar.gz
+)
 
 gup() {
-  if [[ -n $* ]]; then
-    git add . && git commit -m "$1" && git push && git status --short
-  else
-    git add . && git commit -m "fast update ..." && git push && git status --short
-  fi
+  git add . && git commit -m "${1:-fast update ...}" && git push && git status --short
 }
-
-ob-sync() {
-  cd ~/Documents/Obsidian-gitsync || exit 1
-
-  git pull || exit 1
-
-  CHANGES_EXIST="$(git status --porcelain | wc -l)"
-
-  if [ "$CHANGES_EXIST" -eq 0 ]; then
-      exit 0
-  fi
-
-  git add . &&
-  git commit -q -m "$(date +'%Y-%m-%d %H:%M:%S')" &&
-  git push -q
-
-  cd ~
-}
-
-

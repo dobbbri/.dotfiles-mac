@@ -1,1 +1,39 @@
+# macOS
 .DS_Store
+._*
+.AppleDouble
+.LSOverride
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+Icon?
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+.fuse_hidden*
+.~lock.*#
+.xsession-errors*
+
+# Vim / Neovim
+*.swp
+*.swo
+*.swx
+*~
+Session.vim
+.netrwhist
+
+# Emacs
+\#*\#
+.#*
+*.elc
+auto-save-list/
+
+# Segredos locais (versione apenas .env.example)
+.env
+.env.*
+!.env.example

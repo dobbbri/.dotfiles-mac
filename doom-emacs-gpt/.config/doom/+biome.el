@@ -19,6 +19,21 @@
                   (expand-file-name f dir)))
               '("biome.json" "biome.jsonc"))))
 
+(defun my/biome--sem-jsonc ()
+  "Remove comentários e vírgulas finais do buffer atual (JSONC).
+Strings são consumidas inteiras primeiro, então `//' dentro de uma URL
+(como em \"$schema\") nunca é confundido com comentário."
+  (goto-char (point-min))
+  (while (re-search-forward
+          (concat "\"\\(?:[^\"\\\\]\\|\\\\.\\)*\""   ; string
+                  "\\|//.*$"                         ; comentário de linha
+                  "\\|/\\*[^z-a]*?\\*/"              ; comentário de bloco
+                  "\\|\\(,\\)[ \t\n\r]*[]}]")        ; vírgula final
+          nil t)
+    (cond ((match-beginning 1) (replace-match "" t t nil 1))
+          ((/= (char-after (match-beginning 0)) ?\")
+           (replace-match " " t t)))))
+
 (defun my/biome-config-valor (&rest chaves)
   "Busca CHAVES no biome.json(c) atual com cache por data de modificação."
   (when-let* ((file (my/biome-config-file))
@@ -30,6 +45,8 @@
                                   (cons mtime (ignore-errors
                                                 (with-temp-buffer
                                                   (insert-file-contents file)
+                                                  (my/biome--sem-jsonc)
+                                                  (goto-char (point-min))
                                                   (json-parse-buffer :object-type 'alist
                                                                      :null-object nil
                                                                      :false-object nil))))
