@@ -25,6 +25,19 @@
 ;; Onde ficam seus projetos, para o `SPC p p' achá-los sozinho (exemplo):
 (setq projectile-project-search-path '("~/Codes/"))
 
+;; Dired: pastas primeiro e dotfiles ocultos (`zh' alterna).
+;; --group-directories-first exige o ls da GNU (`sudo port install coreutils' -> gls);
+;; o ls do macOS não o aceita, por isso só ligamos se o gls existir.
+(after! dired
+  (when-let* ((gls (executable-find "gls")))
+    (setq insert-directory-program gls
+          dired-use-ls-dired t
+          dired-listing-switches "-alh --group-directories-first"))
+  (add-hook 'dired-mode-hook #'dired-omit-mode))
+(after! dired-x
+  (setq dired-omit-files (concat dired-omit-files "\\|^\\.")))
+(map! :after dired :map dired-mode-map :n "zh" #'dired-omit-mode)
+
 ;; 4. Módulos (cada um num arquivo ao lado deste)
 (load! "+treesit")   ; caminho das gramáticas tree-sitter
 (load! "+lsp")       ; lsp-mode, Astro e Tailwind

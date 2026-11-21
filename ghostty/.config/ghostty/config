@@ -2,6 +2,8 @@
 # Caminhos: ~/.config/ghostty/config  (ou ~/Library/Application Support/com.mitchellh.ghostty/config)
 # Recarregar: cmd+shift+, | Validar: ghostty +validate-config
 
+theme = Catppuccin Mocha
+
 # ---------------------------------------------------------------- Fonte
 # (Ghostty desenha box-drawing e powerline nativamente; não existe
 #  opção "builtin_box_drawing" — o comportamento já vem ligado.)
@@ -27,7 +29,7 @@ clipboard-trim-trailing-spaces = true
 # ---------------------------------------------------------------- Janela
 # background-opacity = 0.75
 # em versões antigas: background-blur-radius = 20
-background-blur = true
+# background-blur = true
 # startup maximizado
 maximize = true
 window-padding-x = 8
