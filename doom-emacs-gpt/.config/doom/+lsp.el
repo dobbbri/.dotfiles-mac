@@ -1,7 +1,8 @@
 ;;; +lsp.el -*- lexical-binding: t; -*-
 
 ;; lsp-mode (módulo `lsp' do Doom, sem +eglot): roda vários servidores no mesmo
-;; buffer (tsserver + astro-ls + Tailwind + Biome em arquivos .astro).
+;; buffer (astro-ls + Tailwind + Biome em arquivos .astro; o TypeScript fica
+;; por conta do próprio astro-ls, que usa o typescript do projeto).
 
 (use-package! astro-ts-mode
   :mode "\\.astro\\'"
