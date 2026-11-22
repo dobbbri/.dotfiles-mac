@@ -6,17 +6,18 @@
 (defconst my/org-inbox    (expand-file-name "inbox.org" org-directory))
 (defconst my/org-diario   (expand-file-name "daily/diario.org" org-directory))
 (defconst my/org-projetos (expand-file-name "projetos.org" org-directory))
+(defconst my/org-arquivos (list my/org-inbox my/org-projetos my/org-diario))
 
 ;; Garante que pastas e arquivos existam: o datetree do diário exige a pasta
 ;; daily/, e um arquivo ausente em `org-agenda-files' faz o Org perguntar a cada
 ;; abertura da agenda se deve removê-lo da lista.
-(dolist (f (list my/org-inbox my/org-diario my/org-projetos))
+(dolist (f my/org-arquivos)
   (make-directory (file-name-directory f) t)
   (unless (file-exists-p f)
     (write-region "" nil f nil 'silent)))
 
 (setq org-default-notes-file my/org-inbox
-      org-agenda-files (list my/org-inbox my/org-projetos my/org-diario)
+      org-agenda-files my/org-arquivos
       org-log-done 'time)
 
 (after! org

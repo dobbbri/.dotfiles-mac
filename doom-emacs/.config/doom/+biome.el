@@ -9,12 +9,17 @@
       eos)
   "Arquivos que o Biome formata e analisa.")
 
+(defun my/biome-raiz ()
+  "Raiz do projeto do buffer atual, ou nil se não houver projeto."
+  (when-let* ((proj (project-current)))
+    (project-root proj)))
+
 (defun my/biome-sem-config-p (&rest _)
   "Não deixa formatar arquivos do Biome em projetos sem biome.json(c) na raiz."
   (and buffer-file-name
        (string-match-p my/biome-arquivos buffer-file-name)
-       (not (when-let* ((proj (project-current)))
-              (seq-some (lambda (f) (file-exists-p (expand-file-name f (project-root proj))))
+       (not (when-let* ((raiz (my/biome-raiz)))
+              (seq-some (lambda (f) (file-exists-p (expand-file-name f raiz)))
                         '("biome.json" "biome.jsonc"))))))
 
 (after! apheleia
@@ -38,9 +43,7 @@
 (defun my/biome-lint-projeto ()
   "Roda `biome lint' na raiz do projeto (Biome local primeiro, depois o do PATH)."
   (interactive)
-  (let ((default-directory (if-let* ((p (project-current)))
-                               (project-root p)
-                             default-directory)))
+  (let ((default-directory (or (my/biome-raiz) default-directory)))
     (compile "PATH=node_modules/.bin:$PATH biome lint --colors=off --max-diagnostics=200 .")))
 
 (map! :leader

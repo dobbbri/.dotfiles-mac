@@ -19,7 +19,7 @@ font-size = 18
 
 # Lekton é uma fonte fina: no macOS isso deixa o texto mais encorpado
 font-thicken = true
-# adjust-cell-height = 10%
+adjust-cell-height = 14%
 
 # ---------------------------------------------------------------- Seleção / clipboard
 # Copiar automaticamente ao selecionar (clipboard do sistema)

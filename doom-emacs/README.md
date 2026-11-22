@@ -19,6 +19,7 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
         ├── +lsp.el      # lsp-mode, Astro (astro-ls) e Tailwind
         ├── +biome.el    # Formatação, lint e atalhos do Biome
         ├── +org.el      # Org-mode (capturas e atalhos)
+        ├── +dashboard.el # Menu inicial simples (pastas abrem no Dirvish)
         ├── init.el      # Módulos ativos do Doom Emacs
         ├── packages.el  # Pacotes externos (Catppuccin, astro-ts-mode, lsp-biome, lsp-tailwindcss)
         └── snippets/    # Snippets do yasnippet (o install.sh cria a pasta)
@@ -30,6 +31,7 @@ Configuração modular do **Doom Emacs** rodando sobre **GNU Emacs 31.1**, geren
 * **lsp-mode (módulo `lsp` do Doom):** conecta os servidores do **Astro**, **TypeScript 6** e **Tailwind CSS** ao mesmo tempo no mesmo buffer (o Tailwind roda como add-on via `lsp-tailwindcss`, com o servidor `0.16.0` fixado no `+lsp.el`). Ajustes leves para 8 GB de RAM (sem lens e sem breadcrumb, file watchers sem `.astro`, `dist` e `.vercel`). O `astro-ls` usa o TypeScript de `node_modules/typescript` do projeto (o do Astro já traz um). A formatação nunca passa pelo LSP (`+format-with-lsp` desligado): quem formata é sempre o Biome via Apheleia.
 * **Linter + formatador BiomeJS:** formatação ao salvar via `apheleia` (usa `biome format`: só formata, não organiza imports) e lint/diagnósticos via `lsp-biome` (cliente do lsp-mode que roda `biome lsp-proxy` junto dos outros servidores). Vale para arquivos `.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, `.tsx`, `.mts`, `.cts`, `.json`, `.jsonc`, `.css`, `.scss`, `.astro`, `.html` e `.htm`, e **só em projetos com `biome.json` ou `biome.jsonc` na raiz do projeto** (um repositório git); sem ele o Biome não roda. YAML fica sem formatador. Veja a seção sobre HTML abaixo.
 * **Dired/Dirvish:** pastas primeiro (padrão do Doom quando o `gls` existe; vem do `coreutils`), `TAB` expande a subpasta no mesmo buffer com a mesma ordem, e todos os dotfiles ficam ocultos. `SPC m h` alterna entre ocultar e mostrar.
+* **Dashboard simples:** o menu inicial tem só arquivos recentes, abrir projeto, agenda do Org e três atalhos de pasta (projetos em `~/Codes/`, Org em `~/org/` e a configuração do Doom). As pastas abrem no Dirvish (ordenado, pastas primeiro). O menu fica em `+dashboard-menu-sections`, no `+dashboard.el`.
 * **Tema Catppuccin:** sabor *Mocha* ativo por padrão.
 * **Org-mode produtivo:** templates de captura rápida (`SPC X`) e atalhos dedicados (`SPC n`). O `+org.el` cria `~/org/inbox.org`, `~/org/projetos.org` e `~/org/daily/diario.org` se não existirem.
 
@@ -55,7 +57,7 @@ O `install.sh` confere os três e para com uma mensagem se algum faltar. Para re
    ```bash
    ./install.sh
    ```
-   Antes de instalar, ele confere se existem `init.el`, `config.el`, `packages.el`, `+treesit.el`, `+lsp.el`, `+biome.el` e `+org.el` em `.config/doom/`.
+   Antes de instalar, ele confere se existem `init.el`, `config.el`, `packages.el`, `+treesit.el`, `+lsp.el`, `+biome.el`, `+org.el` e `+dashboard.el` em `.config/doom/`.
 
 4. *(Opcional)* Adicione o CLI do `doom` ao seu `~/.zshrc`:
    ```bash
