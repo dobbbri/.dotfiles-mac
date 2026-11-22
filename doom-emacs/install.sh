@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$HOME/.dotfiles-mac"
-PKG_NAME="doom-emacs-gpt"
+PKG_NAME="doom-emacs"
 DOOM_PKG="$DOTFILES_DIR/$PKG_NAME"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -12,11 +12,11 @@ NVM_INIT="/opt/local/share/nvm/init-nvm.sh"
 
 # Pacotes npm globais (LSPs, Biome) ficam em ~/.local, sem sudo: não dependem do
 # MacPorts e sobrevivem às atualizações do Node.
-PREFIX="$HOME/.local"
+NPM_PREFIX="$HOME/.local"
 PATH_ORIGINAL="$PATH"
 
 # O MacPorts instala em /opt/local; garante que o script o enxergue
-export PATH="${PREFIX}/bin:/opt/local/bin:/opt/local/sbin:${PATH}"
+export PATH="${NPM_PREFIX}/bin:/opt/local/bin:/opt/local/sbin:${PATH}"
 
 echo "=================================================================="
 echo " Instalando Doom Emacs + Emacs 31.1 (MacPorts, Stow, Astro & TW)"
@@ -38,7 +38,13 @@ if [ ! -d "$DOOM_PKG" ]; then
   exit 1
 fi
 
-for f in init.el config.el packages.el; do
+if [ ! -x "$SCRIPT_DIR/build-grammars.sh" ]; then
+  echo "--> build-grammars.sh não encontrado (ou sem permissão de execução) em $SCRIPT_DIR."
+  echo "    Copie-o para ao lado do install.sh e rode: chmod +x build-grammars.sh"
+  exit 1
+fi
+
+for f in init.el config.el packages.el +treesit.el +lsp.el +biome.el +org.el; do
   if [ ! -f "$DOOM_PKG/.config/doom/$f" ]; then
     echo "--> Faltando $DOOM_PKG/.config/doom/$f (copie seus arquivos do Doom para lá)."
     exit 1
@@ -49,7 +55,8 @@ done
 echo "--> Instalando GNU Emacs 31.1 e dependências via MacPorts..."
 sudo port selfupdate
 sudo port install emacs-app @31.1 +treesitter +nativecomp
-sudo port install ripgrep fd git stow nvm cmake libtool shfmt shellcheck
+# coreutils fornece o `gls', que o Dired do Doom usa para listar pastas primeiro
+sudo port install ripgrep fd git stow nvm cmake libtool shfmt shellcheck coreutils
 
 # Node.js e npm via nvm (o nvm é uma função de shell: precisa ser carregado)
 if [ ! -s "$NVM_INIT" ]; then
@@ -73,14 +80,21 @@ fi
 
 # Links estáveis em ~/.local/bin: o Emacs (GUI) não carrega o nvm, e os servidores
 # LSP precisam de `node' no PATH. O caminho do nvm muda a cada versão; este não.
-mkdir -p "$PREFIX/bin"
+mkdir -p "$NPM_PREFIX/bin"
 for b in node npm npx; do
-  ln -sf "$NODE_BIN_DIR/$b" "$PREFIX/bin/$b"
+  ln -sf "$NODE_BIN_DIR/$b" "$NPM_PREFIX/bin/$b"
 done
 
-# 2. Instalar servidores LSP (TypeScript 6, Astro, Tailwind) e BiomeJS em ~/.local (sem sudo)
-echo "--> Instalando Astro LS, Tailwind LS, TypeScript 6, BiomeJS, stylelint e js-beautify em ${PREFIX}..."
-npm install -g --prefix "$PREFIX" typescript@6 typescript-language-server @astrojs/language-server @tailwindcss/language-server @biomejs/biome stylelint js-beautify
+# Um `sudo npm' antigo deixa arquivos de root em ~/.npm e o npm falha com EACCES
+if [ -d "$HOME/.npm" ] && [ -n "$(find "$HOME/.npm" ! -user "$(id -un)" 2>/dev/null | head -n 1)" ]; then
+  echo "--> ~/.npm tem arquivos de root (de um 'sudo npm' antigo); corrigindo o dono..."
+  sudo chown -R "$(id -u):$(id -g)" "$HOME/.npm"
+fi
+
+# 2. Instalar servidores LSP (TypeScript 6, Astro) e BiomeJS em ~/.local (sem sudo)
+#    O servidor do Tailwind NÃO vem do npm: o lsp-tailwindcss baixa o dele (ver o aviso no fim).
+echo "--> Instalando Astro LS, TypeScript 6, BiomeJS, stylelint e js-beautify em ${NPM_PREFIX}..."
+npm install -g --prefix "$NPM_PREFIX" typescript@6 typescript-language-server @astrojs/language-server @biomejs/biome stylelint js-beautify
 
 # 3. Criar diretórios necessários (inclui a pasta de snippets do yasnippet)
 mkdir -p ~/.config/doom
@@ -89,13 +103,8 @@ mkdir -p "$DOOM_PKG/.config/doom/snippets"
 touch "$DOOM_PKG/.config/doom/snippets/.gitkeep"
 
 # 4. Compilar TODAS as gramáticas tree-sitter em ~/.local/lib/tree-sitter
-if [ -x "$SCRIPT_DIR/build-grammars.sh" ]; then
-  echo "--> Compilando gramáticas tree-sitter..."
-  "$SCRIPT_DIR/build-grammars.sh"
-else
-  echo "--> build-grammars.sh não encontrado ou sem permissão ao lado do install.sh; pulando gramáticas."
-  echo "    (depois rode M-x treesit-install-language-grammar RET astro no Emacs)"
-fi
+echo "--> Compilando gramáticas tree-sitter..."
+"$SCRIPT_DIR/build-grammars.sh"
 
 # 5. Aplicar links simbólicos com GNU Stow (ANTES do doom install, para o Doom já achar a config)
 echo "--> Aplicando dotfiles com GNU Stow..."
@@ -142,10 +151,10 @@ echo "Log salvo em: $LOG_FILE"
 [ "$DOCTOR_STATUS" -eq 0 ] || echo "AVISO: 'doom doctor' encontrou problemas (código $DOCTOR_STATUS). Veja o log:  grep -n -i 'error\|warn' \"$LOG_FILE\""
 
 case ":${PATH_ORIGINAL}:" in
-  *":${PREFIX}/bin:"*) ;;
+  *":${NPM_PREFIX}/bin:"*) ;;
   *)
     echo
-    echo "AVISO: ${PREFIX}/bin não está no PATH do seu shell (o Emacs já o inclui)."
+    echo "AVISO: ${NPM_PREFIX}/bin não está no PATH do seu shell (o Emacs já o inclui)."
     echo "Adicione ao ~/.zshrc:  export PATH=\"\$HOME/.local/bin:\$PATH\""
     ;;
 esac
@@ -157,6 +166,10 @@ echo "=================================================================="
 echo " Instalação concluída! Abra /Applications/MacPorts/Emacs.app"
 echo " Teste as gramáticas com:"
 echo "   M-: (treesit-language-available-p 'astro)"
+echo
+echo " Primeiro uso no Emacs:"
+echo "   1. M-x lsp-install-server RET tailwindcss   (servidor do Tailwind, baixado pelo lsp-mode)"
+echo "   2. Instale a fonte Lekton Nerd Font Mono (usada no config.el); este script não a instala"
 echo
 echo " No projeto Astro, use o Biome local (versão igual à do \$schema do biome.json):"
 echo "   npm i -D --save-exact @biomejs/biome"

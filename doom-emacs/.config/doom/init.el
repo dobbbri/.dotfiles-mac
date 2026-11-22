@@ -18,6 +18,7 @@
        doom-dashboard
        hl-todo
        modeline
+       nav-flash
        ophints
        (popup +defaults)
        vc-gutter

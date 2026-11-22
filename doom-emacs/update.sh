@@ -2,14 +2,14 @@
 set -euo pipefail
 
 DOTFILES_DIR="$HOME/.dotfiles-mac"
-PKG_NAME="doom-emacs-gpt"
+PKG_NAME="doom-emacs"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 NODE_VERSION="22"
 NVM_INIT="/opt/local/share/nvm/init-nvm.sh"
-PREFIX="$HOME/.local"
+NPM_PREFIX="$HOME/.local"
 
-export PATH="${PREFIX}/bin:/opt/local/bin:/opt/local/sbin:${PATH}"
+export PATH="${NPM_PREFIX}/bin:/opt/local/bin:/opt/local/sbin:${PATH}"
 
 echo "=================================================================="
 echo " Atualizando MacPorts, Node, LSPs, Biome e Doom Emacs"
@@ -32,15 +32,21 @@ if [ -s "$NVM_INIT" ]; then
   NODE_BIN_DIR="$(dirname "$(nvm which "$NODE_VERSION")")"
   set -eu
 
-  mkdir -p "$PREFIX/bin"
+  mkdir -p "$NPM_PREFIX/bin"
   for b in node npm npx; do
-    ln -sf "$NODE_BIN_DIR/$b" "$PREFIX/bin/$b"
+    ln -sf "$NODE_BIN_DIR/$b" "$NPM_PREFIX/bin/$b"
   done
 fi
 
+# Um `sudo npm' antigo deixa arquivos de root em ~/.npm e o npm falha com EACCES
+if [ -d "$HOME/.npm" ] && [ -n "$(find "$HOME/.npm" ! -user "$(id -un)" 2>/dev/null | head -n 1)" ]; then
+  echo "--> ~/.npm tem arquivos de root (de um 'sudo npm' antigo); corrigindo o dono..."
+  sudo chown -R "$(id -u):$(id -g)" "$HOME/.npm"
+fi
+
 # 3. Atualizar pacotes npm globais em ~/.local (mantendo TypeScript 6)
-echo "--> Atualizando servidores LSP e BiomeJS em ${PREFIX}..."
-npm install -g --prefix "$PREFIX" typescript@6 typescript-language-server @astrojs/language-server @tailwindcss/language-server @biomejs/biome stylelint js-beautify
+echo "--> Atualizando servidores LSP e BiomeJS em ${NPM_PREFIX}..."
+npm install -g --prefix "$NPM_PREFIX" typescript@6 typescript-language-server @astrojs/language-server @biomejs/biome stylelint js-beautify
 
 # 4. Reaplicar symlinks do GNU Stow
 if [ -d "$DOTFILES_DIR/$PKG_NAME" ]; then
