@@ -1,1 +1,0 @@
-("~/Codes/rafay99.com/" "~/.dotfiles-mac/")
