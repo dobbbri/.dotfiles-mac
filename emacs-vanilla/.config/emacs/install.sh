@@ -122,7 +122,7 @@ npm install -g --prefix "$NPM_PREFIX" typescript@6 typescript-language-server \
   @astrojs/language-server @biomejs/biome vscode-langservers-extracted
 
 # 3. Pasta do Org (a config também a cria, mas assim ela já existe)
-mkdir -p ~/org/daily
+mkdir -p ~/My Files/Org Files/daily
 
 # 4. Compilar as gramáticas tree-sitter em ~/.local/lib/tree-sitter
 echo "--> Compilando gramáticas tree-sitter..."
