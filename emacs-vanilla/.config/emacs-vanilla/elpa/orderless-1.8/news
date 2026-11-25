@@ -1,0 +1,75 @@
+                         ━━━━━━━━━━━━━━━━━━━━━
+                          ORDERLESS.EL - NEWS
+                         ━━━━━━━━━━━━━━━━━━━━━
+
+
+1 Version 1.8 (2026-09-28)
+══════════════════════════
+
+  • New `orderless--metadata-get' function which can be advised.
+  • `orderless-annotation': Prevent recursive matching.
+
+
+2 Version 1.7 (2026-05-19)
+══════════════════════════
+
+  • Generalize `orderless-escapable-split-on-space' and rename to
+    `orderless-escapable-split'. The old name is kept as obsolete alias.
+  • Require Compat 31.
+
+
+3 Version 1.6 (2026-01-24)
+══════════════════════════
+
+  • `orderless-compile', `orderless-escapable-split-on-space': Preserve
+    empty components.
+  • `orderless-kwd-alist': Add `:not' keyword.
+  • Use `when-let*'.
+  • Minor bug fixes.
+
+
+4 Version 1.5 (2025-07-28)
+══════════════════════════
+
+  • `orderless-kwd-documentation': Add support for `embark-bindings'.
+
+
+5 Version 1.4 (2025-03-16)
+══════════════════════════
+
+  • Improved smart case heuristic, which checks the case before the
+    compilation of the input to regexps.
+
+
+6 Version 1.3 (2024-12-24)
+══════════════════════════
+
+  • `orderless-kwd-file': New keyword matching function.
+
+
+7 Version 1.2 (2024-09-10)
+══════════════════════════
+
+  • `orderless-expand-substring': New customization option for literal
+    prefix and substring expansion.
+  • `orderless-pattern-compiler': Remove deprecated function.
+  • `orderless-annotation': Match against both prefix and suffix.
+  • `orderless-not', `orderless-annotation': Respect smart-case.
+  • Depend on Compat 30.
+
+
+8 Version 1.1 (2024-03-20)
+══════════════════════════
+
+  • Matching style functions have been extended. They can return either
+    a regexp string, a `rx' expression or a predicate function.
+  • Annotation matcher orderless-annotation available with the & prefix
+    (mnemonic: an(d)notation).
+  • New keyword matching facility `orderless-kwd-dispatch'. See the
+    orderless-kwd.el file for details.
+
+
+9 Version 1.0 (2026-12-26)
+══════════════════════════
+
+  • Release version 1.0!

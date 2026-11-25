@@ -1,0 +1,13 @@
+# Target labels
+ libvterm
+# Source files and their labels
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/CMakeFiles/libvterm
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/CMakeFiles/libvterm.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/CMakeFiles/libvterm-complete.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-build.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-configure.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-download.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-install.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-mkdir.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-patch.rule
+/Users/sdobri/.config/emacs-vanilla/elpa/vterm-20260914.1641/build/libvterm-prefix/src/libvterm-stamp/libvterm-update.rule

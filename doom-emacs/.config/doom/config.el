@@ -12,8 +12,9 @@
     (setenv "PATH" (concat dir ":" (getenv "PATH")))))
 
 ;; 2. Tema: Catppuccin (sabores: 'mocha, 'macchiato, 'frappe, 'latte)
-(setq catppuccin-flavor 'mocha
-      doom-theme 'catppuccin)
+;; (setq catppuccin-flavor 'mocha
+;;       doom-theme 'catppuccin)
+(setq doom-theme 'doom-peacock)
 
 ;; 3. Interface
 (setq display-line-numbers-type 'relative)   ; use t para números absolutos
@@ -22,23 +23,27 @@
 (setq doom-font (font-spec :family "Lekton Nerd Font Mono" :size 18 :weight 'normal)
       doom-variable-pitch-font doom-font)
 
-;; Onde ficam seus projetos: o `SPC p p' os acha sozinho e o dashboard abre esta pasta.
-(defconst my/projects-dir (expand-file-name "~/Codes/"))
-(setq projectile-project-search-path (list my/projects-dir))
+;; Onde ficam seus projetos, para o `SPC p p' achá-los sozinho:
+(setq projectile-project-search-path '("~/Codes/"))
 
-;; Dired/Dirvish: o Doom já lista pastas primeiro (com o gls) e liga o dired-omit-mode.
-;; Aqui só: ocultar todos os dotfiles (`SPC m h' alterna) e fixar a mesma ordem no TAB.
+;; Dired, Dirvish (inclusive o TAB) e vertico com a mesma ordem: por nome (código de
+;; caractere, como o `ls' no macOS), pastas primeiro, sem `-v'. Exige o gls (coreutils).
+;; O Doom já liga o dired-omit-mode; aqui também se ocultam todos os dotfiles
+;; (`SPC m h' alterna).
+(defconst my/ls-switches "-ahl --group-directories-first")
 (after! dired-x
   (setq dired-omit-files (concat dired-omit-files "\\|^\\.")))
+(after! dired
+  (when (executable-find "gls")
+    (setq dired-listing-switches my/ls-switches)))
 (when (executable-find "gls")
-  (setq dirvish-subtree-listing-switches "-ahl -v --group-directories-first"))
+  (setq dirvish-subtree-listing-switches my/ls-switches))
 
-;; Seletores de arquivo do vertico (SPC f P, SPC f p, SPC SPC, find-file): ordem
-;; alfabética, com pastas primeiro quando a lista as traz (find-file). O padrão do
-;; vertico ordena por histórico e tamanho do nome (o que deixa a lista "bagunçada").
+;; Seletores de arquivo do vertico (SPC f P, SPC f p, SPC SPC, find-file): mesma ordem
+;; do Dired (por código de caractere, `string<'), com pastas primeiro quando a lista as
+;; traz (find-file). O padrão do vertico ordena por histórico e tamanho do nome.
 (defun my/vertico-sort-dirs-first (files)
-  (let ((files (sort (copy-sequence files)
-                     (lambda (a b) (string-collate-lessp a b nil t)))))
+  (let ((files (sort (copy-sequence files) #'string<)))
     (nconc (seq-filter (lambda (f) (string-suffix-p "/" f)) files)
            (seq-remove (lambda (f) (string-suffix-p "/" f)) files))))
 
@@ -58,4 +63,3 @@
 (load! "+lsp")       ; lsp-mode, Astro e Tailwind
 (load! "+biome")     ; formatação, lint e diagnóstico do Biome
 (load! "+org")       ; Org-mode
-(load! "+dashboard") ; menu inicial simples (pastas abrem no Dirvish)

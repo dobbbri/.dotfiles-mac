@@ -22,17 +22,26 @@ if ! command -v emacs >/dev/null; then
 	fi
 fi
 
-# ---------------------------------------------------------------- fzf (MacPorts)
-# Ajuste os caminhos se necessário: `port contents fzf`
-[[ -r /opt/local/share/fzf/shell/key-bindings.zsh ]] && source /opt/local/share/fzf/shell/key-bindings.zsh
-[[ -r /opt/local/share/fzf/shell/completion.zsh ]] && source /opt/local/share/fzf/shell/completion.zsh
-
 # ---------------------------------------------------------------- Shell
 export CLICOLOR=1
 export LANG=en_US.UTF-8
 
 # Completion
-autoload -Uz compinit && compinit
+# O .zcompdump é recriado no máximo 1x por dia; nas demais aberturas usa `compinit -C`
+# (pula a verificação), o que deixa o shell interativo bem mais rápido.
+autoload -Uz compinit
+_zdump="$HOME/.zcompdump"
+if [[ ! -f $_zdump || -n $(find "$_zdump" -mtime +0 2>/dev/null) ]]; then
+	compinit
+else
+	compinit -C
+fi
+unset _zdump
+
+# fzf (MacPorts) — depois do compinit, para o Tab do fzf valer
+# Ajuste os caminhos se necessário: `port contents fzf`
+[[ -r /opt/local/share/fzf/shell/key-bindings.zsh ]] && source /opt/local/share/fzf/shell/key-bindings.zsh
+[[ -r /opt/local/share/fzf/shell/completion.zsh ]] && source /opt/local/share/fzf/shell/completion.zsh
 
 # History
 HISTFILE="$HOME/.zsh_history"

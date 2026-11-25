@@ -44,7 +44,7 @@ if [ ! -x "$SCRIPT_DIR/build-grammars.sh" ]; then
   exit 1
 fi
 
-for f in init.el config.el packages.el +treesit.el +lsp.el +biome.el +org.el +dashboard.el; do
+for f in init.el config.el packages.el +treesit.el +lsp.el +biome.el +org.el; do
   if [ ! -f "$DOOM_PKG/.config/doom/$f" ]; then
     echo "--> Faltando $DOOM_PKG/.config/doom/$f (copie seus arquivos do Doom para lá)."
     exit 1

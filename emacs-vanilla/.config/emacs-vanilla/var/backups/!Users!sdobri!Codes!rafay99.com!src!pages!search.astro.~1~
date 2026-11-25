@@ -1,0 +1,54 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import BaseHead from "@astro/base/BaseHead.astro";
+import Footer from "@astro/footer/Footer.astro";
+import Header from "@astro/header/Header.astro";
+import { featureFlags } from "@config/featureFlag/featureFlag.json";
+import authorConfig from "@config/siteConfig/info.json";
+import SearchReactComponent from "@react/blog/metadata/SearchField/SearchField";
+
+export const prerender = true;
+
+if (!featureFlags.showSearch) {
+  return Astro.redirect("/access-denied?feature=search");
+}
+
+const posts = featureFlags.showBlog
+  ? (await getCollection("blog"))
+      .filter((post: CollectionEntry<"blog">) => !post.data.draft && !post.data.archived)
+      .sort(
+        (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+      )
+      .map((post: CollectionEntry<"blog">) => ({
+        id: post.id,
+        collection: post.collection,
+        data: {
+          title: post.data.title,
+          description: post.data.description,
+          pubDate: post.data.pubDate,
+          authorName: post.data.authorName,
+          draft: post.data.draft,
+          archived: post.data.archived,
+          tags: post.data.tags,
+        },
+      }))
+  : [];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={`Search | ${authorConfig.SiteName}`}
+      description={`Search every article on ${authorConfig.SiteName} by title, tag, author or date.`}
+    />
+  </head>
+
+  <body>
+    <Header />
+    <main class="ed">
+      <SearchReactComponent client:idle posts={posts} />
+    </main>
+    <Footer />
+  </body>
+</html>

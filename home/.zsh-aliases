@@ -23,8 +23,6 @@ alias mv='mv -i'
 # untar
 alias untar='tar xvf'
 
-alias kitty="kitty --start-as maximized"
-
 # run http-server
 alias run-server="npx http-server "
 
