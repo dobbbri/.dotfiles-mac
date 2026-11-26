@@ -6,7 +6,6 @@ path=(
 	/opt/local/sbin
 	$HOME/nvim-macos-x86_64/bin
 	$HOME/.local/bin
-	$HOME/.config/emacs/bin   # Doom Emacs (comando `doom`)
 	$path
 )
 export PATH

@@ -32,10 +32,9 @@
       warning-suppress-log-types '((files missing-lexbind-cookie)))
 
 ;; Compilação nativa em silêncio.
-(setq native-comp-async-report-warnings-errors 'silent
-      native-comp-jit-compilation t)
+(setq native-comp-async-report-warnings-errors 'silent)
 
-;; Cache da compilação nativa fica em ~/.config/emacs-vanilla/var/eln-cache/.
+;; Cache da compilação nativa fica em var/eln-cache/, dentro da pasta da config.
 (when (boundp 'native-comp-eln-load-path)
   (startup-redirect-eln-cache
    (expand-file-name "var/eln-cache/" user-emacs-directory)))

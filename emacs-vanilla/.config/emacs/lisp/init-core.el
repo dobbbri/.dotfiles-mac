@@ -2,7 +2,8 @@
 
 ;; --- Arquivos gerados fora da pasta da config --------------------------------
 (defconst my/var-dir (expand-file-name "var/" user-emacs-directory))
-(make-directory my/var-dir t)
+(make-directory (expand-file-name "backups/" my/var-dir) t)
+(make-directory (expand-file-name "auto-save/" my/var-dir) t)
 
 (setq backup-directory-alist `(("." . ,(expand-file-name "backups/" my/var-dir)))
       auto-save-list-file-prefix (expand-file-name "auto-save/" my/var-dir)
@@ -13,8 +14,6 @@
       delete-old-versions t
       kept-new-versions 3
       kept-old-versions 1)
-(make-directory (expand-file-name "backups/" my/var-dir) t)
-(make-directory (expand-file-name "auto-save/" my/var-dir) t)
 
 ;; --- GC / desempenho ----------------------------------------------------------
 (use-package gcmh
@@ -49,7 +48,6 @@
 (show-paren-mode 1)
 (column-number-mode 1)
 (pixel-scroll-precision-mode 1)
-(electric-indent-mode 1)
 
 (setq recentf-save-file (expand-file-name "recentf" my/var-dir)
       recentf-max-saved-items 300
@@ -68,8 +66,9 @@
         which-key-sort-order #'which-key-key-order-alpha)
   (which-key-mode 1))
 
-;; --- PATH: ~/.local/bin (LSPs, Node, Biome) e MacPorts -------------------------
-;; A ordem importa: ~/.local/bin fica na frente, então vence cópias antigas.
+;; --- PATH: ~/.local/bin (LSPs, Biome) e MacPorts ---------------------------------
+;; Garante os dois mesmo se o exec-path-from-shell falhar. ~/.local/bin fica na
+;; frente, então vence cópias antigas.
 (dolist (dir (delq nil (list (and (eq system-type 'darwin) "/opt/local/bin")
                              (expand-file-name "~/.local/bin"))))
   (add-to-list 'exec-path dir)
@@ -88,13 +87,12 @@
 
 ;; --- macOS (equivalente ao módulo :os macos do Doom) --------------------------
 (when (eq system-type 'darwin)
-  (setq mac-command-modifier 'super   ns-command-modifier 'super     ; Command = super
-        mac-option-modifier 'meta     ns-option-modifier 'meta       ; Option  = meta
-        mac-right-option-modifier 'none ns-right-option-modifier 'none
+  (setq ns-command-modifier 'super          ; Command = super
+        ns-option-modifier 'meta            ; Option  = meta
+        ns-right-option-modifier 'none      ; Option direito livre para acentos
         ns-use-proxy-icon nil
         ns-pop-up-frames nil
-        delete-by-moving-to-trash t
-        trash-directory "~/.Trash")
+        delete-by-moving-to-trash t)        ; apagar manda para a Lixeira
   (global-set-key (kbd "s-c") #'kill-ring-save)
   (global-set-key (kbd "s-v") #'yank)
   (global-set-key (kbd "s-x") #'kill-region)

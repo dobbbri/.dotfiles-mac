@@ -1,12 +1,9 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-;; Config Emacs vanilla baseada no Doom Emacs (Emacs 31).
-;; Uso lado a lado com o Doom:  emacs --init-directory ~/.config/emacs-vanilla
+;; Config Emacs vanilla baseada no Doom Emacs (Emacs 31), em ~/.config/emacs.
+;; Para testar de outra pasta:  emacs --init-directory <pasta>
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
-
-;; Garante que treesit-ready-p exista antes de qualquer autoload de pacote.
-(require 'treesit)
 
 (require 'init-package)    ; package.el, MELPA, use-package
 (require 'init-core)       ; padrões sensatos (backups, recentf, scroll, macOS...)

@@ -36,7 +36,6 @@
     "fr" '(consult-recent-file :which-key "Recentes")
     "fs" '(save-buffer :which-key "Salvar")
     "fS" '(write-file :which-key "Salvar como")
-    "fP" '(projectile-find-file :which-key "Arquivo do projeto")
     "fR" '(rename-visited-file :which-key "Renomear")
 
     ;; buffers
@@ -47,7 +46,6 @@
     "bn" '(next-buffer :which-key "Próximo")
     "bp" '(previous-buffer :which-key "Anterior")
     "br" '(revert-buffer-quick :which-key "Recarregar")
-    "bs" '(save-buffer :which-key "Salvar")
 
     ;; janelas
     "w"  '(:ignore t :which-key "janelas")
@@ -85,7 +83,8 @@
     "ss" '(consult-line :which-key "Na linha/buffer")
     "si" '(consult-imenu :which-key "Imenu")
     "sp" '(consult-ripgrep :which-key "No projeto")
-    "sd" '(consult-ripgrep :which-key "Na pasta")
+    "sd" `(,(lambda () (interactive) (consult-ripgrep default-directory))
+          :which-key "Na pasta atual")
 
     ;; git
     "g"  '(:ignore t :which-key "git")

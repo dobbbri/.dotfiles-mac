@@ -58,14 +58,14 @@
 (use-package projectile
   :demand t
   :config
-  ;; Onde ficam seus projetos, para o `SPC p p' achá-los sozinho:
+  ;; Onde ficam seus projetos. A varredura não roda mais a cada inicialização: use
+  ;; `SPC p D' para redescobrir (ex.: depois de clonar um projeto novo).
   (setq projectile-project-search-path '("~/Codes/")
+        projectile-auto-discover nil
         projectile-known-projects-file (expand-file-name "projectile-projects.eld" my/var-dir)
         projectile-cache-file (expand-file-name "projectile.cache" my/var-dir)
         projectile-switch-project-action #'projectile-find-file)
-  (projectile-mode 1)
-  (when (file-directory-p (expand-file-name "~/Codes/"))
-    (projectile-discover-projects-in-search-path)))
+  (projectile-mode 1))
 
 ;; --- Autocompletar no buffer (company) ------------------------------------------
 (use-package company

@@ -4,6 +4,7 @@
 ;; a pasta onde o Emacs procura sozinho. O Emacs não instala nada: se faltar uma
 ;; gramática, rode o script. ~/.local/lib/tree-sitter (setup antigo do Doom) também
 ;; é consultada, se existir.
+(require 'treesit)
 (add-to-list 'treesit-extra-load-path (expand-file-name "~/.local/lib/tree-sitter"))
 (setq treesit-auto-install-grammar 'never
       treesit-font-lock-level 4)

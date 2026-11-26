@@ -4,7 +4,6 @@
 ;; linguagem que sobraram (equivalente aos módulos :lang do Doom).
 
 ;; --- emacs-lisp ---------------------------------------------------------------
-(setq lisp-indent-offset nil)
 (my/local-leader
   :predicate '(derived-mode-p 'emacs-lisp-mode)
   "e"  '(:ignore t :which-key "eval")

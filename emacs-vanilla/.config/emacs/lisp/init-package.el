@@ -8,8 +8,7 @@
 (setq package-archives
       '(("gnu"   . "https://elpa.gnu.org/packages/")
         ("melpa" . "https://melpa.org/packages/"))
-      package-archive-priorities '(("gnu" . 2) ("melpa" . 1))
-      url-queue-timeout 15)
+      package-archive-priorities '(("gnu" . 2) ("melpa" . 1)))
 
 (package-initialize)
 

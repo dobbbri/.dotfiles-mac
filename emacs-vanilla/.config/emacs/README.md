@@ -176,7 +176,7 @@ Arquivos da config (não pacotes), equivalentes aos módulos `+treesit`, `+lsp`,
 - **O que é:** só um aviso. Algum pacote instalado carrega a biblioteca antiga `cl` com `(require 'cl)`. Nada quebra, e não há nada para corrigir na config (nenhum arquivo em `lisp/` usa o `cl`).
 - **Como achar o pacote culpado** (as aspas no `--include` evitam o erro `no matches found` do zsh):
 
-      grep -rl "(require 'cl)" ~/.config/emacs-vanilla/elpa --include='*.el'
+      grep -rl "(require 'cl)" ~/.config/emacs/elpa --include='*.el'
 
   Alternativa: coloque `(setq debug-on-message "Package cl is deprecated")` no começo do `init.el`, reinicie e veja o backtrace do debugger (e remova a linha depois).
 - **Falso positivo:** o `dash.el` aparece no grep, mas só carrega o `cl` em Emacs anterior à versão 24.3, então não causa o aviso.

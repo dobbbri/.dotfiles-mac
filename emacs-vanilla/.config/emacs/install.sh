@@ -122,21 +122,18 @@ echo "--> Instalando Astro LS, TypeScript 6, BiomeJS e servidores web em ${NPM_P
 npm install -g --prefix "$NPM_PREFIX" typescript@6 typescript-language-server \
   @astrojs/language-server @biomejs/biome vscode-langservers-extracted
 
-# 3. Pasta do Org (a config também a cria, mas assim ela já existe)
-mkdir -p ~/org/daily
-
-# 4. Compilar as gramáticas tree-sitter em ~/.config/emacs/tree-sitter
+# 3. Compilar as gramáticas tree-sitter em ~/.config/emacs/tree-sitter
 echo "--> Compilando gramáticas tree-sitter..."
 "$SCRIPT_DIR/build-grammars.sh"
 
-# 5. Links simbólicos com GNU Stow. --no-folding: ~/.config/emacs fica uma pasta de
+# 4. Links simbólicos com GNU Stow. --no-folding: ~/.config/emacs fica uma pasta de
 #    verdade (só os arquivos viram link), assim elpa/, var/ e custom.el, gerados pelo
 #    Emacs, não caem dentro do repositório de dotfiles.
 echo "--> Aplicando dotfiles com GNU Stow..."
 cd "$DOTFILES_DIR"
 stow -v -R --no-folding -t "$HOME" "$PKG_NAME"
 
-# 6. Primeira abertura em modo batch: baixa, instala e compila todos os pacotes,
+# 5. Primeira abertura em modo batch: baixa, instala e compila todos os pacotes,
 #    com o log em ~/.local/state/emacs/ (e também na tela).
 if command -v emacs >/dev/null 2>&1; then
   EMACS_BIN="$(command -v emacs)"

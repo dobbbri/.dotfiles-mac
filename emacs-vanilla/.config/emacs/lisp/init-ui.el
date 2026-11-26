@@ -28,11 +28,10 @@
 (setq display-line-numbers-type 'relative)
 (dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
   (add-hook hook #'display-line-numbers-mode))
-;; Sem números em Org, terminais e afins.
-(dolist (hook '(org-mode-hook vterm-mode-hook dired-mode-hook))
-  (add-hook hook (lambda () (display-line-numbers-mode -1))))
+;; O Org deriva de text-mode, mas fica sem números de linha.
+(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode -1)))
 
-;; --- Pequenos auxílios visuais (hl-todo, ophints, nav-flash, ~ nas bordas) ----
+;; --- Pequenos auxílios visuais (hl-todo, ophints, nav-flash, vc-gutter) ----------
 (use-package hl-todo
   :demand t
   :config (global-hl-todo-mode 1))
@@ -50,9 +49,6 @@
   (add-hook 'consult-after-jump-hook #'pulsar-pulse-line)
   (add-hook 'xref-after-jump-hook #'pulsar-pulse-line)
   (pulsar-global-mode 1))
-
-(use-package vi-tilde-fringe
-  :hook ((prog-mode text-mode) . vi-tilde-fringe-mode))
 
 (use-package diff-hl                          ; vc-gutter do Doom
   :demand t

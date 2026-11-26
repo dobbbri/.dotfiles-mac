@@ -45,7 +45,7 @@
   :commands vterm
   :config (setq vterm-max-scrollback 10000))
 
-;; --- ibuffer / ajuda ------------------------------------------------------------------
+;; --- ibuffer -----------------------------------------------------------------------
 (global-set-key [remap list-buffers] #'ibuffer)
 
 (provide 'init-editor)
