@@ -10,5 +10,8 @@ nvm install 22
 
 # sudo port install pnpm && corepack enable
 
+# Permitir o core-js permanentemente (Instalações globais)
+npm config set allow-scripts=core-js --location=user
+
 echo "- Install NPM packages --------------------------------------------------"
 npm i -g @ast-grep/cli npm-check-updates typescript typescript-language-server vscode-langservers-extracted eslint prettier biome

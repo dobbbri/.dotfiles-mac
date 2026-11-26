@@ -26,9 +26,9 @@
 Para só experimentar a config, sem instalar nada: `emacs --init-directory <pasta-com-esta-config>`.
 
 ## Dependências externas
-- Gramáticas tree-sitter: `./build-grammars.sh` (grava em `~/.local/lib/tree-sitter`; precisa de git e de um compilador C, no macOS `xcode-select --install`). O `install.sh` já o executa.
-- Tailwind: `M-x lsp-install-server RET tailwindcss` (o lsp-mode baixa e gerencia o servidor)
-- Servidores: astro-ls, typescript-language-server, vscode-langservers-extracted, `@biomejs/biome` em `~/.local/bin` (o `install.sh` instala)
+- Gramáticas tree-sitter: `./build-grammars.sh` (grava em `~/.config/emacs/tree-sitter`; precisa de git e de um compilador C, no macOS `xcode-select --install`). O `install.sh` já o executa.
+- Tailwind: `M-x lsp-install-server RET tailwindcss` (o lsp-mode baixa a extensão oficial do VS Code; evite o pacote npm `@tailwindcss/language-server`, que não recebe atualizações e ficou defasado em relação ao Tailwind v4; com ele o servidor iniciava mas não carregava nenhum projeto). Para atualizar depois de mudar `lsp-tailwindcss-server-version`: `C-u M-x lsp-install-server`
+- Servidores em `~/.local/bin` (o `install.sh` instala com `npm install -g --prefix ~/.local`): astro-ls, typescript-language-server, vscode-langservers-extracted e `@biomejs/biome`
 - `rg` (consult-ripgrep), `gls` (coreutils, só macOS), `cmake` + `libtool` (vterm)
 - Fonte Lekton Nerd Font Mono (o `install.sh` não a instala)
 

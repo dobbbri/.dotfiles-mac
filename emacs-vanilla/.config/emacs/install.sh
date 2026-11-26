@@ -116,15 +116,16 @@ if [ -d "$HOME/.npm" ] && [ -n "$(find "$HOME/.npm" ! -user "$(id -un)" 2>/dev/n
 fi
 
 # 2. Servidores LSP (TypeScript 6, Astro, JSON/CSS/HTML) e BiomeJS em ~/.local (sem sudo)
-#    O servidor do Tailwind NÃO vem do npm: o lsp-mode o instala (ver o aviso no fim).
+#    O servidor do Tailwind NÃO vem do npm (o pacote não recebe atualizações): o lsp-mode
+#    baixa a extensão oficial do VS Code (ver o aviso no fim).
 echo "--> Instalando Astro LS, TypeScript 6, BiomeJS e servidores web em ${NPM_PREFIX}..."
 npm install -g --prefix "$NPM_PREFIX" typescript@6 typescript-language-server \
   @astrojs/language-server @biomejs/biome vscode-langservers-extracted
 
 # 3. Pasta do Org (a config também a cria, mas assim ela já existe)
-mkdir -p ~/My Files/Org Files/daily
+mkdir -p ~/org/daily
 
-# 4. Compilar as gramáticas tree-sitter em ~/.local/lib/tree-sitter
+# 4. Compilar as gramáticas tree-sitter em ~/.config/emacs/tree-sitter
 echo "--> Compilando gramáticas tree-sitter..."
 "$SCRIPT_DIR/build-grammars.sh"
 

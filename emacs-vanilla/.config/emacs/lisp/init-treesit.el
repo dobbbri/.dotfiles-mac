@@ -1,8 +1,9 @@
 ;;; init-treesit.el -*- lexical-binding: t; -*-
 
-;; Gramáticas compiladas pelo ./build-grammars.sh ficam em ~/.local/lib/tree-sitter,
-;; fora da pasta da config. O Emacs não instala nada sozinho: se faltar uma
-;; gramática, rode o script.
+;; Gramáticas compiladas pelo ./build-grammars.sh ficam em ~/.config/emacs/tree-sitter,
+;; a pasta onde o Emacs procura sozinho. O Emacs não instala nada: se faltar uma
+;; gramática, rode o script. ~/.local/lib/tree-sitter (setup antigo do Doom) também
+;; é consultada, se existir.
 (add-to-list 'treesit-extra-load-path (expand-file-name "~/.local/lib/tree-sitter"))
 (setq treesit-auto-install-grammar 'never
       treesit-font-lock-level 4)

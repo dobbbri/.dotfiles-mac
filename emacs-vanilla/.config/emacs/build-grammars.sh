@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Compila as gramáticas tree-sitter usadas pela config, sem depender do Emacs.
 # Uso:  ./build-grammars.sh [pasta-de-destino]
-# Padrão: ~/.local/lib/tree-sitter (a config já procura as gramáticas lá)
+# Padrão: ~/.config/emacs/tree-sitter (a pasta onde o Emacs procura as gramáticas sozinho)
 # Precisa de git e de um compilador C (macOS: xcode-select --install).
 set -euo pipefail
 
-DEST="${1:-$HOME/.local/lib/tree-sitter}"
+DEST="${1:-$HOME/.config/emacs/tree-sitter}"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 mkdir -p "$DEST"

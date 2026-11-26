@@ -43,8 +43,10 @@
   (add-to-list 'lsp-disabled-clients 'eslint))
 
 ;; O cliente de Tailwind já vem no lsp-mode; só acrescenta os modos que ele não cobre.
-;; O servidor é gerenciado pelo lsp-mode (precisa de node no PATH):
-;; M-x lsp-install-server RET tailwindcss   (reinstale se mudar a versão acima).
+;; O servidor é gerenciado pelo lsp-mode, que baixa a extensão oficial do VS Code (o
+;; pacote npm @tailwindcss/language-server não recebe atualizações e ficou defasado em
+;; relação ao Tailwind v4). Instale com M-x lsp-install-server RET tailwindcss (precisa de
+;; node); depois de mudar a versão acima, reinstale com C-u M-x lsp-install-server.
 (with-eval-after-load 'lsp-tailwindcss
   (dolist (mode '(astro-ts-mode css-ts-mode))
     (add-to-list 'lsp-tailwindcss-major-modes mode)))
