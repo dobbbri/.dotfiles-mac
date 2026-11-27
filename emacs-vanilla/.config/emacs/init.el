@@ -20,7 +20,6 @@
 (require 'init-org)        ; Org-mode
 
 ;; Customize fica fora deste arquivo.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file) (load custom-file nil 'nomessage))
 
 ;;; init.el ends here

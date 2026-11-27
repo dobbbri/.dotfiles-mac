@@ -1,40 +1,29 @@
 ;;; init-treesit.el -*- lexical-binding: t; -*-
 
-;; Gramáticas compiladas pelo ./build-grammars.sh ficam em ~/.config/emacs/tree-sitter,
-;; a pasta onde o Emacs procura sozinho. O Emacs não instala nada: se faltar uma
-;; gramática, rode o script. ~/.local/lib/tree-sitter (setup antigo do Doom) também
-;; é consultada, se existir.
+;; Emacs 31: com `treesit-auto-install-grammar' em `always', o Emacs baixa e compila a
+;; gramática (precisa de git e de um compilador C; no macOS, `xcode-select --install')
+;; na primeira vez que um modo precisar dela, e `treesit-enabled-modes' usa os
+;; *-ts-mode no lugar dos modos clássicos. As gramáticas ficam em
+;; ~/.config/emacs/tree-sitter. As que já existirem em ~/.local/lib/tree-sitter (setup
+;; antigo do Doom) também são usadas, sem baixar de novo.
 (require 'treesit)
 (add-to-list 'treesit-extra-load-path (expand-file-name "~/.local/lib/tree-sitter"))
-(setq treesit-auto-install-grammar 'never
+(setq treesit-auto-install-grammar 'always
+      treesit-enabled-modes t
       treesit-font-lock-level 4)
 
-;; Usa o modo ts só se a gramática existir; senão mantém o modo clássico.
-(dolist (r '((js-mode      js-ts-mode   javascript)
-             (js-jsx-mode  js-ts-mode   javascript)
-             (js-json-mode json-ts-mode json)
-             (css-mode     css-ts-mode  css)
-             (mhtml-mode   html-ts-mode html)
-             (html-mode    html-ts-mode html)
-             (sh-mode      bash-ts-mode bash)
-             (yaml-mode    yaml-ts-mode yaml)))
-  (when (treesit-language-available-p (nth 2 r))
-    (setf (alist-get (nth 0 r) major-mode-remap-alist) (nth 1 r))))
+;; O Astro vem de um pacote de terceiros: informa de onde baixar a gramática.
+(add-to-list 'treesit-language-source-alist
+             '(astro "https://github.com/virchau13/tree-sitter-astro"))
 
-;; TypeScript não tem modo clássico embutido: associa direto.
-(when (treesit-language-available-p 'typescript)
-  (add-to-list 'auto-mode-alist '("\\.[cm]?ts\\'" . typescript-ts-mode)))
-(when (treesit-language-available-p 'tsx)
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode)))
-(when (treesit-language-available-p 'javascript)
-  (add-to-list 'auto-mode-alist '("\\.[cm]?js\\'" . js-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js-ts-mode)))
-(when (treesit-language-available-p 'json)
-  (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode)))
-(when (treesit-language-available-p 'yaml)
-  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode)))
-
-;; Fallback quando não há gramática de YAML.
-(use-package yaml-mode :mode "\\.ya?ml\\'" :defer t)
+;; Associações diretas ao ts-mode. TypeScript não tem modo clássico embutido, e as
+;; demais garantem o comportamento mesmo se o `treesit-enabled-modes' não as cobrir
+;; (se cobrir, ficam redundantes e inofensivas).
+(add-to-list 'auto-mode-alist '("\\.[cm]?ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
+(dolist (mode '(mhtml-mode html-mode))
+  (setf (alist-get mode major-mode-remap-alist) 'html-ts-mode))
 
 (provide 'init-treesit)

@@ -22,6 +22,10 @@
         dired-recursive-copies 'always
         dired-recursive-deletes 'top
         dired-kill-when-opening-new-dired-buffer t
+        dired-vc-rename-file t                       ; R em arquivo versionado = git mv
+        dired-create-destination-dirs 'ask           ; cria a pasta de destino se faltar
+        dired-clean-confirm-killing-deleted-buffers nil
+        dired-free-space nil
         dired-auto-revert-buffer #'dired-directory-changed-p)
   (when my/gnu-ls-p
     (setq dired-listing-switches my/ls-switches)))

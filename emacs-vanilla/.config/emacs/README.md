@@ -10,7 +10,7 @@
 
        ~/.dotfiles-mac/
        ├── install.sh
-       ├── build-grammars.sh
+       ├── uninstall.sh
        └── emacs-vanilla/.config/emacs/
            ├── early-init.el
            ├── init.el
@@ -19,15 +19,23 @@
    Se você já testou com `.config/emacs-vanilla` dentro do pacote: rode `stow -D -t ~ emacs-vanilla`, mova os arquivos para `.config/emacs/` e apague do repositório o que o Emacs gerou (`elpa/`, `var/`, `tree-sitter/`, `eln-cache/`, `custom.el`). Isso foi parar lá porque o Stow "dobrava" a pasta inteira em um link; o `install.sh` agora usa `--no-folding` para evitar.
 3. **Rodar o instalador:**
 
-       cd ~/.dotfiles-mac && chmod +x install.sh build-grammars.sh && ./install.sh
+       cd ~/.dotfiles-mac && chmod +x install.sh uninstall.sh && ./install.sh
 
-   Ele instala o Emacs 31.1 e as dependências (MacPorts), o Node (nvm), os servidores LSP e o Biome (em `~/.local`), compila as gramáticas tree-sitter, aplica o Stow e faz a primeira abertura do Emacs em modo batch, que baixa e compila os pacotes. O log fica em `~/.local/state/emacs/`. Pode ser rodado de novo sem problema.
+   O script (no mesmo formato do `uninstall.sh`) pergunta antes de cada grupo, pula o que já está instalado e permite instalar só parte: o Emacs 31.1 (MacPorts), as ferramentas (base, vterm e scripts sh), o Node via nvm, os servidores LSP e o Biome (em `~/.local`), a config via Stow e a primeira abertura do Emacs em modo batch, que baixa e compila os pacotes. O log fica em `~/.local/state/emacs/`. Use `./install.sh --dry-run` para só ver o que seria feito, ou `--yes` para aceitar tudo sem perguntar. Pode ser rodado de novo sem problema.
 
 Para só experimentar a config, sem instalar nada: `emacs --init-directory <pasta-com-esta-config>`.
 
+## Desinstalar
+`./uninstall.sh` reverte o `install.sh`, perguntando antes de cada grupo: desfaz o Stow, remove os servidores LSP e o Biome de `~/.local`, os links de `node`/`npm`/`npx`, as gramáticas e os arquivos que o Emacs gerou (com opção de mover para backup em vez de apagar). Pacotes do MacPorts e o Node do nvm só saem se você confirmar, e os genéricos (`git`, `stow`, `nvm`, `coreutils`) ficam em uma pergunta separada.
+
+- `./uninstall.sh --dry-run` só mostra o que seria feito, sem alterar nada. Rode isso primeiro.
+- `./uninstall.sh --yes` aceita as respostas padrão, que são as mais seguras: faz backup em vez de apagar e não mexe nos pacotes do MacPorts nem no Node.
+- Nunca é apagado: `~/org` (suas notas), o repositório `~/.dotfiles-mac` (só os links são removidos), o MacPorts e as Xcode Command Line Tools.
+
 ## Dependências externas
-- Gramáticas tree-sitter: `./build-grammars.sh` (grava em `~/.config/emacs/tree-sitter`; precisa de git e de um compilador C, no macOS `xcode-select --install`). O `install.sh` já o executa.
-- Tailwind: `M-x lsp-install-server RET tailwindcss` (o lsp-mode baixa a extensão oficial do VS Code; evite o pacote npm `@tailwindcss/language-server`, que não recebe atualizações e ficou defasado em relação ao Tailwind v4; com ele o servidor iniciava mas não carregava nenhum projeto). Para atualizar depois de mudar `lsp-tailwindcss-server-version`: `C-u M-x lsp-install-server`
+- Gramáticas tree-sitter: o Emacs 31 as instala sozinho na primeira vez que um modo precisar (`treesit-auto-install-grammar 'always`), gravando em `~/.config/emacs/tree-sitter`; precisa de git e de um compilador C (macOS: `xcode-select --install`). Gramáticas já existentes em `~/.local/lib/tree-sitter` (setup antigo do Doom) também são usadas
+- Tailwind: o `install.sh` instala `@tailwindcss/language-server` via npm, e a config o usa se estiver no PATH. Se ele iniciar mas o log mostrar `Initialized 0 projects` e nada completar (aconteceu em um teste), use o servidor gerenciado pelo lsp-mode: `npm uninstall -g --prefix ~/.local @tailwindcss/language-server` e depois `M-x lsp-install-server RET tailwindcss`
+- **Em cada projeto Astro:** `npm i -D typescript@6` (o astro-ls usa o TypeScript do projeto) e `npm i -D --save-exact @biomejs/biome` (a versão deve ser a do `$schema` do `biome.json`)
 - Servidores em `~/.local/bin` (o `install.sh` instala com `npm install -g --prefix ~/.local`): astro-ls, typescript-language-server, vscode-langservers-extracted e `@biomejs/biome`
 - `rg` (consult-ripgrep), `gls` (coreutils, só macOS), `cmake` + `libtool` (vterm)
 - Fonte Lekton Nerd Font Mono (o `install.sh` não a instala)
@@ -44,6 +52,8 @@ Para só experimentar a config, sem instalar nada: `emacs --init-directory <past
 | (org +pretty) | [org-modern](https://github.com/minad/org-modern) |
 | (eval +overlay) | [eros](https://github.com/xiongtx/eros) |
 | `+treesit` `+lsp` `+biome` `+org` | `init-treesit` `init-lsp` `init-biome` `init-org` |
+
+Alguns padrões gerais (minibuffer, undo, auto-save, `load-prefer-newer`, entre outros) vieram do [minimal-emacs.d](https://github.com/jamescherti/minimal-emacs.d), selecionados e adaptados.
 
 Ficaram de fora: doom-dashboard, file-templates, lsp-ui e a persistência de workspaces.
 
