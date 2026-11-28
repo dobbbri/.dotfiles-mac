@@ -10,6 +10,14 @@
         ("melpa" . "https://melpa.org/packages/"))
       package-archive-priorities '(("gnu" . 2) ("melpa" . 1)))
 
+;; Alguns pacotes de terceiros (ex.: astro-ts-mode) ainda chamam `treesit-ready-p', que o
+;; Emacs 31 não tem mais, e isso dá "Error loading autoloads (void-function
+;; treesit-ready-p)" ao ativar os pacotes. Este substituto precisa existir antes disso.
+(unless (fboundp 'treesit-ready-p)
+  (defun treesit-ready-p (language &optional _quiet)
+    "Substituto de compatibilidade: não nil se a gramática de LANGUAGE estiver disponível."
+    (and (treesit-available-p) (treesit-language-available-p language))))
+
 (package-initialize)
 
 ;; Na primeira execução baixa o índice dos pacotes; se a rede falhar, segue

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Instala o Emacs 31.1 (MacPorts) + a config vanilla em ~/.config/emacs, via GNU Stow.
 # Pergunta antes de cada grupo, então dá para instalar só parte. O que já está instalado é
-# pulado, e o script pode ser rodado de novo. As gramáticas tree-sitter o próprio Emacs 31
-# instala, na primeira vez que precisar.
+# pulado, e o script pode ser rodado de novo. As gramáticas tree-sitter e os servidores
+# LSP (astro-ls, typescript, json/css/html, Biome e Tailwind) o próprio Emacs instala, na
+# primeira abertura (precisa do Node, da etapa 2).
 #
 # Uso:  ./install.sh [-n|--dry-run] [-y|--yes]
 #   -n, --dry-run  só mostra o que seria feito, sem alterar nada
@@ -19,10 +20,7 @@ TARGET="$HOME/.config/emacs"              # onde o Emacs procura a config
 NPM_PREFIX="$HOME/.local"                 # LSPs e Biome ficam aqui, sem sudo
 NODE_VERSION="22"
 NVM_INIT="/opt/local/share/nvm/init-nvm.sh"
-LOG_DIR="$HOME/.local/state/emacs"
 
-NPM_PACKAGES=(typescript@6 typescript-language-server @astrojs/language-server
-              @tailwindcss/language-server @biomejs/biome vscode-langservers-extracted)
 PORTS_EMACS=(emacs)                              # instalado com @31.1 +treesitter +nativecomp
 PORTS_BASE=(git stow ripgrep fd coreutils)       # stow liga a config; gls = Dired; rg = busca
 PORTS_VTERM=(cmake libtool)                      # o vterm compila um módulo nativo
@@ -150,26 +148,20 @@ if ask "Instalar o nvm e o Node ${NODE_VERSION}?" s; then
   fi
 fi
 
-# ---------------------------------------------------------------- 3. npm: LSP e Biome
-# O servidor do Tailwind vem do npm e a config o usa se estiver no PATH. Se ele iniciar mas
-# não completar nada, veja o aviso no fim do lisp/init-lsp.el (o lsp-mode tem um gerenciado).
-step "3. Servidores LSP e Biome em ${NPM_PREFIX} (${NPM_PACKAGES[*]})"
-if ask "Instalar?" s; then
-  if [ "$DRY_RUN" -eq 0 ] && ! command -v npm >/dev/null 2>&1; then
-    say "   npm não encontrado (instale o Node na etapa 2); pulando."
-  else
-    # Um `sudo npm' antigo deixa arquivos de root em ~/.npm e o npm falha com EACCES
-    if [ -d "$HOME/.npm" ] && [ -n "$(find "$HOME/.npm" ! -user "$(id -un)" 2>/dev/null | head -n 1)" ]; then
-      say "   ~/.npm tem arquivos de root (de um 'sudo npm' antigo); corrigindo o dono..."
-      run sudo chown -R "$(id -u):$(id -g)" "$HOME/.npm"
-    fi
-    run npm install -g --prefix "$NPM_PREFIX" "${NPM_PACKAGES[@]}"
+# ---------------------------------------------------------------- 3. Cache do npm
+# Os servidores LSP e o Biome (npm) e o do Tailwind o próprio Emacs instala na primeira
+# abertura (veja o fim do lisp/init-lsp.el). Aqui só se corrige um ~/.npm que tenha ficado
+# com arquivos de root: com ele o npm falha com EACCES.
+if [ -d "$HOME/.npm" ] && [ -n "$(find "$HOME/.npm" ! -user "$(id -un)" 2>/dev/null | head -n 1)" ]; then
+  step "3. Cache do npm (~/.npm)"
+  say "   ~/.npm tem arquivos de root (de um 'sudo npm' antigo); isso faz o npm falhar."
+  if ask "Corrigir o dono com sudo chown?" s; then
+    run sudo chown -R "$(id -u):$(id -g)" "$HOME/.npm"
   fi
 fi
 
 # ---------------------------------------------------------------- 4. Stow
 step "4. Config em ${TARGET} (GNU Stow, pacote ${PKG_NAME})"
-STOWED=0
 if ask "Aplicar?" s; then
   if [ "$DRY_RUN" -eq 0 ] && ! command -v stow >/dev/null 2>&1; then
     say "   stow não encontrado (instale-o na etapa 1); pulando."
@@ -197,35 +189,6 @@ if ask "Aplicar?" s; then
     # --no-folding: ~/.config/emacs fica uma pasta de verdade (só os arquivos viram link),
     # assim elpa/, var/ e custom.el, gerados pelo Emacs, não caem no repositório de dotfiles.
     ( cd "$DOTFILES_DIR" && run stow -v -R --no-folding -t "$HOME" "$PKG_NAME" )
-    STOWED=1
-  fi
-fi
-
-# ---------------------------------------------------------------- 5. Pacotes do Emacs
-step "5. Pacotes e gramáticas tree-sitter do Emacs (primeira abertura em modo batch)"
-if [ "$STOWED" -eq 0 ] && [ "$DRY_RUN" -eq 0 ] && [ ! -f "$TARGET/init.el" ]; then
-  say "   A config ainda não está em $TARGET; pulando."
-elif ask "Executar agora? (pode levar vários minutos; precisa de internet)" s; then
-  if command -v emacs >/dev/null 2>&1; then
-    EMACS_BIN="$(command -v emacs)"
-  else
-    EMACS_BIN="/Applications/MacPorts/Emacs.app/Contents/MacOS/Emacs"
-  fi
-  LOG_FILE="$LOG_DIR/install-$(date +%Y%m%d-%H%M%S).log"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    say "   [dry-run] $EMACS_BIN --batch --eval '(message \"Pacotes prontos\")' --eval '(my/treesit-install-missing)' | tee $LOG_FILE"
-  elif [ ! -x "$EMACS_BIN" ]; then
-    say "   Emacs não encontrado ($EMACS_BIN); instale-o na etapa 1 e rode de novo."
-  else
-    mkdir -p "$LOG_DIR"
-    { echo "=== emacs --batch ($(date '+%F %T')) ==="
-      "$EMACS_BIN" --batch --eval '(message "Pacotes prontos")' \
-        --eval '(my/treesit-install-missing)'; } 2>&1 | tee -a "$LOG_FILE"
-    BATCH_STATUS="${PIPESTATUS[0]}"
-    say ""
-    say "   Log salvo em: $LOG_FILE"
-    [ "$BATCH_STATUS" -eq 0 ] \
-      || say "   AVISO: o Emacs terminou com código $BATCH_STATUS. Veja o log:  grep -n -i 'error' \"$LOG_FILE\""
   fi
 fi
 
@@ -250,8 +213,10 @@ fi
 
 say ""
 say "Abra /Applications/MacPorts/Emacs.app. Primeiro uso:"
-say "  1. Se alguma gramática tree-sitter não foi instalada (veja o log), o Emacs tenta de novo"
-say "     2 s depois de abrir (git + compilador C), ou rode M-x my/treesit-install-missing."
+say "  1. Na primeira abertura o Emacs baixa e compila os pacotes e, em seguida, instala todas"
+say "     as gramáticas tree-sitter (git + compilador C) e os servidores LSP (npm + Tailwind,"
+say "     em segundo plano). Leva vários minutos e precisa de internet; o Emacs pode ficar"
+say "     ocupado nesse tempo. O andamento dos servidores aparece em *lsp-npm-install*."
 say "  2. Instale a fonte Lekton Nerd Font Mono; este script não a instala."
 say ""
 say "LEMBRETE para cada projeto Astro: instale o TypeScript e o Biome no próprio projeto."
@@ -260,5 +225,3 @@ say "do biome.json:"
 say "  npm i -D typescript@6"
 say "  npm i -D --save-exact @biomejs/biome"
 say ""
-say "Se o Tailwind não completar (log com \"Initialized 0 projects\"), veja o aviso no fim"
-say "do ~/.config/emacs/lisp/init-lsp.el: dá para trocar para o servidor gerenciado pelo lsp-mode."

@@ -167,4 +167,23 @@
   (global-set-key (kbd "s-0") (lambda () (interactive) (text-scale-set 0)))
   (global-set-key (kbd "s-f") #'consult-line))
 
+;; --- Clipboard no Emacs de terminal (macOS) -----------------------------------------
+;; No `emacs -nw' o Emacs não enxerga a área de transferência do sistema: o que você copia
+;; no navegador não chega ao `p', ao `C-y' nem ao `yank'. Aqui ele passa a usar o pbpaste e
+;; o pbcopy, então `y' no Emacs copia para o macOS e `p' cola o que veio de fora.
+;; (O Cmd+V do terminal continua funcionando por conta própria, como colagem do terminal.)
+(when (and (eq system-type 'darwin) (not (display-graphic-p))
+           (executable-find "pbcopy") (executable-find "pbpaste"))
+  (setq interprogram-cut-function
+        (lambda (texto)
+          (let ((process-connection-type nil)
+                (proc (start-process "pbcopy" nil "pbcopy")))
+            (process-send-string proc texto)
+            (process-send-eof proc)))
+        interprogram-paste-function
+        (lambda ()
+          (let ((texto (shell-command-to-string "pbpaste")))
+            (unless (or (string-empty-p texto) (string= texto (car kill-ring)))
+              texto)))))
+
 (provide 'init-core)

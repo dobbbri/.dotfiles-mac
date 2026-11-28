@@ -22,7 +22,7 @@ LOG_DIR="$HOME/.local/state/emacs"
 
 NPM_PACKAGES=(typescript typescript-language-server @astrojs/language-server
               @tailwindcss/language-server @biomejs/biome vscode-langservers-extracted)
-PORTS_EMACS=(emacs-app)
+PORTS_EMACS=(emacs)    
 PORTS_TOOLS=(ripgrep fd shfmt shellcheck cmake libtool)   # úteis ao Emacs, mas genéricos
 PORTS_SHARED=(git stow nvm coreutils)                      # você provavelmente usa fora do Emacs
 
@@ -102,15 +102,11 @@ done
 
 # ---------------------------------------------------------------- 3. gramáticas
 step "3. Gramáticas tree-sitter compiladas"
-for d in "$TARGET/tree-sitter" "$HOME/.local/lib/tree-sitter"; do
-  if [ -d "$d" ]; then
-    say "   $d ($(find "$d" -maxdepth 1 -type f | wc -l | tr -d ' ') arquivos)"
-    default="s"
-    # Esta última pasta pode ser de um setup antigo (Doom): por segurança, padrão = não.
-    [ "$d" = "$HOME/.local/lib/tree-sitter" ] && default="n"
-    if ask "Remover $d?" "$default"; then run rm -rf -- "$d"; fi
-  fi
-done
+d="$TARGET/tree-sitter"
+if [ -d "$d" ]; then
+  say "   $d ($(find "$d" -maxdepth 1 -type f | wc -l | tr -d ' ') arquivos)"
+  if ask "Remover $d?" s; then run rm -rf -- "$d"; fi
+fi
 
 # ---------------------------------------------------------------- 4. arquivos do Emacs
 step "4. Arquivos gerados pelo Emacs em ${TARGET} (elpa, var, custom.el, ...)"

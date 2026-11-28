@@ -16,7 +16,15 @@
   (doom-themes-org-config))
 
 ;; --- Ícones e modeline --------------------------------------------------------
-(use-package nerd-icons :demand t)
+(use-package nerd-icons
+  :demand t
+  :config
+  ;; O nerd-icons não conhece o Astro (cairia no ícone genérico de arquivo):
+  ;; nf-dev-astro (\ue735) no Dired/Dirvish, nos buffers e na modeline.
+  (add-to-list 'nerd-icons-extension-icon-alist
+               '("astro" nerd-icons-devicon "nf-dev-astro" :face nerd-icons-lpurple))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(astro-ts-mode nerd-icons-devicon "nf-dev-astro" :face nerd-icons-lpurple)))
 (use-package doom-modeline
   :demand t
   :config

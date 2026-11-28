@@ -1,14 +1,18 @@
 ;;; init-treesit.el -*- lexical-binding: t; -*-
 
-;; Emacs 31 instala as gramáticas tree-sitter sozinho. Precisa de git e de um compilador C
-;; (macOS: `xcode-select --install'). Elas ficam em ~/.config/emacs/tree-sitter; as que
-;; já existirem em ~/.local/lib/tree-sitter (setup antigo do Doom) também são usadas.
+;; Precisa de git e de um compilador C (macOS: `xcode-select --install'). As gramáticas
+;; ficam em ~/.config/emacs/tree-sitter (padrão do Emacs; o --no-folding do Stow mantém a
+;; pasta fora do repositório de dotfiles). A instalação é feita na primeira abertura (ver
+;; "Instalação antecipada" abaixo); o Emacs 31 ainda instala sozinho o que faltar quando
+;; um modo precisar.
 (require 'treesit)
-;; (add-to-list 'treesit-extra-load-path (expand-file-name "~/.local/lib/tree-sitter"))
 
 (setq treesit-auto-install-grammar 'always   ; instala sem perguntar quando um modo precisar
-      treesit-enabled-modes t                ; usa os *-ts-mode no lugar dos modos clássicos
       treesit-font-lock-level 4)
+
+;; `setopt' (e não `setq'): no Emacs 31 esta opção tem um setter que registra os
+;; remapeamentos dos modos; com `setq' o valor muda, mas os remapeamentos não são feitos.
+(setopt treesit-enabled-modes t)             ; usa os *-ts-mode no lugar dos modos clássicos
 
 ;; O Astro vem de um pacote de terceiros: informa de onde baixar a gramática. As das
 ;; linguagens embutidas (TypeScript, CSS, YAML...) o próprio Emacs já sabe onde buscar.
@@ -29,10 +33,10 @@
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;; --- Instalação antecipada --------------------------------------------------------
-;; Sem isto cada gramática só é instalada quando você abre o primeiro arquivo da
-;; linguagem. Aqui todas as que a config usa são verificadas de uma vez, 2 s depois da
-;; inicialização, e as que faltarem são instaladas (na primeira vez, o Emacs pode ficar
-;; ocupado por alguns minutos compilando). O install.sh chama a mesma função em modo batch.
+;; Todas as gramáticas que a config usa são verificadas de uma vez, 2 s depois de o Emacs
+;; abrir, e as que faltarem são instaladas. Na primeira abertura o Emacs fica ocupado por
+;; alguns minutos compilando; nas seguintes não há nada a fazer. Isto também cobre o
+;; `astro-ts-mode', de terceiros, que não instala as gramáticas de que depende.
 (defconst my/treesit-languages
   '(astro bash css elisp go html javascript json markdown python toml tsx typescript yaml)
   "Gramáticas tree-sitter usadas por esta config.")

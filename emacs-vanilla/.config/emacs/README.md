@@ -21,7 +21,7 @@
 
        cd ~/.dotfiles-mac && chmod +x install.sh uninstall.sh && ./install.sh
 
-   O script (no mesmo formato do `uninstall.sh`) pergunta antes de cada grupo, pula o que já está instalado e permite instalar só parte: o Emacs 31.1 (MacPorts), as ferramentas (base, vterm e scripts sh), o Node via nvm, os servidores LSP e o Biome (em `~/.local`), a config via Stow e a primeira abertura do Emacs em modo batch, que baixa e compila os pacotes. O log fica em `~/.local/state/emacs/`. Use `./install.sh --dry-run` para só ver o que seria feito, ou `--yes` para aceitar tudo sem perguntar. Pode ser rodado de novo sem problema.
+   O script (no mesmo formato do `uninstall.sh`) pergunta antes de cada grupo, pula o que já está instalado e permite instalar só parte: o Emacs 31.1 (MacPorts), as ferramentas (base, vterm e scripts sh), o Node via nvm e a config via Stow. Os pacotes do Emacs, as gramáticas tree-sitter e os servidores LSP (como faria o Mason) são instalados pelo próprio Emacs na primeira abertura normal. Use `./install.sh --dry-run` para só ver o que seria feito, ou `--yes` para aceitar tudo sem perguntar. Pode ser rodado de novo sem problema.
 
 Para só experimentar a config, sem instalar nada: `emacs --init-directory <pasta-com-esta-config>`.
 
@@ -33,10 +33,9 @@ Para só experimentar a config, sem instalar nada: `emacs --init-directory <past
 - Nunca é apagado: `~/org` (suas notas), o repositório `~/.dotfiles-mac` (só os links são removidos), o MacPorts e as Xcode Command Line Tools.
 
 ## Dependências externas
-- Gramáticas tree-sitter: instaladas sozinhas (precisa de git e de um compilador C; macOS: `xcode-select --install`). O `install.sh` instala todas em modo batch; se alguma faltar, o Emacs verifica 2 s depois de abrir e instala o que faltar (`M-x my/treesit-install-missing` faz o mesmo na hora). Ficam em `~/.config/emacs/tree-sitter`, e as de `~/.local/lib/tree-sitter` (setup antigo do Doom) também são usadas
-- Tailwind: o `install.sh` instala `@tailwindcss/language-server` via npm, e a config o usa se estiver no PATH. Se ele iniciar mas o log mostrar `Initialized 0 projects` e nada completar (aconteceu em um teste), use o servidor gerenciado pelo lsp-mode: `npm uninstall -g --prefix ~/.local @tailwindcss/language-server` e depois `M-x lsp-install-server RET tailwindcss`
+- Gramáticas tree-sitter: instaladas sozinhas (precisa de git e de um compilador C; macOS: `xcode-select --install`). Todas são instaladas na primeira abertura do Emacs, 2 s depois de ele iniciar (o Emacs fica ocupado alguns minutos compilando); `M-x my/treesit-install-missing` repete a verificação. Ficam em `~/.config/emacs/tree-sitter`
+- Servidores LSP: instalados sozinhos na primeira abertura, 5 s depois de o Emacs iniciar (precisa de internet e de `node`/`npm`; `M-x my/lsp-install-missing` repete). Via npm, em `~/.local/bin`: astro-ls, typescript-language-server (+ `typescript@6`), vscode-langservers-extracted e `@biomejs/biome` (log em `*lsp-npm-install*`). O Tailwind é o gerenciado pelo lsp-mode (extensão oficial do VS Code), baixado em `var/lsp-servers/`; se houver um `tailwindcss-language-server` do npm no PATH, ele tem prioridade.
 - **Em cada projeto Astro:** `npm i -D typescript@6` (o astro-ls usa o TypeScript do projeto) e `npm i -D --save-exact @biomejs/biome` (a versão deve ser a do `$schema` do `biome.json`)
-- Servidores em `~/.local/bin` (o `install.sh` instala com `npm install -g --prefix ~/.local`): astro-ls, typescript-language-server, vscode-langservers-extracted e `@biomejs/biome`
 - `rg` (consult-ripgrep), `gls` (coreutils, só macOS), `cmake` + `libtool` (vterm)
 - Fonte Lekton Nerd Font Mono (o `install.sh` não a instala)
 
