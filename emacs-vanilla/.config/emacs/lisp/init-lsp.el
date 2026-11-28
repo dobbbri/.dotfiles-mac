@@ -4,7 +4,7 @@
 ;; TypeScript fica por conta do astro-ls.
 
 (use-package astro-ts-mode
-  :mode "\\.astro\\'")
+  :commands astro-ts-mode)               ; a associação do .astro fica em init-treesit.el
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)

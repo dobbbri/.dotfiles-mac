@@ -33,7 +33,7 @@ Para só experimentar a config, sem instalar nada: `emacs --init-directory <past
 - Nunca é apagado: `~/org` (suas notas), o repositório `~/.dotfiles-mac` (só os links são removidos), o MacPorts e as Xcode Command Line Tools.
 
 ## Dependências externas
-- Gramáticas tree-sitter: o Emacs 31 as instala sozinho na primeira vez que um modo precisar (`treesit-auto-install-grammar 'always`), gravando em `~/.config/emacs/tree-sitter`; precisa de git e de um compilador C (macOS: `xcode-select --install`). Gramáticas já existentes em `~/.local/lib/tree-sitter` (setup antigo do Doom) também são usadas
+- Gramáticas tree-sitter: instaladas sozinhas (precisa de git e de um compilador C; macOS: `xcode-select --install`). O `install.sh` instala todas em modo batch; se alguma faltar, o Emacs verifica 2 s depois de abrir e instala o que faltar (`M-x my/treesit-install-missing` faz o mesmo na hora). Ficam em `~/.config/emacs/tree-sitter`, e as de `~/.local/lib/tree-sitter` (setup antigo do Doom) também são usadas
 - Tailwind: o `install.sh` instala `@tailwindcss/language-server` via npm, e a config o usa se estiver no PATH. Se ele iniciar mas o log mostrar `Initialized 0 projects` e nada completar (aconteceu em um teste), use o servidor gerenciado pelo lsp-mode: `npm uninstall -g --prefix ~/.local @tailwindcss/language-server` e depois `M-x lsp-install-server RET tailwindcss`
 - **Em cada projeto Astro:** `npm i -D typescript@6` (o astro-ls usa o TypeScript do projeto) e `npm i -D --save-exact @biomejs/biome` (a versão deve ser a do `$schema` do `biome.json`)
 - Servidores em `~/.local/bin` (o `install.sh` instala com `npm install -g --prefix ~/.local`): astro-ls, typescript-language-server, vscode-langservers-extracted e `@biomejs/biome`

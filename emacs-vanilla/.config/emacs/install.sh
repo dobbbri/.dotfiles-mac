@@ -23,7 +23,7 @@ LOG_DIR="$HOME/.local/state/emacs"
 
 NPM_PACKAGES=(typescript@6 typescript-language-server @astrojs/language-server
               @tailwindcss/language-server @biomejs/biome vscode-langservers-extracted)
-PORTS_EMACS=(emacs-app)                   # instalado com @31.1 +treesitter +nativecomp
+PORTS_EMACS=(emacs)                              # instalado com @31.1 +treesitter +nativecomp
 PORTS_BASE=(git stow ripgrep fd coreutils)       # stow liga a config; gls = Dired; rg = busca
 PORTS_VTERM=(cmake libtool)                      # o vterm compila um módulo nativo
 PORTS_SH=(shfmt shellcheck)                      # formatar e checar scripts sh
@@ -113,7 +113,7 @@ for group in EMACS BASE VTERM SH; do
   fi
   if ask "Instalar $label (${missing[*]}) com sudo port install?" s; then
     if [ "$group" = "EMACS" ]; then
-      port_install emacs-app @31.1 +treesitter +nativecomp
+      port_install emacs
     else
       port_install "${missing[@]}"
     fi
@@ -202,7 +202,7 @@ if ask "Aplicar?" s; then
 fi
 
 # ---------------------------------------------------------------- 5. Pacotes do Emacs
-step "5. Pacotes do Emacs (primeira abertura em modo batch: baixa e compila tudo)"
+step "5. Pacotes e gramáticas tree-sitter do Emacs (primeira abertura em modo batch)"
 if [ "$STOWED" -eq 0 ] && [ "$DRY_RUN" -eq 0 ] && [ ! -f "$TARGET/init.el" ]; then
   say "   A config ainda não está em $TARGET; pulando."
 elif ask "Executar agora? (pode levar vários minutos; precisa de internet)" s; then
@@ -213,13 +213,14 @@ elif ask "Executar agora? (pode levar vários minutos; precisa de internet)" s; 
   fi
   LOG_FILE="$LOG_DIR/install-$(date +%Y%m%d-%H%M%S).log"
   if [ "$DRY_RUN" -eq 1 ]; then
-    say "   [dry-run] $EMACS_BIN --batch --eval '(message \"Pacotes prontos\")' | tee $LOG_FILE"
+    say "   [dry-run] $EMACS_BIN --batch --eval '(message \"Pacotes prontos\")' --eval '(my/treesit-install-missing)' | tee $LOG_FILE"
   elif [ ! -x "$EMACS_BIN" ]; then
     say "   Emacs não encontrado ($EMACS_BIN); instale-o na etapa 1 e rode de novo."
   else
     mkdir -p "$LOG_DIR"
     { echo "=== emacs --batch ($(date '+%F %T')) ==="
-      "$EMACS_BIN" --batch --eval '(message "Pacotes prontos")'; } 2>&1 | tee -a "$LOG_FILE"
+      "$EMACS_BIN" --batch --eval '(message "Pacotes prontos")' \
+        --eval '(my/treesit-install-missing)'; } 2>&1 | tee -a "$LOG_FILE"
     BATCH_STATUS="${PIPESTATUS[0]}"
     say ""
     say "   Log salvo em: $LOG_FILE"
@@ -249,8 +250,8 @@ fi
 
 say ""
 say "Abra /Applications/MacPorts/Emacs.app. Primeiro uso:"
-say "  1. As gramáticas tree-sitter são instaladas sozinhas (git + compilador C) na primeira"
-say "     vez que você abrir cada tipo de arquivo."
+say "  1. Se alguma gramática tree-sitter não foi instalada (veja o log), o Emacs tenta de novo"
+say "     2 s depois de abrir (git + compilador C), ou rode M-x my/treesit-install-missing."
 say "  2. Instale a fonte Lekton Nerd Font Mono; este script não a instala."
 say ""
 say "LEMBRETE para cada projeto Astro: instale o TypeScript e o Biome no próprio projeto."

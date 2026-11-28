@@ -32,9 +32,9 @@ clipboard-trim-trailing-spaces = true
 # background-blur = true
 # startup maximizado
 maximize = true
-window-padding-x = 8
-window-padding-y = 6
-window-padding-balance = true
+window-padding-x = 0
+window-padding-y = 0
+# window-padding-balance = false
 window-save-state = never
 confirm-close-surface = false
 quit-after-last-window-closed = true
